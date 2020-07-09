@@ -1,6 +1,13 @@
 package tile
 
+import (
+	"log"
+	"strconv"
+)
+
 type TileKind string
+
+const Count = 4
 
 var (
 	suit      TileKind = "suit"      // suuzi
@@ -25,6 +32,31 @@ var (
 type Tile struct {
 	kind []TileKind
 	name string
+}
+
+func (t *Tile) Name() string {
+	return t.name
+}
+
+func (t *Tile) Number() int {
+
+	for _, k := range t.kind {
+		for _, knum := range []TileKind{one, two, three, four, five, six, seven, eight, nine} {
+			if knum == k {
+				num, err := strconv.Atoi(string(knum))
+				if err != nil {
+					log.Println(err)
+					return 0
+				}
+				return num
+			}
+		}
+	}
+	return 0
+}
+
+func (t *Tile) Kinds() []TileKind {
+	return t.kind
 }
 
 var (
