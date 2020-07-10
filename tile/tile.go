@@ -10,23 +10,23 @@ type TileKind string
 const Count = 4
 
 var (
-	suit      TileKind = "suit"      // suuzi
-	dot       TileKind = "dot"       // pinzu
-	banboo    TileKind = "banboo"    // sozu
-	character TileKind = "character" // manzu
-	one       TileKind = "1"
-	two       TileKind = "2"
-	three     TileKind = "3"
-	four      TileKind = "4"
-	five      TileKind = "5"
-	six       TileKind = "6"
-	seven     TileKind = "7"
-	eight     TileKind = "8"
-	nine      TileKind = "9"
+	suhai TileKind = "suit"
+	pinzu TileKind = "dot"
+	souzu TileKind = "banboo"
+	manzu TileKind = "character"
+	one   TileKind = "1"
+	two   TileKind = "2"
+	three TileKind = "3"
+	four  TileKind = "4"
+	five  TileKind = "5"
+	six   TileKind = "6"
+	seven TileKind = "7"
+	eight TileKind = "8"
+	nine  TileKind = "9"
 
-	honor  TileKind = "honor"  // zihai
-	wind   TileKind = "wind"   // kaze
-	dragon TileKind = "dragon" // yakuhai
+	zihai   TileKind = "honor"
+	kaze    TileKind = "wind"
+	yakuhai TileKind = "dragon"
 )
 
 type Tile struct {
@@ -61,150 +61,150 @@ func (t *Tile) Kinds() []TileKind {
 
 var (
 	// suits
-	Dot1 = Tile{
-		kind: []TileKind{suit, one, dot},
-		name: "dot1",
+	Pinzu1 = Tile{
+		kind: []TileKind{suhai, one, pinzu},
+		name: "pinzu1",
 	}
-	Dot2 = Tile{
-		kind: []TileKind{suit, two, dot},
-		name: "dot2",
+	Pinzu2 = Tile{
+		kind: []TileKind{suhai, two, pinzu},
+		name: "pinzu2",
 	}
-	Dot3 = Tile{
-		kind: []TileKind{suit, three, dot},
-		name: "dot3",
+	Pinzu3 = Tile{
+		kind: []TileKind{suhai, three, pinzu},
+		name: "pinzu3",
 	}
-	Dot4 = Tile{
-		kind: []TileKind{suit, four, dot},
-		name: "dot4",
+	Pinzu4 = Tile{
+		kind: []TileKind{suhai, four, pinzu},
+		name: "pinzu4",
 	}
-	Dot5 = Tile{
-		kind: []TileKind{suit, four, dot},
-		name: "dot5",
+	Pinzu5 = Tile{
+		kind: []TileKind{suhai, four, pinzu},
+		name: "pinzu5",
 	}
-	Dot6 = Tile{
-		kind: []TileKind{suit, six, dot},
-		name: "dot6",
+	Pinzu6 = Tile{
+		kind: []TileKind{suhai, six, pinzu},
+		name: "pinzu6",
 	}
-	Dot7 = Tile{
-		kind: []TileKind{suit, seven, dot},
-		name: "dot7",
+	Pinzu7 = Tile{
+		kind: []TileKind{suhai, seven, pinzu},
+		name: "pinzu7",
 	}
-	Dot8 = Tile{
-		kind: []TileKind{suit, eight, dot},
-		name: "dot8",
+	Pinzu8 = Tile{
+		kind: []TileKind{suhai, eight, pinzu},
+		name: "pinzu8",
 	}
-	Dot9 = Tile{
-		kind: []TileKind{suit, nine, dot},
-		name: "dot9",
+	Pinzu9 = Tile{
+		kind: []TileKind{suhai, nine, pinzu},
+		name: "pinzu9",
 	}
-	Banboo1 = Tile{
-		kind: []TileKind{suit, one, dot},
-		name: "banboo1",
+	Souzu1 = Tile{
+		kind: []TileKind{suhai, one, pinzu},
+		name: "souzu1",
 	}
-	Banboo2 = Tile{
-		kind: []TileKind{suit, two, banboo},
-		name: "banboo2",
+	Souzu2 = Tile{
+		kind: []TileKind{suhai, two, souzu},
+		name: "souzu2",
 	}
-	Banboo3 = Tile{
-		kind: []TileKind{suit, three, banboo},
-		name: "banboo3",
+	Souzu3 = Tile{
+		kind: []TileKind{suhai, three, souzu},
+		name: "souzu3",
 	}
-	Banboo5 = Tile{
-		kind: []TileKind{suit, four, banboo},
-		name: "banboo5",
+	Souzu4 = Tile{
+		kind: []TileKind{suhai, four, souzu},
+		name: "souzu4",
 	}
-	Banboo4 = Tile{
-		kind: []TileKind{suit, four, banboo},
-		name: "banboo4",
+	Souzu5 = Tile{
+		kind: []TileKind{suhai, four, souzu},
+		name: "souzu5",
 	}
-	Banboo6 = Tile{
-		kind: []TileKind{suit, six, banboo},
-		name: "banboo6",
+	Souzu6 = Tile{
+		kind: []TileKind{suhai, six, souzu},
+		name: "souzu6",
 	}
-	Banboo7 = Tile{
-		kind: []TileKind{suit, seven, banboo},
-		name: "banboo7",
+	Souzu7 = Tile{
+		kind: []TileKind{suhai, seven, souzu},
+		name: "souzu7",
 	}
-	Banboo8 = Tile{
-		kind: []TileKind{suit, eight, banboo},
-		name: "banboo8",
+	Souzu8 = Tile{
+		kind: []TileKind{suhai, eight, souzu},
+		name: "souzu8",
 	}
-	Banboo9 = Tile{
-		kind: []TileKind{suit, nine, banboo},
-		name: "banboo9",
+	Souzu9 = Tile{
+		kind: []TileKind{suhai, nine, souzu},
+		name: "souzu9",
 	}
-	Character1 = Tile{
-		kind: []TileKind{suit, one, character},
-		name: "character1",
+	Manzu1 = Tile{
+		kind: []TileKind{suhai, one, manzu},
+		name: "manzu1",
 	}
-	Character2 = Tile{
-		kind: []TileKind{suit, two, character},
-		name: "character2",
+	Manzu2 = Tile{
+		kind: []TileKind{suhai, two, manzu},
+		name: "manzu2",
 	}
-	Character3 = Tile{
-		kind: []TileKind{suit, three, character},
-		name: "character3",
+	Manzu3 = Tile{
+		kind: []TileKind{suhai, three, manzu},
+		name: "manzu3",
 	}
-	Character4 = Tile{
-		kind: []TileKind{suit, four, character},
-		name: "character4",
+	Manzu4 = Tile{
+		kind: []TileKind{suhai, four, manzu},
+		name: "manzu4",
 	}
-	Character5 = Tile{
-		kind: []TileKind{suit, four, character},
-		name: "character5",
+	Manzu5 = Tile{
+		kind: []TileKind{suhai, four, manzu},
+		name: "manzu5",
 	}
-	Character6 = Tile{
-		kind: []TileKind{suit, six, character},
-		name: "character6",
+	Manzu6 = Tile{
+		kind: []TileKind{suhai, six, manzu},
+		name: "manzu6",
 	}
-	Character7 = Tile{
-		kind: []TileKind{suit, seven, character},
-		name: "character7",
+	Manzu7 = Tile{
+		kind: []TileKind{suhai, seven, manzu},
+		name: "manzu7",
 	}
-	Character8 = Tile{
-		kind: []TileKind{suit, eight, character},
-		name: "character8",
+	Manzu8 = Tile{
+		kind: []TileKind{suhai, eight, manzu},
+		name: "manzu8",
 	}
-	Character9 = Tile{
-		kind: []TileKind{suit, nine, character},
-		name: "character9",
+	Manzu9 = Tile{
+		kind: []TileKind{suhai, nine, manzu},
+		name: "manzu9",
 	}
 
 	// honors
-	Red = Tile{
-		kind: []TileKind{honor, dragon},
+	Chun = Tile{
+		kind: []TileKind{zihai, yakuhai},
 		name: "red",
 	}
-	Green = Tile{
-		kind: []TileKind{honor, dragon},
+	Hatu = Tile{
+		kind: []TileKind{zihai, yakuhai},
 		name: "green",
 	}
-	White = Tile{
-		kind: []TileKind{honor, dragon},
+	Haku = Tile{
+		kind: []TileKind{zihai, yakuhai},
 		name: "white",
 	}
 	North = Tile{
-		kind: []TileKind{honor, wind},
+		kind: []TileKind{zihai, kaze},
 		name: "north",
 	}
 	East = Tile{
-		kind: []TileKind{honor, wind},
+		kind: []TileKind{zihai, kaze},
 		name: "east",
 	}
 	West = Tile{
-		kind: []TileKind{honor, wind},
+		kind: []TileKind{zihai, kaze},
 		name: "west",
 	}
 	South = Tile{
-		kind: []TileKind{honor, wind},
+		kind: []TileKind{zihai, kaze},
 		name: "south",
 	}
 )
 
 var All = []Tile{
-	Dot1, Dot2, Dot3, Dot4, Dot5, Dot6, Dot7, Dot8, Dot9,
-	Banboo1, Banboo2, Banboo3, Banboo4, Banboo5, Banboo6, Banboo7, Banboo8, Banboo9,
-	Character1, Character2, Character3, Character4, Character5, Character6, Character7, Character8, Character9,
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu6, Souzu7, Souzu8, Souzu9,
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu6, Manzu7, Manzu8, Manzu9,
 	North, East, West, South,
-	Red, Green, White,
+	Chun, Hatu, Haku,
 }
