@@ -19,9 +19,7 @@ func NewDeck() *Deck {
 
 	tiles := []tile.Tile{}
 	for _, t := range tile.All {
-		for i := 0; i < tile.Count; i++ {
-			tiles = append(tiles, t)
-		}
+		tiles = append(tiles, t)
 	}
 
 	deck := Deck{tiles: tiles}

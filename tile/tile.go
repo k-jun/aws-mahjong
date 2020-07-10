@@ -7,26 +7,25 @@ import (
 
 type TileKind string
 
-const Count = 4
-
 var (
-	suhai TileKind = "suit"
-	pinzu TileKind = "dot"
-	souzu TileKind = "banboo"
-	manzu TileKind = "character"
+	suhai TileKind = "suhai"
+	pinzu TileKind = "pinzu"
+	souzu TileKind = "souzu"
+	manzu TileKind = "manzu"
 	one   TileKind = "1"
 	two   TileKind = "2"
 	three TileKind = "3"
 	four  TileKind = "4"
 	five  TileKind = "5"
+	aka   TileKind = "aka"
 	six   TileKind = "6"
 	seven TileKind = "7"
 	eight TileKind = "8"
 	nine  TileKind = "9"
 
-	zihai   TileKind = "honor"
-	kaze    TileKind = "wind"
-	yakuhai TileKind = "dragon"
+	zihai   TileKind = "zihai"
+	kaze    TileKind = "kaze"
+	yakuhai TileKind = "yakuhai"
 )
 
 type Tile struct {
@@ -81,6 +80,10 @@ var (
 		kind: []TileKind{suhai, four, pinzu},
 		name: "pinzu5",
 	}
+	Pinzu5Aka = Tile{
+		kind: []TileKind{suhai, four, pinzu, aka},
+		name: "pinzu5aka",
+	}
 	Pinzu6 = Tile{
 		kind: []TileKind{suhai, six, pinzu},
 		name: "pinzu6",
@@ -117,6 +120,10 @@ var (
 		kind: []TileKind{suhai, four, souzu},
 		name: "souzu5",
 	}
+	Souzu5Aka = Tile{
+		kind: []TileKind{suhai, four, souzu, aka},
+		name: "souzu5aka",
+	}
 	Souzu6 = Tile{
 		kind: []TileKind{suhai, six, souzu},
 		name: "souzu6",
@@ -152,6 +159,10 @@ var (
 	Manzu5 = Tile{
 		kind: []TileKind{suhai, four, manzu},
 		name: "manzu5",
+	}
+	Manzu5Aka = Tile{
+		kind: []TileKind{suhai, four, souzu, aka},
+		name: "manzu5aka",
 	}
 	Manzu6 = Tile{
 		kind: []TileKind{suhai, six, manzu},
@@ -201,10 +212,42 @@ var (
 	}
 )
 
-var All = []Tile{
-	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
-	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu6, Souzu7, Souzu8, Souzu9,
-	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu6, Manzu7, Manzu8, Manzu9,
+var AllTailKind = []Tile{
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu5Aka, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu5Aka, Souzu6, Souzu7, Souzu8, Souzu9,
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu5Aka, Manzu6, Manzu7, Manzu8, Manzu9,
 	North, East, West, South,
+	Chun, Hatu, Haku,
+}
+
+var All = []Tile{
+	// pinzu
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5Aka, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
+
+	// souzu
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu6, Souzu7, Souzu8, Souzu9,
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu6, Souzu7, Souzu8, Souzu9,
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu6, Souzu7, Souzu8, Souzu9,
+	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5Aka, Souzu6, Souzu7, Souzu8, Souzu9,
+
+	// manzu
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu6, Manzu7, Manzu8, Manzu9,
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu6, Manzu7, Manzu8, Manzu9,
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5, Manzu6, Manzu7, Manzu8, Manzu9,
+	Manzu1, Manzu2, Manzu3, Manzu4, Manzu5Aka, Manzu6, Manzu7, Manzu8, Manzu9,
+
+	// kaze
+	North, East, West, South,
+	North, East, West, South,
+	North, East, West, South,
+	North, East, West, South,
+
+	// yakuhai
+	Chun, Hatu, Haku,
+	Chun, Hatu, Haku,
+	Chun, Hatu, Haku,
 	Chun, Hatu, Haku,
 }
