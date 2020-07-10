@@ -3,6 +3,7 @@ package hand
 import (
 	"aws-mahjong/tile"
 	"errors"
+	"sort"
 )
 
 var (
@@ -24,6 +25,12 @@ func NewHand() *Hand {
 	}
 }
 
+func (h *Hand) Tiles() []*tile.Tile {
+	tiles := h.tiles
+	sort.Slice(tiles, func(i int, j int) bool { return tiles[i].Name() < tiles[j].Name() })
+	return tiles
+}
+
 func (h *Hand) Add(inTile *tile.Tile) error {
 	if len(h.tiles) > handCount-1 {
 		return TileCountErr
@@ -37,24 +44,25 @@ func (h *Hand) Add(inTile *tile.Tile) error {
 func (h *Hand) Remove(outTile *tile.Tile) (*tile.Tile, error) {
 	for idx, tile := range h.tiles {
 		if tile.Name() == outTile.Name() {
-			removedTile := h.tiles[idx]
+			tile := h.tiles[idx]
 			h.tiles[idx] = h.tiles[0]
 			h.tiles = h.tiles[1:]
-			return removedTile, nil
+			return tile, nil
 		}
 	}
 	return nil, TileNotFoundErr
 
 }
 
-func (h *Hand) Replace(inTile *tile.Tile, outTile *tile.Tile) error {
+func (h *Hand) Replace(inTile *tile.Tile, outTile *tile.Tile) (*tile.Tile, error) {
 	for idx, tile := range h.tiles {
 		if tile.Name() == outTile.Name() {
+			tile = h.tiles[idx]
 			h.tiles[idx] = h.tiles[0]
-			h.tiles[0] = outTile
-			return nil
+			h.tiles[0] = inTile
+			return tile, nil
 		}
 	}
 
-	return TileNotFoundErr
+	return nil, TileNotFoundErr
 }
