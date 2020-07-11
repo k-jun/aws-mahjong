@@ -17,8 +17,7 @@ type NakiTile struct {
 }
 
 type KawaTile struct {
-	tile   tile.Tile
-	isSide bool
+	tile tile.Tile
 }
 
 type Player struct {
@@ -57,10 +56,15 @@ func (p *Player) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
 	if outTile != p.tsumo {
 		_, err := p.hand.Replace(p.tsumo, outTile)
 		if err != nil {
-			return outTile, err
+			return nil, err
 		}
 	}
 	p.tsumo = nil
 
 	return outTile, nil
+}
+
+func (p *Player) DahaiDone(deadTile *tile.Tile) error {
+	return nil
+
 }
