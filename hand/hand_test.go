@@ -130,3 +130,106 @@ func TestReplace(t *testing.T) {
 		})
 	}
 }
+
+func TestFindPonPair(t *testing.T) {
+	cases := []struct {
+		Description   string
+		CurrentTiles  []*tile.Tile
+		InTile        *tile.Tile
+		ExpectedPairs [][2]*tile.Tile
+	}{
+		{
+			Description:  "suhai pair",
+			CurrentTiles: []*tile.Tile{&tile.West, &tile.West},
+			InTile:       &tile.West,
+			ExpectedPairs: [][2]*tile.Tile{
+				[2]*tile.Tile{&tile.West, &tile.West},
+			},
+		},
+		{
+			Description:  "zihai pair",
+			CurrentTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu1, &tile.Manzu1, &tile.West},
+			InTile:       &tile.Manzu1,
+			ExpectedPairs: [][2]*tile.Tile{
+				[2]*tile.Tile{&tile.Manzu1, &tile.Manzu1},
+			},
+		},
+		{
+			Description:  "zihai 5 pair",
+			CurrentTiles: []*tile.Tile{&tile.Manzu5, &tile.Manzu5Aka, &tile.Manzu5, &tile.West},
+			InTile:       &tile.Manzu5,
+			ExpectedPairs: [][2]*tile.Tile{
+				[2]*tile.Tile{&tile.Manzu5, &tile.Manzu5},
+				[2]*tile.Tile{&tile.Manzu5, &tile.Manzu5Aka},
+			},
+		},
+		{
+			Description:   "zihai no pair",
+			CurrentTiles:  []*tile.Tile{&tile.Manzu4, &tile.Manzu5Aka, &tile.Manzu5, &tile.West},
+			InTile:        &tile.Manzu3,
+			ExpectedPairs: [][2]*tile.Tile{},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			hand := NewHand()
+			hand.tiles = c.CurrentTiles
+			pairs := hand.FindPonPair(c.InTile)
+			assert.Equal(t, c.ExpectedPairs, pairs)
+
+		})
+	}
+}
+
+func TestFindKanPair(t *testing.T) {
+	cases := []struct {
+		Description   string
+		CurrentTiles  []*tile.Tile
+		InTile        *tile.Tile
+		ExpectedPairs [][3]*tile.Tile
+	}{
+		{
+			Description:  "zihai pair",
+			CurrentTiles: []*tile.Tile{&tile.West, &tile.East, &tile.West, &tile.West},
+			InTile:       &tile.West,
+			ExpectedPairs: [][3]*tile.Tile{
+				[3]*tile.Tile{&tile.West, &tile.West, &tile.West},
+			},
+		},
+		{
+			Description:  "suhai pair",
+			CurrentTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu1, &tile.Manzu1},
+			InTile:       &tile.Manzu1,
+			ExpectedPairs: [][3]*tile.Tile{
+				[3]*tile.Tile{&tile.Manzu1, &tile.Manzu1, &tile.Manzu1},
+			},
+		},
+		{
+			Description:  "suhai 5 pair",
+			CurrentTiles: []*tile.Tile{&tile.Manzu5, &tile.Manzu5Aka, &tile.Manzu5},
+			InTile:       &tile.Manzu5,
+			ExpectedPairs: [][3]*tile.Tile{
+				[3]*tile.Tile{&tile.Manzu5, &tile.Manzu5, &tile.Manzu5Aka},
+			},
+		},
+		{
+			Description:   "suhai no pair",
+			CurrentTiles:  []*tile.Tile{&tile.Manzu4, &tile.Manzu5Aka, &tile.Manzu5},
+			InTile:        &tile.Manzu5,
+			ExpectedPairs: [][3]*tile.Tile{},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			hand := NewHand()
+			hand.tiles = c.CurrentTiles
+			pairs := hand.FindKanPair(c.InTile)
+			assert.Equal(t, c.ExpectedPairs, pairs)
+
+		})
+
+	}
+
+}
