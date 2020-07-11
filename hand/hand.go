@@ -4,6 +4,7 @@ import (
 	"aws-mahjong/tile"
 	"errors"
 	"sort"
+	"strconv"
 )
 
 var (
@@ -105,6 +106,42 @@ func (h *Hand) FindPonPair(inTile *tile.Tile) [][2]*tile.Tile {
 
 func (h *Hand) FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile {
 	pairs := [][2]*tile.Tile{}
+
+	if inTile.IsZihai() {
+		return pairs
+	}
+
+	num := inTile.Number()
+	smpKind := inTile.KindSMP()
+
+	lambda := func(xkind *tile.TileKind, ykind *tile.TileKind) {
+		for _, i := range h.findByKinds([]*tile.TileKind{xkind, smpKind}) {
+			for _, j := range h.findByKinds([]*tile.TileKind{ykind, smpKind}) {
+				pairs = append(pairs, [2]*tile.Tile{i, j})
+			}
+		}
+	}
+	// inTile is on left
+	if num <= 7 {
+		centerKind := tile.TileKindFromString(strconv.Itoa(num + 1))
+		rightKind := tile.TileKindFromString(strconv.Itoa(num + 2))
+		lambda(centerKind, rightKind)
+	}
+
+	// inTile is on center
+	if num <= 8 && num >= 2 {
+		leftKind := tile.TileKindFromString(strconv.Itoa(num - 1))
+		rightKind := tile.TileKindFromString(strconv.Itoa(num + 1))
+		lambda(leftKind, rightKind)
+	}
+
+	// inTile is on right
+	if num <= 3 {
+		leftKind := tile.TileKindFromString(strconv.Itoa(num - 2))
+		centerKind := tile.TileKindFromString(strconv.Itoa(num - 1))
+		lambda(leftKind, centerKind)
+	}
+
 	return pairs
 }
 
@@ -126,4 +163,28 @@ func (h *Hand) FindKanPair(inTile *tile.Tile) [][3]*tile.Tile {
 		pairs = append(pairs, [3]*tile.Tile{hitTiles[0], hitTiles[1], hitTiles[2]})
 	}
 	return pairs
+}
+
+func (h *Hand) findByKinds(kinds []*tile.TileKind) []*tile.Tile {
+	tiles := []*tile.Tile{}
+
+	for _, tile := range h.tiles {
+		hasAllKind := true
+		for _, kind := range kinds {
+			hasKind := false
+			for _, tKind := range tile.Kinds() {
+				if tKind == *kind {
+					hasKind = true
+				}
+			}
+			if !hasKind {
+				hasAllKind = false
+			}
+		}
+		if hasAllKind {
+			tiles = append(tiles, tile)
+		}
+	}
+
+	return tiles
 }

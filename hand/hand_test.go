@@ -182,6 +182,47 @@ func TestFindPonPair(t *testing.T) {
 	}
 }
 
+func TestFindChiiPair(t *testing.T) {
+	cases := []struct {
+		Description   string
+		CurrentTiles  []*tile.Tile
+		InTile        *tile.Tile
+		ExpectedPairs [][2]*tile.Tile
+	}{
+		{
+			Description:   "zihai no pair",
+			CurrentTiles:  []*tile.Tile{&tile.West, &tile.North, &tile.South, &tile.East},
+			InTile:        &tile.East,
+			ExpectedPairs: [][2]*tile.Tile{},
+		},
+		{
+			Description:  "suhai pair",
+			CurrentTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			InTile:       &tile.Manzu3,
+			ExpectedPairs: [][2]*tile.Tile{
+				[2]*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			},
+		},
+		{
+			Description:   "suhai no pair",
+			CurrentTiles:  []*tile.Tile{&tile.Souzu1, &tile.Manzu2},
+			InTile:        &tile.Manzu3,
+			ExpectedPairs: [][2]*tile.Tile{},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			hand := NewHand()
+			hand.tiles = c.CurrentTiles
+			pairs := hand.FindChiiPair(c.InTile)
+			assert.Equal(t, c.ExpectedPairs, pairs)
+		})
+
+	}
+
+}
+
 func TestFindKanPair(t *testing.T) {
 	cases := []struct {
 		Description   string
