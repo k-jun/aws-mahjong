@@ -29,7 +29,7 @@ var (
 )
 
 type Tile struct {
-	kind []TileKind
+	kind []*TileKind
 	name string
 }
 
@@ -59,7 +59,7 @@ func (t *Tile) IsSame(a *Tile) bool {
 
 func (t *Tile) KindSMP() *TileKind {
 	for _, k := range t.Kinds() {
-		switch k {
+		switch *k {
 		case souzu:
 			return &souzu
 		case pinzu:
@@ -99,7 +99,7 @@ func TileKindFromString(kind string) *TileKind {
 
 func (t *Tile) IsSuhai() bool {
 	for _, tk := range t.kind {
-		if tk == suhai {
+		if *tk == suhai {
 			return true
 		}
 	}
@@ -108,7 +108,7 @@ func (t *Tile) IsSuhai() bool {
 
 func (t *Tile) IsZihai() bool {
 	for _, tk := range t.kind {
-		if tk == zihai {
+		if *tk == zihai {
 			return true
 		}
 	}
@@ -118,9 +118,9 @@ func (t *Tile) IsZihai() bool {
 func (t *Tile) Number() int {
 
 	for _, k := range t.kind {
-		for _, knum := range []TileKind{one, two, three, four, five, six, seven, eight, nine} {
-			if knum == k {
-				num, err := strconv.Atoi(string(knum))
+		for _, knum := range []*TileKind{&one, &two, &three, &four, &five, &six, &seven, &eight, &nine} {
+			if *knum == *k {
+				num, err := strconv.Atoi(string(*knum))
 				if err != nil {
 					log.Println(err)
 					return 0
@@ -132,160 +132,160 @@ func (t *Tile) Number() int {
 	return 0
 }
 
-func (t *Tile) Kinds() []TileKind {
+func (t *Tile) Kinds() []*TileKind {
 	return t.kind
 }
 
 var (
 	// suits
 	Pinzu1 = Tile{
-		kind: []TileKind{suhai, one, pinzu},
+		kind: []*TileKind{&suhai, &one, &pinzu},
 		name: "pinzu1",
 	}
 	Pinzu2 = Tile{
-		kind: []TileKind{suhai, two, pinzu},
+		kind: []*TileKind{&suhai, &two, &pinzu},
 		name: "pinzu2",
 	}
 	Pinzu3 = Tile{
-		kind: []TileKind{suhai, three, pinzu},
+		kind: []*TileKind{&suhai, &three, &pinzu},
 		name: "pinzu3",
 	}
 	Pinzu4 = Tile{
-		kind: []TileKind{suhai, four, pinzu},
+		kind: []*TileKind{&suhai, &four, &pinzu},
 		name: "pinzu4",
 	}
 	Pinzu5 = Tile{
-		kind: []TileKind{suhai, five, pinzu},
+		kind: []*TileKind{&suhai, &five, &pinzu},
 		name: "pinzu5",
 	}
 	Pinzu5Aka = Tile{
-		kind: []TileKind{suhai, five, pinzu, aka},
+		kind: []*TileKind{&suhai, &five, &pinzu, &aka},
 		name: "pinzu5aka",
 	}
 	Pinzu6 = Tile{
-		kind: []TileKind{suhai, six, pinzu},
+		kind: []*TileKind{&suhai, &six, &pinzu},
 		name: "pinzu6",
 	}
 	Pinzu7 = Tile{
-		kind: []TileKind{suhai, seven, pinzu},
+		kind: []*TileKind{&suhai, &seven, &pinzu},
 		name: "pinzu7",
 	}
 	Pinzu8 = Tile{
-		kind: []TileKind{suhai, eight, pinzu},
+		kind: []*TileKind{&suhai, &eight, &pinzu},
 		name: "pinzu8",
 	}
 	Pinzu9 = Tile{
-		kind: []TileKind{suhai, nine, pinzu},
+		kind: []*TileKind{&suhai, &nine, &pinzu},
 		name: "pinzu9",
 	}
 	Souzu1 = Tile{
-		kind: []TileKind{suhai, one, souzu},
+		kind: []*TileKind{&suhai, &one, &souzu},
 		name: "souzu1",
 	}
 	Souzu2 = Tile{
-		kind: []TileKind{suhai, two, souzu},
+		kind: []*TileKind{&suhai, &two, &souzu},
 		name: "souzu2",
 	}
 	Souzu3 = Tile{
-		kind: []TileKind{suhai, three, souzu},
+		kind: []*TileKind{&suhai, &three, &souzu},
 		name: "souzu3",
 	}
 	Souzu4 = Tile{
-		kind: []TileKind{suhai, four, souzu},
+		kind: []*TileKind{&suhai, &four, &souzu},
 		name: "souzu4",
 	}
 	Souzu5 = Tile{
-		kind: []TileKind{suhai, five, souzu},
+		kind: []*TileKind{&suhai, &five, &souzu},
 		name: "souzu5",
 	}
 	Souzu5Aka = Tile{
-		kind: []TileKind{suhai, five, souzu, aka},
+		kind: []*TileKind{&suhai, &five, &souzu, &aka},
 		name: "souzu5aka",
 	}
 	Souzu6 = Tile{
-		kind: []TileKind{suhai, six, souzu},
+		kind: []*TileKind{&suhai, &six, &souzu},
 		name: "souzu6",
 	}
 	Souzu7 = Tile{
-		kind: []TileKind{suhai, seven, souzu},
+		kind: []*TileKind{&suhai, &seven, &souzu},
 		name: "souzu7",
 	}
 	Souzu8 = Tile{
-		kind: []TileKind{suhai, eight, souzu},
+		kind: []*TileKind{&suhai, &eight, &souzu},
 		name: "souzu8",
 	}
 	Souzu9 = Tile{
-		kind: []TileKind{suhai, nine, souzu},
+		kind: []*TileKind{&suhai, &nine, &souzu},
 		name: "souzu9",
 	}
 	Manzu1 = Tile{
-		kind: []TileKind{suhai, one, manzu},
+		kind: []*TileKind{&suhai, &one, &manzu},
 		name: "manzu1",
 	}
 	Manzu2 = Tile{
-		kind: []TileKind{suhai, two, manzu},
+		kind: []*TileKind{&suhai, &two, &manzu},
 		name: "manzu2",
 	}
 	Manzu3 = Tile{
-		kind: []TileKind{suhai, three, manzu},
+		kind: []*TileKind{&suhai, &three, &manzu},
 		name: "manzu3",
 	}
 	Manzu4 = Tile{
-		kind: []TileKind{suhai, four, manzu},
+		kind: []*TileKind{&suhai, &four, &manzu},
 		name: "manzu4",
 	}
 	Manzu5 = Tile{
-		kind: []TileKind{suhai, five, manzu},
+		kind: []*TileKind{&suhai, &five, &manzu},
 		name: "manzu5",
 	}
 	Manzu5Aka = Tile{
-		kind: []TileKind{suhai, five, souzu, aka},
+		kind: []*TileKind{&suhai, &five, &souzu, &aka},
 		name: "manzu5aka",
 	}
 	Manzu6 = Tile{
-		kind: []TileKind{suhai, six, manzu},
+		kind: []*TileKind{&suhai, &six, &manzu},
 		name: "manzu6",
 	}
 	Manzu7 = Tile{
-		kind: []TileKind{suhai, seven, manzu},
+		kind: []*TileKind{&suhai, &seven, &manzu},
 		name: "manzu7",
 	}
 	Manzu8 = Tile{
-		kind: []TileKind{suhai, eight, manzu},
+		kind: []*TileKind{&suhai, &eight, &manzu},
 		name: "manzu8",
 	}
 	Manzu9 = Tile{
-		kind: []TileKind{suhai, nine, manzu},
+		kind: []*TileKind{&suhai, &nine, &manzu},
 		name: "manzu9",
 	}
 
 	// honors
 	Chun = Tile{
-		kind: []TileKind{zihai, yakuhai},
+		kind: []*TileKind{&zihai, &yakuhai},
 		name: "red",
 	}
 	Hatu = Tile{
-		kind: []TileKind{zihai, yakuhai},
+		kind: []*TileKind{&zihai, &yakuhai},
 		name: "green",
 	}
 	Haku = Tile{
-		kind: []TileKind{zihai, yakuhai},
+		kind: []*TileKind{&zihai, &yakuhai},
 		name: "white",
 	}
 	North = Tile{
-		kind: []TileKind{zihai, kaze},
+		kind: []*TileKind{&zihai, &kaze},
 		name: "north",
 	}
 	East = Tile{
-		kind: []TileKind{zihai, kaze},
+		kind: []*TileKind{&zihai, &kaze},
 		name: "east",
 	}
 	West = Tile{
-		kind: []TileKind{zihai, kaze},
+		kind: []*TileKind{&zihai, &kaze},
 		name: "west",
 	}
 	South = Tile{
-		kind: []TileKind{zihai, kaze},
+		kind: []*TileKind{&zihai, &kaze},
 		name: "south",
 	}
 )

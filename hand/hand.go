@@ -182,7 +182,7 @@ func (h *Hand) findByKinds(kinds []*tile.TileKind) []*tile.Tile {
 		for _, kind := range kinds {
 			hasKind := false
 			for _, tKind := range tile.Kinds() {
-				if tKind == *kind {
+				if *tKind == *kind {
 					hasKind = true
 				}
 			}
