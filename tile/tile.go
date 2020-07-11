@@ -57,6 +57,30 @@ func (t *Tile) IsSame(a *Tile) bool {
 	return false
 }
 
+func TileKindFromString(kind string) *TileKind {
+	converter := map[string]*TileKind{
+		"suhai":   &suhai,
+		"pinzu":   &pinzu,
+		"souzu":   &souzu,
+		"manzu":   &manzu,
+		"1":       &one,
+		"2":       &two,
+		"3":       &three,
+		"4":       &four,
+		"5":       &five,
+		"6":       &six,
+		"7":       &seven,
+		"8":       &eight,
+		"9":       &nine,
+		"aka":     &aka,
+		"zihai":   &zihai,
+		"kaze":    &kaze,
+		"yakuhai": &yakuhai,
+	}
+
+	return converter[kind]
+}
+
 func (t *Tile) IsSuhai() bool {
 	for _, tk := range t.kind {
 		if tk == suhai {

@@ -148,3 +148,34 @@ func TestIsZihai(t *testing.T) {
 		})
 	}
 }
+
+func TestTileKindFromString(t *testing.T) {
+	cases := []struct {
+		Description    string
+		InputString    string
+		ExpectedResult *TileKind
+	}{
+		{
+			Description:    "valid string",
+			InputString:    "1",
+			ExpectedResult: &one,
+		},
+		{
+			Description:    "valid string",
+			InputString:    "suhai",
+			ExpectedResult: &suhai,
+		},
+		{
+			Description:    "invalid string",
+			InputString:    "not_existing_key",
+			ExpectedResult: nil,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			assert.Equal(t, c.ExpectedResult, TileKindFromString(c.InputString))
+
+		})
+	}
+}
