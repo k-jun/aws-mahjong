@@ -37,6 +37,28 @@ func (t *Tile) Name() string {
 	return t.name
 }
 
+func (t *Tile) IsSame(a *Tile) bool {
+	if t.Name() == a.Name() {
+		return true
+	}
+
+	akaMapper := map[string]string{
+		Souzu5.Name():    Souzu5Aka.Name(),
+		Manzu5.Name():    Manzu5Aka.Name(),
+		Pinzu5.Name():    Pinzu5Aka.Name(),
+		Souzu5Aka.Name(): Souzu5.Name(),
+		Manzu5Aka.Name(): Manzu5.Name(),
+		Pinzu5Aka.Name(): Pinzu5.Name(),
+	}
+
+	if t.Number() == 5 && akaMapper[t.Name()] == a.Name() {
+		return true
+	}
+
+	return false
+
+}
+
 func (t *Tile) Number() int {
 
 	for _, k := range t.kind {
@@ -77,11 +99,11 @@ var (
 		name: "pinzu4",
 	}
 	Pinzu5 = Tile{
-		kind: []TileKind{suhai, four, pinzu},
+		kind: []TileKind{suhai, five, pinzu},
 		name: "pinzu5",
 	}
 	Pinzu5Aka = Tile{
-		kind: []TileKind{suhai, four, pinzu, aka},
+		kind: []TileKind{suhai, five, pinzu, aka},
 		name: "pinzu5aka",
 	}
 	Pinzu6 = Tile{
@@ -117,11 +139,11 @@ var (
 		name: "souzu4",
 	}
 	Souzu5 = Tile{
-		kind: []TileKind{suhai, four, souzu},
+		kind: []TileKind{suhai, five, souzu},
 		name: "souzu5",
 	}
 	Souzu5Aka = Tile{
-		kind: []TileKind{suhai, four, souzu, aka},
+		kind: []TileKind{suhai, five, souzu, aka},
 		name: "souzu5aka",
 	}
 	Souzu6 = Tile{
@@ -157,11 +179,11 @@ var (
 		name: "manzu4",
 	}
 	Manzu5 = Tile{
-		kind: []TileKind{suhai, four, manzu},
+		kind: []TileKind{suhai, five, manzu},
 		name: "manzu5",
 	}
 	Manzu5Aka = Tile{
-		kind: []TileKind{suhai, four, souzu, aka},
+		kind: []TileKind{suhai, five, souzu, aka},
 		name: "manzu5aka",
 	}
 	Manzu6 = Tile{
