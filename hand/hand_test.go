@@ -51,6 +51,45 @@ func TestAdd(t *testing.T) {
 	}
 }
 
+func TestAdds(t *testing.T) {
+	cases := []struct {
+		Description   string
+		CurrentTiles  []*tile.Tile
+		InTiles       []*tile.Tile
+		ExpectedTiles []*tile.Tile
+		ExpectedError error
+	}{
+		{
+			Description:   "valid case",
+			CurrentTiles:  []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun},
+			InTiles:       []*tile.Tile{&tile.Haku, &tile.Haku, &tile.Haku},
+			ExpectedTiles: []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun, &tile.Haku, &tile.Haku, &tile.Haku},
+			ExpectedError: nil,
+		},
+		{
+			Description:   "invalid case",
+			CurrentTiles:  []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun},
+			InTiles:       []*tile.Tile{&tile.Haku, &tile.Haku, &tile.Haku, &tile.Manzu1, &tile.Manzu2, &tile.Manzu3, &tile.Manzu4, &tile.Manzu5, &tile.Chun, &tile.East, &tile.Haku},
+			ExpectedTiles: []*tile.Tile{},
+			ExpectedError: TileCountErr,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			hand := NewHand()
+			hand.tiles = c.CurrentTiles
+			err := hand.Adds(c.InTiles)
+			if err != nil && err == c.ExpectedError {
+				return
+			}
+			assert.Equal(t, c.ExpectedError, err)
+			assert.Equal(t, c.ExpectedTiles, hand.Tiles())
+		})
+	}
+
+}
+
 func TestRemove(t *testing.T) {
 	cases := []struct {
 		Description   string

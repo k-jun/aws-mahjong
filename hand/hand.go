@@ -35,11 +35,20 @@ func (h *Hand) Tiles() []*tile.Tile {
 func (h *Hand) Add(inTile *tile.Tile) error {
 	if len(h.tiles) > handCount-1 {
 		return TileCountErr
-
 	}
 	h.tiles = append(h.tiles, inTile)
 	return nil
+}
 
+func (h *Hand) Adds(inTiles []*tile.Tile) error {
+	for _, tile := range inTiles {
+		err := h.Add(tile)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (h *Hand) Remove(outTile *tile.Tile) (*tile.Tile, error) {
