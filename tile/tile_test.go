@@ -179,3 +179,39 @@ func TestTileKindFromString(t *testing.T) {
 		})
 	}
 }
+
+func TestKindSMP(t *testing.T) {
+	cases := []struct {
+		Description    string
+		InTile         *Tile
+		ExpectedResult *TileKind
+	}{
+		{
+			Description:    "souzu case",
+			InTile:         &Souzu1,
+			ExpectedResult: &souzu,
+		},
+		{
+			Description:    "manzu case",
+			InTile:         &Manzu1,
+			ExpectedResult: &manzu,
+		},
+		{
+			Description:    "pinzu case",
+			InTile:         &Pinzu1,
+			ExpectedResult: &pinzu,
+		},
+		{
+			Description:    "invalid case",
+			InTile:         &West,
+			ExpectedResult: nil,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			assert.Equal(t, c.ExpectedResult, c.InTile.KindSMP())
+		})
+	}
+
+}

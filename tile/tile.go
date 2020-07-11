@@ -57,6 +57,22 @@ func (t *Tile) IsSame(a *Tile) bool {
 	return false
 }
 
+func (t *Tile) KindSMP() *TileKind {
+	for _, k := range t.Kinds() {
+		switch k {
+		case souzu:
+			return &souzu
+		case pinzu:
+			return &pinzu
+		case manzu:
+			return &manzu
+		default:
+			continue
+		}
+	}
+	return nil
+}
+
 func TileKindFromString(kind string) *TileKind {
 	converter := map[string]*TileKind{
 		"suhai":   &suhai,
@@ -163,7 +179,7 @@ var (
 		name: "pinzu9",
 	}
 	Souzu1 = Tile{
-		kind: []TileKind{suhai, one, pinzu},
+		kind: []TileKind{suhai, one, souzu},
 		name: "souzu1",
 	}
 	Souzu2 = Tile{
