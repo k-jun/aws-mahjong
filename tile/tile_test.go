@@ -98,3 +98,53 @@ func TestIsSame(t *testing.T) {
 		})
 	}
 }
+
+func TestIsSuhai(t *testing.T) {
+	cases := []struct {
+		Description    string
+		Tile           *Tile
+		ExpectedResult bool
+	}{
+		{
+			Description:    "suhai case",
+			Tile:           &Manzu1,
+			ExpectedResult: true,
+		},
+		{
+			Description:    "zihai case",
+			Tile:           &South,
+			ExpectedResult: false,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			assert.Equal(t, c.ExpectedResult, c.Tile.IsSuhai())
+		})
+	}
+}
+
+func TestIsZihai(t *testing.T) {
+	cases := []struct {
+		Description    string
+		Tile           *Tile
+		ExpectedResult bool
+	}{
+		{
+			Description:    "suhai case",
+			Tile:           &Manzu1,
+			ExpectedResult: false,
+		},
+		{
+			Description:    "zihai case",
+			Tile:           &South,
+			ExpectedResult: true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			assert.Equal(t, c.ExpectedResult, c.Tile.IsZihai())
+		})
+	}
+}

@@ -54,9 +54,25 @@ func (t *Tile) IsSame(a *Tile) bool {
 	if t.Number() == 5 && akaMapper[t.Name()] == a.Name() {
 		return true
 	}
-
 	return false
+}
 
+func (t *Tile) IsSuhai() bool {
+	for _, tk := range t.kind {
+		if tk == suhai {
+			return true
+		}
+	}
+	return false
+}
+
+func (t *Tile) IsZihai() bool {
+	for _, tk := range t.kind {
+		if tk == zihai {
+			return true
+		}
+	}
+	return false
 }
 
 func (t *Tile) Number() int {
