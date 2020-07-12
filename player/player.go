@@ -79,3 +79,22 @@ func (p *Player) DahaiDone(deadTile *tile.Tile) error {
 	err := p.kawa.Add(deadTile, false)
 	return err
 }
+
+func (p *Player) CanNaki(inTile *tile.Tile) bool {
+	return p.canPon(inTile) || p.canChii(inTile) || p.canKan(inTile)
+}
+
+func (p *Player) canPon(inTile *tile.Tile) bool {
+	pairs := p.hand.FindPonPair(inTile)
+	return len(pairs) != 0
+}
+
+func (p *Player) canChii(inTile *tile.Tile) bool {
+	pairs := p.hand.FindChiiPair(inTile)
+	return len(pairs) != 0
+}
+
+func (p *Player) canKan(inTile *tile.Tile) bool {
+	pairs := p.hand.FindKanPair(inTile)
+	return len(pairs) != 0
+}

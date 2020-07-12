@@ -3,7 +3,6 @@ package player
 import (
 	"aws-mahjong/deck"
 	"aws-mahjong/hand"
-	"aws-mahjong/kawa"
 	"aws-mahjong/tile"
 	"testing"
 
@@ -159,45 +158,35 @@ func TestDahai(t *testing.T) {
 // 		})
 // 	}
 // }
+
+func TestCanNaki(t *testing.T) {
 	cases := []struct {
-		Description string
-		CurrentKawa []*kawa.KawaTile
-		InTile      *tile.Tile
-		OutError    error
-		OutKawa     []*kawa.KawaTile
+		Description      string
+		CurrentHandTiles []*tile.Tile
+		InTile           *tile.Tile
+		OutBool          bool
 	}{
 		{
-			Description: "valid case",
-			CurrentKawa: []*kawa.KawaTile{
-				kawa.NewKawaTile(&tile.Chun, false),
-			},
-			InTile:   &tile.Pinzu5Aka,
-			OutError: nil,
-			OutKawa: []*kawa.KawaTile{
-				kawa.NewKawaTile(&tile.Chun, false),
-				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
-			},
-		},
-		{
-			Description: "valid case",
-			CurrentKawa: []*kawa.KawaTile{},
-			InTile:      &tile.Pinzu5Aka,
-			OutError:    nil,
-			OutKawa: []*kawa.KawaTile{
-				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
-			},
+			Description:      "found pon",
+			CurrentHandTiles: []*tile.Tile{&tile.Manzu3, &tile.Manzu3},
+			InTile:           &tile.Manzu3,
+			OutBool:          true,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer("test_id", "Chad Durgan", deck.NewDeck(), nil, nil, false)
-			err := player.DahaiDone(c.InTile)
+			player := NewPlayer("test_id", "Otto Murray", deck.NewDeck(), nil, nil, false)
+			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
+				t.Fatal()
+			}
 
-			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutKawa, player.kawa)
+			result := player.CanNaki(c.InTile)
+			assert.Equal(t, c.OutBool, result)
 		})
+
 	}
+
 }
 
 func blankDeck() *deck.Deck {
