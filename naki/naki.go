@@ -24,6 +24,14 @@ type NakiTile struct {
 	isSide bool
 }
 
+func NewNakiTile(inTile *tile.Tile, isOpen bool, isSide bool) *NakiTile {
+	return &NakiTile{
+		tile:   inTile,
+		isOpen: isOpen,
+		isSide: isSide,
+	}
+}
+
 type Naki struct {
 	sets [][]*NakiTile
 }
@@ -38,11 +46,7 @@ func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 	set := []*NakiTile{}
 
 	for _, t := range tiles {
-		set = append(set, &NakiTile{
-			tile:   t,
-			isOpen: true,
-			isSide: false,
-		})
+		set = append(set, NewNakiTile(t, true, false))
 	}
 
 	// ankan
@@ -79,11 +83,7 @@ func (n *Naki) AddTileToSet(inTile *tile.Tile) error {
 					break
 				}
 			}
-			set = append(set, &NakiTile{
-				tile:   inTile,
-				isOpen: true,
-				isSide: true,
-			})
+			set = append(set, NewNakiTile(inTile, true, true))
 			set[insertIdx], set[len(set)-1] = set[len(set)-1], set[insertIdx]
 			n.sets[idx] = set
 			return nil
