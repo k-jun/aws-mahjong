@@ -15,6 +15,7 @@ type Hand interface {
 	Add(inTile *tile.Tile) error
 	Adds(inTiles []*tile.Tile) error
 	Remove(outTile *tile.Tile) (*tile.Tile, error)
+	Removes(outTiles []*tile.Tile) ([]*tile.Tile, error)
 	Replace(inTile *tile.Tile, outTile *tile.Tile) (*tile.Tile, error)
 	FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile
 	FindPonPair(inTile *tile.Tile) [][2]*tile.Tile
@@ -71,7 +72,19 @@ func (h *HandImpl) Remove(outTile *tile.Tile) (*tile.Tile, error) {
 		}
 	}
 	return nil, TileNotFoundErr
+}
 
+func (h *HandImpl) Removes(outTiles []*tile.Tile) ([]*tile.Tile, error) {
+	tiles := []*tile.Tile{}
+	for _, tile := range outTiles {
+		tile, err := h.Remove(tile)
+		if err != nil {
+			return tiles, err
+		}
+		tiles = append(tiles, tile)
+	}
+
+	return tiles, nil
 }
 
 func (h *HandImpl) Replace(inTile *tile.Tile, outTile *tile.Tile) (*tile.Tile, error) {

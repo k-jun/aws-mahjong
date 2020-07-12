@@ -28,6 +28,10 @@ func (h *HandMock) Remove(outTile *tile.Tile) (*tile.Tile, error) {
 	return h.ExpectedTile, h.ExpectedError
 }
 
+func (h *HandMock) Removes(outTiles []*tile.Tile) ([]*tile.Tile, error) {
+	return h.ExpectedTiles, h.ExpectedError
+}
+
 func (h *HandMock) Replace(inTile *tile.Tile, outtile *tile.Tile) (*tile.Tile, error) {
 	return h.ExpectedTile, h.ExpectedError
 }

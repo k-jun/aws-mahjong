@@ -116,9 +116,46 @@ func TestRemove(t *testing.T) {
 			outTile, err := hand.Remove(c.OutTile)
 			if err != nil && err == c.ExpectedError {
 				return
-
 			}
 			assert.Equal(t, c.OutTile, outTile)
+		})
+	}
+}
+
+func TestRemoves(t *testing.T) {
+	cases := []struct {
+		Description   string
+		CurrentTiles  []*tile.Tile
+		OutTiles      []*tile.Tile
+		ExpectedTiles []*tile.Tile
+		ExpectedError error
+	}{
+		{
+			Description:   "valid case",
+			CurrentTiles:  []*tile.Tile{&tile.Chun, &tile.Chun},
+			OutTiles:      []*tile.Tile{&tile.Chun, &tile.Chun},
+			ExpectedTiles: []*tile.Tile{},
+			ExpectedError: nil,
+		},
+		{
+			Description:   "invalid case",
+			CurrentTiles:  []*tile.Tile{&tile.Chun},
+			OutTiles:      []*tile.Tile{&tile.Chun, &tile.Chun},
+			ExpectedTiles: []*tile.Tile{},
+			ExpectedError: TileNotFoundErr,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+
+			hand := HandImpl{tiles: c.CurrentTiles}
+			_, err := hand.Removes(c.OutTiles)
+			if err != nil && err == c.ExpectedError {
+				return
+			}
+			assert.Equal(t, c.ExpectedError, err)
+			assert.Equal(t, c.ExpectedTiles, hand.Tiles())
 		})
 
 	}
