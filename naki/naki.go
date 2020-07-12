@@ -18,12 +18,12 @@ type NakiTile struct {
 }
 
 type Naki struct {
-	setMap map[int][]*NakiTile
+	sets [][]*NakiTile
 }
 
 func NewNaki() *Naki {
 	return &Naki{
-		setMap: map[int][]*NakiTile{},
+		sets: [][]*NakiTile{},
 	}
 }
 
@@ -56,11 +56,6 @@ func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 		break
 	}
 
-	n.setMap[n.nextIndex()] = set
+	n.sets = append(n.sets, set)
 	return nil
-
-}
-
-func (n *Naki) nextIndex() int {
-	return len(n.setMap)
 }

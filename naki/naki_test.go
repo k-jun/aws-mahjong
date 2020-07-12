@@ -13,15 +13,15 @@ func TestAddSet(t *testing.T) {
 		InTiles     []*tile.Tile
 		InCha       NakiFrom
 		OutError    error
-		OutMapSet   map[int][]*NakiTile
+		OutSets     [][]*NakiTile
 	}{
 		{
 			Description: "valid pon case",
 			InTiles:     []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun},
 			InCha:       Jicha,
 			OutError:    nil,
-			OutMapSet: map[int][]*NakiTile{
-				0: []*NakiTile{
+			OutSets: [][]*NakiTile{
+				[]*NakiTile{
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
@@ -33,8 +33,8 @@ func TestAddSet(t *testing.T) {
 			InTiles:     []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun},
 			InCha:       Toimen,
 			OutError:    nil,
-			OutMapSet: map[int][]*NakiTile{
-				0: []*NakiTile{
+			OutSets: [][]*NakiTile{
+				[]*NakiTile{
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: true},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
@@ -46,8 +46,8 @@ func TestAddSet(t *testing.T) {
 			InTiles:     []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun, &tile.Chun},
 			InCha:       Jicha,
 			OutError:    nil,
-			OutMapSet: map[int][]*NakiTile{
-				0: []*NakiTile{
+			OutSets: [][]*NakiTile{
+				[]*NakiTile{
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: false, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: false, isSide: false},
@@ -60,8 +60,8 @@ func TestAddSet(t *testing.T) {
 			InTiles:     []*tile.Tile{&tile.Chun, &tile.Chun, &tile.Chun, &tile.Chun},
 			InCha:       Kamicha,
 			OutError:    nil,
-			OutMapSet: map[int][]*NakiTile{
-				0: []*NakiTile{
+			OutSets: [][]*NakiTile{
+				[]*NakiTile{
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: true},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
 					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
@@ -76,7 +76,7 @@ func TestAddSet(t *testing.T) {
 			naki := NewNaki()
 			err := naki.AddSet(c.InTiles, c.InCha)
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutMapSet, naki.setMap)
+			assert.Equal(t, c.OutSets, naki.sets)
 
 		})
 	}
