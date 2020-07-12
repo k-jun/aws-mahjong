@@ -19,7 +19,7 @@ type Player struct {
 	name string
 
 	// game info
-	deck   *deck.Deck
+	deck   deck.Deck
 	bakaze *tile.Tile
 	zikaze *tile.Tile
 	isOya  bool
@@ -34,7 +34,7 @@ type Player struct {
 func NewPlayer(
 	id string,
 	playername string,
-	deck *deck.Deck,
+	deck deck.Deck,
 	bakaze *tile.Tile,
 	zikaze *tile.Tile,
 	isOya bool,

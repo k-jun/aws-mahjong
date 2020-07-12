@@ -14,7 +14,7 @@ func TestTsumo(t *testing.T) {
 		Description   string
 		PlayerName    string
 		CurrentTsumo  *tile.Tile
-		CurrentDeck   *deck.Deck
+		CurrentDeck   deck.Deck
 		ExpectedError error
 	}{
 		{
@@ -55,7 +55,7 @@ func TestDahai(t *testing.T) {
 		Description       string
 		PlayerName        string
 		CurrentTsumo      *tile.Tile
-		CurrentDeck       *deck.Deck
+		CurrentDeck       deck.Deck
 		CurrentHandTiles  []*tile.Tile
 		InputOutTile      *tile.Tile
 		ExpectedTile      *tile.Tile
@@ -189,7 +189,7 @@ func TestCanNaki(t *testing.T) {
 
 }
 
-func blankDeck() *deck.Deck {
+func blankDeck() deck.Deck {
 	deck := deck.NewDeck()
 	for {
 		_, err := deck.Draw()

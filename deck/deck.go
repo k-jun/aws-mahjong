@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
-type Deck struct {
+type Deck interface {
+	Draw() (*tile.Tile, error)
+}
+
+type DeckImpl struct {
 	tiles []tile.Tile
 }
 
@@ -15,19 +19,19 @@ var (
 	RunOutOfTileErr = errors.New("no tile exist on deck")
 )
 
-func NewDeck() *Deck {
+func NewDeck() Deck {
 
 	tiles := []tile.Tile{}
 	for _, t := range tile.All {
 		tiles = append(tiles, t)
 	}
 
-	deck := Deck{tiles: tiles}
+	deck := DeckImpl{tiles: tiles}
 	deck.shuffle()
 	return &deck
 }
 
-func (d *Deck) Draw() (*tile.Tile, error) {
+func (d *DeckImpl) Draw() (*tile.Tile, error) {
 	if len(d.tiles) > 0 {
 		tile := d.tiles[0]
 		d.tiles = d.tiles[1:]
@@ -37,7 +41,7 @@ func (d *Deck) Draw() (*tile.Tile, error) {
 
 }
 
-func (d *Deck) shuffle() {
+func (d *DeckImpl) shuffle() {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(d.tiles), func(i, j int) { d.tiles[i], d.tiles[j] = d.tiles[j], d.tiles[i] })
 }

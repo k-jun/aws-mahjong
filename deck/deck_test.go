@@ -16,27 +16,9 @@ var checker = map[string]int{
 	"pinzu5aka": 1,
 }
 
-func TestNewDeck(t *testing.T) {
-	deck := NewDeck()
-
-	counter := map[string]int{}
-
-	for _, i := range deck.tiles {
-		counter[i.Name()] += 1
-	}
-
-	for _, i := range tile.AllTailKind {
-		expectedNum := checker[i.Name()]
-		if expectedNum == 0 {
-			expectedNum = 4
-		}
-		assert.Equal(t, expectedNum, counter[i.Name()])
-	}
-}
-
 func TestDraw(t *testing.T) {
 	deck := NewDeck()
-	size := len(deck.tiles)
+	size := len(tile.All)
 
 	counter := map[string]int{}
 
