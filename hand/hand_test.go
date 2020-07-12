@@ -9,7 +9,7 @@ import (
 
 func TestNewHand(t *testing.T) {
 	hand := NewHand()
-	assert.Equal(t, []*tile.Tile{}, hand.tiles)
+	assert.Equal(t, []*tile.Tile{}, hand.Tiles())
 }
 
 func TestAdd(t *testing.T) {
@@ -38,8 +38,7 @@ func TestAdd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			err := hand.Add(c.InTile)
 			if err != nil && err == c.ExpectedError {
 				return
@@ -77,8 +76,7 @@ func TestAdds(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			err := hand.Adds(c.InTiles)
 			if err != nil && err == c.ExpectedError {
 				return
@@ -114,8 +112,7 @@ func TestRemove(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			outTile, err := hand.Remove(c.OutTile)
 			if err != nil && err == c.ExpectedError {
 				return
@@ -157,8 +154,7 @@ func TestReplace(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			outTile, err := hand.Replace(c.InTile, c.OutTile)
 			if err != nil && err == c.ExpectedError {
 				return
@@ -212,8 +208,7 @@ func TestFindPonPair(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			pairs := hand.FindPonPair(c.InTile)
 			assert.Equal(t, c.ExpectedPairs, pairs)
 
@@ -252,8 +247,7 @@ func TestFindChiiPair(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			pairs := hand.FindChiiPair(c.InTile)
 			assert.Equal(t, c.ExpectedPairs, pairs)
 		})
@@ -303,8 +297,7 @@ func TestFindKanPair(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			hand := NewHand()
-			hand.tiles = c.CurrentTiles
+			hand := HandImpl{tiles: c.CurrentTiles}
 			pairs := hand.FindKanPair(c.InTile)
 			assert.Equal(t, c.ExpectedPairs, pairs)
 

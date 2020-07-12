@@ -26,7 +26,7 @@ type Player struct {
 
 	// player info
 	tsumo *tile.Tile
-	hand  *hand.Hand
+	hand  hand.Hand
 	kawa  kawa.Kawa
 	naki  naki.Naki
 }
