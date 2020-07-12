@@ -1,6 +1,13 @@
 package naki
 
-import "aws-mahjong/tile"
+import (
+	"aws-mahjong/tile"
+	"errors"
+)
+
+var (
+	SetNotFoundErr = errors.New("specified tile's set does not found")
+)
 
 type NakiFrom string
 
@@ -44,7 +51,7 @@ func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 		set[2].isOpen = false
 	}
 
-	// minkan
+	// min pon, kan, chii
 	switch cha {
 	case Kamicha:
 		set[0].isSide = true
@@ -58,4 +65,30 @@ func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 
 	n.sets = append(n.sets, set)
 	return nil
+}
+
+func (n *Naki) AddTileToSet(inTile *tile.Tile) error {
+	for idx, set := range n.sets {
+		if inTile.IsSame(set[0].tile) {
+
+			// insert after isSide=true tile if exists
+			insertIdx := len(set)
+			for idx, t := range set {
+				if t.isSide == true {
+					insertIdx = idx + 1
+					break
+				}
+			}
+			set = append(set, &NakiTile{
+				tile:   inTile,
+				isOpen: true,
+				isSide: true,
+			})
+			set[insertIdx], set[len(set)-1] = set[len(set)-1], set[insertIdx]
+			n.sets[idx] = set
+			return nil
+		}
+	}
+
+	return SetNotFoundErr
 }
