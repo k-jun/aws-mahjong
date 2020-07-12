@@ -213,5 +213,33 @@ func TestKindSMP(t *testing.T) {
 			assert.Equal(t, c.ExpectedResult, c.InTile.KindSMP())
 		})
 	}
+}
+
+func TestSortTiles(t *testing.T) {
+	cases := []struct {
+		Description string
+		InTiles     []*Tile
+		OutTiles    []*Tile
+	}{
+		{
+			Description: "only suhai",
+			InTiles:     []*Tile{&Manzu9, &Manzu7, &Manzu8, &Manzu4},
+			OutTiles:    []*Tile{&Manzu4, &Manzu7, &Manzu8, &Manzu9},
+		},
+		{
+			Description: "only zihai",
+			InTiles:     []*Tile{&West, &East, &North, &South},
+			OutTiles:    []*Tile{&East, &North, &South, &West},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			tiles := c.InTiles
+			SortTiles(tiles)
+			assert.Equal(t, c.OutTiles, tiles)
+		})
+
+	}
 
 }
