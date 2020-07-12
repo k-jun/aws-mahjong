@@ -290,6 +290,9 @@ var (
 	}
 )
 
+var Bakazes = []*Tile{&East, &South}
+var Zikazes = []*Tile{&East, &South, &West, &North}
+
 var AllTailKind = []Tile{
 	Pinzu1, Pinzu2, Pinzu3, Pinzu4, Pinzu5, Pinzu5Aka, Pinzu6, Pinzu7, Pinzu8, Pinzu9,
 	Souzu1, Souzu2, Souzu3, Souzu4, Souzu5, Souzu5Aka, Souzu6, Souzu7, Souzu8, Souzu9,
