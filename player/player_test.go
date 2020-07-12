@@ -117,7 +117,48 @@ func TestDahai(t *testing.T) {
 	}
 }
 
-func TestDahaiDone(t *testing.T) {
+// func TestDahaiDone(t *testing.T) {
+// 	cases := []struct {
+// 		Description string
+// 		CurrentKawa *kawa.Kawa
+// 		InTile      *tile.Tile
+// 		OutError    error
+// 		OutKawa     *kawa.Kawa
+// 	}{
+// 		{
+// 			Description: "valid case",
+// 			CurrentKawa: []*kawa.KawaTile{
+// 				kawa.NewKawaTile(&tile.Chun, false),
+// 			},
+// 			InTile:   &tile.Pinzu5Aka,
+// 			OutError: nil,
+// 			OutKawa: []*kawa.KawaTile{
+// 				kawa.NewKawaTile(&tile.Chun, false),
+// 				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
+// 			},
+// 		},
+// 		{
+// 			Description: "valid case",
+// 			CurrentKawa: []*kawa.KawaTile{},
+// 			InTile:      &tile.Pinzu5Aka,
+// 			OutError:    nil,
+// 			OutKawa: []*kawa.KawaTile{
+// 				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
+// 			},
+// 		},
+// 	}
+//
+// 	for _, c := range cases {
+// 		t.Run(c.Description, func(t *testing.T) {
+// 			player := NewPlayer("test_id", "Chad Durgan", deck.NewDeck(), nil, nil, false)
+// 			player.kawa = c.CurrentKawa
+// 			err := player.DahaiDone(c.InTile)
+//
+// 			assert.Equal(t, c.OutError, err)
+// 			assert.Equal(t, c.OutKawa, player.kawa)
+// 		})
+// 	}
+// }
 	cases := []struct {
 		Description string
 		CurrentKawa []*kawa.KawaTile
