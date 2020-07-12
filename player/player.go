@@ -78,6 +78,30 @@ func (p *Player) DahaiDone(deadTile *tile.Tile, isSide bool) error {
 	return p.kawa.Add(deadTile, isSide)
 }
 
+func (p *Player) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error {
+	set, err := p.removeTilesFromHand(fromHandTiles)
+	if err != nil {
+		return err
+	}
+	set = append(set, inTile)
+	tile.SortTiles(set)
+
+	return p.naki.AddSet(set, cha)
+}
+
+func (p *Player) removeTilesFromHand(tiles []*tile.Tile) ([]*tile.Tile, error) {
+	outTiles := []*tile.Tile{}
+	for _, tile := range tiles {
+		outTile, err := p.hand.Remove(tile)
+		if err != nil {
+			return outTiles, err
+		}
+		outTiles = append(outTiles, outTile)
+	}
+
+	return outTiles, nil
+}
+
 func (p *Player) CanNaki(inTile *tile.Tile) bool {
 	return p.canPon(inTile) || p.canChii(inTile) || p.canKan(inTile)
 }

@@ -3,7 +3,6 @@ package hand
 import (
 	"aws-mahjong/tile"
 	"errors"
-	"sort"
 	"strconv"
 )
 
@@ -39,7 +38,7 @@ func NewHand() Hand {
 
 func (h *HandImpl) Tiles() []*tile.Tile {
 	tiles := h.tiles
-	sort.Slice(tiles, func(i int, j int) bool { return tiles[i].Name() < tiles[j].Name() })
+	tile.SortTiles(tiles)
 	return tiles
 }
 
@@ -99,8 +98,7 @@ func (h *HandImpl) FindPonPair(inTile *tile.Tile) [][2]*tile.Tile {
 		}
 	}
 
-	// sort hit tiles
-	sort.Slice(hitTiles, func(i int, j int) bool { return hitTiles[i].Name() < hitTiles[j].Name() })
+	tile.SortTiles(hitTiles)
 
 	for i := 0; i < len(hitTiles); i++ {
 		for j := i + 1; j < len(hitTiles); j++ {
@@ -176,8 +174,7 @@ func (h *HandImpl) FindKanPair(inTile *tile.Tile) [][3]*tile.Tile {
 		}
 	}
 
-	// sort hit tiles
-	sort.Slice(hitTiles, func(i int, j int) bool { return hitTiles[i].Name() < hitTiles[j].Name() })
+	tile.SortTiles(hitTiles)
 
 	if len(hitTiles) == 3 {
 		pairs = append(pairs, [3]*tile.Tile{hitTiles[0], hitTiles[1], hitTiles[2]})

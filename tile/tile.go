@@ -2,6 +2,7 @@ package tile
 
 import (
 	"log"
+	"sort"
 	"strconv"
 )
 
@@ -95,6 +96,10 @@ func TileKindFromString(kind string) *TileKind {
 	}
 
 	return converter[kind]
+}
+
+func SortTiles(tiles []*Tile) {
+	sort.Slice(tiles, func(i int, j int) bool { return tiles[i].Name() < tiles[j].Name() })
 }
 
 func (t *Tile) IsSuhai() bool {
