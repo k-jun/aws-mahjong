@@ -74,10 +74,8 @@ func (p *Player) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
 	return outTile, nil
 }
 
-func (p *Player) DahaiDone(deadTile *tile.Tile) error {
-	// TODO when reach isSide=true
-	err := p.kawa.Add(deadTile, false)
-	return err
+func (p *Player) DahaiDone(deadTile *tile.Tile, isSide bool) error {
+	return p.kawa.Add(deadTile, isSide)
 }
 
 func (p *Player) CanNaki(inTile *tile.Tile) bool {

@@ -3,7 +3,9 @@ package player
 import (
 	"aws-mahjong/deck"
 	"aws-mahjong/hand"
+	"aws-mahjong/kawa"
 	"aws-mahjong/tile"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -116,48 +118,35 @@ func TestDahai(t *testing.T) {
 	}
 }
 
-// func TestDahaiDone(t *testing.T) {
-// 	cases := []struct {
-// 		Description string
-// 		CurrentKawa *kawa.Kawa
-// 		InTile      *tile.Tile
-// 		OutError    error
-// 		OutKawa     *kawa.Kawa
-// 	}{
-// 		{
-// 			Description: "valid case",
-// 			CurrentKawa: []*kawa.KawaTile{
-// 				kawa.NewKawaTile(&tile.Chun, false),
-// 			},
-// 			InTile:   &tile.Pinzu5Aka,
-// 			OutError: nil,
-// 			OutKawa: []*kawa.KawaTile{
-// 				kawa.NewKawaTile(&tile.Chun, false),
-// 				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
-// 			},
-// 		},
-// 		{
-// 			Description: "valid case",
-// 			CurrentKawa: []*kawa.KawaTile{},
-// 			InTile:      &tile.Pinzu5Aka,
-// 			OutError:    nil,
-// 			OutKawa: []*kawa.KawaTile{
-// 				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
-// 			},
-// 		},
-// 	}
-//
-// 	for _, c := range cases {
-// 		t.Run(c.Description, func(t *testing.T) {
-// 			player := NewPlayer("test_id", "Chad Durgan", deck.NewDeck(), nil, nil, false)
-// 			player.kawa = c.CurrentKawa
-// 			err := player.DahaiDone(c.InTile)
-//
-// 			assert.Equal(t, c.OutError, err)
-// 			assert.Equal(t, c.OutKawa, player.kawa)
-// 		})
-// 	}
-// }
+func TestDahaiDone(t *testing.T) {
+	cases := []struct {
+		Description string
+		InTile      *tile.Tile
+		InIsSide    bool
+		OutError    error
+	}{
+		{
+			Description: "valid case",
+			InTile:      &tile.Pinzu5Aka,
+			InIsSide:    false,
+			OutError:    nil,
+		},
+		{
+			Description: "invalid case",
+			InTile:      &tile.Pinzu5Aka,
+			InIsSide:    false,
+			OutError:    errors.New(""),
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			player := Player{kawa: &kawa.KawaMock{ExpectedError: c.OutError}}
+			err := player.DahaiDone(c.InTile, c.InIsSide)
+			assert.Equal(t, c.OutError, err)
+		})
+	}
+}
 
 func TestCanNaki(t *testing.T) {
 	cases := []struct {
