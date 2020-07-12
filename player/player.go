@@ -14,16 +14,33 @@ var (
 )
 
 type Player struct {
-	name  string
-	deck  *deck.Deck
+	// user info
+	id   string
+	name string
+
+	// game info
+	deck   *deck.Deck
+	bakaze *tile.Tile
+	zikaze *tile.Tile
+	isOya  bool
+
+	// player info
 	tsumo *tile.Tile
 	hand  *hand.Hand
 	kawa  *kawa.Kawa
 	naki  *naki.Naki
 }
 
-func NewPlayer(playername string, deck *deck.Deck) *Player {
+func NewPlayer(
+	id string,
+	playername string,
+	deck *deck.Deck,
+	bakaze *tile.Tile,
+	zikaze *tile.Tile,
+	isOya bool,
+) *Player {
 	return &Player{
+		id:   id,
 		name: playername,
 		deck: deck,
 		hand: hand.NewHand(),

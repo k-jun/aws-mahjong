@@ -43,7 +43,7 @@ func TestTsumo(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer(c.PlayerName, c.CurrentDeck)
+			player := NewPlayer("test_id", c.PlayerName, c.CurrentDeck, nil, nil, false)
 			player.tsumo = c.CurrentTsumo
 			err := player.Tsumo()
 			assert.Equal(t, c.ExpectedError, err)
@@ -100,7 +100,7 @@ func TestDahai(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer(c.PlayerName, c.CurrentDeck)
+			player := NewPlayer("test_id", c.PlayerName, c.CurrentDeck, nil, nil, false)
 			player.tsumo = c.CurrentTsumo
 			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
 				t.Fatal()
@@ -150,7 +150,7 @@ func TestDahaiDone(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer("Chad Durgan", deck.NewDeck())
+			player := NewPlayer("test_id", "Chad Durgan", deck.NewDeck(), nil, nil, false)
 			err := player.DahaiDone(c.InTile)
 
 			assert.Equal(t, c.OutError, err)
