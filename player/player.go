@@ -3,6 +3,8 @@ package player
 import (
 	"aws-mahjong/deck"
 	"aws-mahjong/hand"
+	"aws-mahjong/kawa"
+	"aws-mahjong/naki"
 	"aws-mahjong/tile"
 	"errors"
 )
@@ -11,22 +13,13 @@ var (
 	TsumoAlreadyExistErr = errors.New("tsumo already exist")
 )
 
-type NakiTile struct {
-	tile   tile.Tile
-	isOpen bool
-}
-
-type KawaTile struct {
-	tile tile.Tile
-}
-
 type Player struct {
 	name  string
 	deck  *deck.Deck
 	tsumo *tile.Tile
 	hand  *hand.Hand
-	kawa  []*KawaTile
-	naki  []*NakiTile
+	kawa  *kawa.Kawa
+	naki  *naki.Naki
 }
 
 func NewPlayer(playername string, deck *deck.Deck) *Player {
@@ -34,8 +27,8 @@ func NewPlayer(playername string, deck *deck.Deck) *Player {
 		name: playername,
 		deck: deck,
 		hand: hand.NewHand(),
-		kawa: []*KawaTile{},
-		naki: []*NakiTile{},
+		kawa: kawa.NewKawa(),
+		naki: naki.NewNaki(),
 	}
 }
 
@@ -65,6 +58,7 @@ func (p *Player) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
 }
 
 func (p *Player) DahaiDone(deadTile *tile.Tile) error {
-	return nil
-
+	// TODO when reach isSide=true
+	err := p.kawa.Add(deadTile, false)
+	return err
 }

@@ -3,6 +3,7 @@ package player
 import (
 	"aws-mahjong/deck"
 	"aws-mahjong/hand"
+	"aws-mahjong/kawa"
 	"aws-mahjong/tile"
 	"testing"
 
@@ -112,11 +113,50 @@ func TestDahai(t *testing.T) {
 			assert.Equal(t, c.ExpectedError, err)
 			assert.Equal(t, c.ExpectedHandTiles, player.hand.Tiles())
 			assert.Equal(t, c.ExpectedTile, outTile)
-
 		})
+	}
+}
 
+func TestDahaiDone(t *testing.T) {
+	cases := []struct {
+		Description string
+		CurrentKawa []*kawa.KawaTile
+		InTile      *tile.Tile
+		OutError    error
+		OutKawa     []*kawa.KawaTile
+	}{
+		{
+			Description: "valid case",
+			CurrentKawa: []*kawa.KawaTile{
+				kawa.NewKawaTile(&tile.Chun, false),
+			},
+			InTile:   &tile.Pinzu5Aka,
+			OutError: nil,
+			OutKawa: []*kawa.KawaTile{
+				kawa.NewKawaTile(&tile.Chun, false),
+				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
+			},
+		},
+		{
+			Description: "valid case",
+			CurrentKawa: []*kawa.KawaTile{},
+			InTile:      &tile.Pinzu5Aka,
+			OutError:    nil,
+			OutKawa: []*kawa.KawaTile{
+				kawa.NewKawaTile(&tile.Pinzu5Aka, false),
+			},
+		},
 	}
 
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			player := NewPlayer("Chad Durgan", deck.NewDeck())
+			err := player.DahaiDone(c.InTile)
+
+			assert.Equal(t, c.OutError, err)
+			assert.Equal(t, c.OutKawa, player.kawa)
+		})
+	}
 }
 
 func blankDeck() *deck.Deck {
