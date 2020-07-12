@@ -14,7 +14,7 @@ type Hand interface {
 	Tiles() []*tile.Tile
 	Add(inTile *tile.Tile) error
 	Adds(inTiles []*tile.Tile) error
-	Remove(outTiles *tile.Tile) (*tile.Tile, error)
+	Remove(outTile *tile.Tile) (*tile.Tile, error)
 	Replace(inTile *tile.Tile, outTile *tile.Tile) (*tile.Tile, error)
 	FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile
 	FindPonPair(inTile *tile.Tile) [][2]*tile.Tile
