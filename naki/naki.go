@@ -5,6 +5,12 @@ import (
 	"errors"
 )
 
+type Naki interface {
+	AddSet(tiles []*tile.Tile, cha NakiFrom) error
+	AddTileToSet(inTile *tile.Tile) error
+	Sets() [][]*NakiTile
+}
+
 var (
 	SetNotFoundErr = errors.New("specified tile's set does not found")
 )
@@ -32,17 +38,21 @@ func NewNakiTile(inTile *tile.Tile, isOpen bool, isSide bool) *NakiTile {
 	}
 }
 
-type Naki struct {
+type NakiImpl struct {
 	sets [][]*NakiTile
 }
 
-func NewNaki() *Naki {
-	return &Naki{
+func NewNaki() Naki {
+	return &NakiImpl{
 		sets: [][]*NakiTile{},
 	}
 }
 
-func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
+func (n *NakiImpl) Sets() [][]*NakiTile {
+	return n.sets
+}
+
+func (n *NakiImpl) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 	set := []*NakiTile{}
 
 	for _, t := range tiles {
@@ -71,7 +81,7 @@ func (n *Naki) AddSet(tiles []*tile.Tile, cha NakiFrom) error {
 	return nil
 }
 
-func (n *Naki) AddTileToSet(inTile *tile.Tile) error {
+func (n *NakiImpl) AddTileToSet(inTile *tile.Tile) error {
 	for idx, set := range n.sets {
 		if inTile.IsSame(set[0].tile) {
 

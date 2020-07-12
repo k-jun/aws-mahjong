@@ -76,7 +76,7 @@ func TestAddSet(t *testing.T) {
 			naki := NewNaki()
 			err := naki.AddSet(c.InTiles, c.InCha)
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutSets, naki.sets)
+			assert.Equal(t, c.OutSets, naki.Sets())
 
 		})
 	}
@@ -132,14 +132,15 @@ func TestAddTileToSet(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			naki := NewNaki()
-			naki.sets = c.CurrentSets
+			naki := &NakiImpl{
+				sets: c.CurrentSets,
+			}
 			err := naki.AddTileToSet(c.InTile)
 			if err != nil && c.OutError == err {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutSets, naki.sets)
+			assert.Equal(t, c.OutSets, naki.Sets())
 		})
 	}
 }

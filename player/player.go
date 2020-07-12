@@ -28,7 +28,7 @@ type Player struct {
 	tsumo *tile.Tile
 	hand  *hand.Hand
 	kawa  kawa.Kawa
-	naki  *naki.Naki
+	naki  naki.Naki
 }
 
 func NewPlayer(
