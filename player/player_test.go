@@ -209,26 +209,61 @@ func TestCanNaki(t *testing.T) {
 
 func TestNaki(t *testing.T) {
 	cases := []struct {
-		Description string
-		MockTiles   []*tile.Tile
-		MockError   error
-		InTile      *tile.Tile
-		InTiles     []*tile.Tile
-		OutError    error
+		Description   string
+		MockHandTiles []*tile.Tile
+		MockHandError error
+		MockNakiError error
+		InTile        *tile.Tile
+		InTiles       []*tile.Tile
+		OutError      error
 	}{
 		{
-			Description: "valid case",
-			MockTiles:   []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
-			MockError:   nil,
-			InTile:      &tile.Manzu3,
-			InTiles:     []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
-			OutError:    nil,
+			Description:   "valid case",
+			MockHandTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			MockHandError: nil,
+			MockNakiError: nil,
+			InTile:        &tile.Manzu3,
+			InTiles:       []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			OutError:      nil,
+		},
+		{
+			Description:   "invalid case",
+			MockHandTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			MockHandError: errors.New(""),
+			MockNakiError: nil,
+			InTile:        &tile.Manzu3,
+			InTiles:       []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			OutError:      errors.New(""),
+		},
+		{
+			Description:   "invalid case",
+			MockHandTiles: []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			MockHandError: nil,
+			MockNakiError: errors.New(""),
+			InTile:        &tile.Manzu3,
+			InTiles:       []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			OutError:      errors.New(""),
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
+			handMock := hand.HandMock{ExpectedTiles: c.MockHandTiles, ExpectedError: c.MockHandError}
+			nakiMock := naki.NakiMock{ExpectedError: c.MockNakiError}
+			player := NewPlayer(
+				"test_id",
+				"Mr. Claud Walker DVM",
+				nil,
+				nil,
+				false,
+				deck.NewDeck(),
+				&handMock,
+				kawa.NewKawa(),
+				&nakiMock,
+			)
 
+			err := player.Naki(c.InTile, c.InTiles, naki.Jicha)
+			assert.Equal(t, c.OutError, err)
 		})
 	}
 }
