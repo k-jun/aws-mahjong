@@ -2,6 +2,9 @@ package board
 
 import (
 	"aws-mahjong/deck"
+	"aws-mahjong/hand"
+	"aws-mahjong/kawa"
+	"aws-mahjong/naki"
 	"aws-mahjong/player"
 	"aws-mahjong/tile"
 	"errors"
@@ -32,15 +35,29 @@ func NewBoard(users []UserInfo) *Board {
 	newDeck := deck.NewDeck()
 	players := []*player.Player{}
 	bakaze := tile.Bakazes[0]
+	oyaIdx := 0
 
 	for idx, user := range users {
-		players = append(players, player.NewPlayer(user.ID, user.Name, newDeck, bakaze, tile.Zikazes[idx], false))
+		newHand := hand.NewHand()
+		newNaki := naki.NewNaki()
+		newKawa := kawa.NewKawa()
+		players = append(players, player.NewPlayer(
+			user.ID,
+			user.Name,
+			bakaze,
+			tile.Zikazes[idx],
+			oyaIdx == idx,
+			newDeck,
+			newHand,
+			newKawa,
+			newNaki,
+		))
 	}
 
 	return &Board{
 		bakaze:  bakaze,
 		deck:    newDeck,
-		oya:     0,
+		oya:     oyaIdx,
 		players: players,
 		turn:    0,
 	}

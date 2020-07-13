@@ -34,18 +34,21 @@ type Player struct {
 func NewPlayer(
 	id string,
 	playername string,
-	deck deck.Deck,
 	bakaze *tile.Tile,
 	zikaze *tile.Tile,
 	isOya bool,
+	deck deck.Deck,
+	hand hand.Hand,
+	kawa kawa.Kawa,
+	naki naki.Naki,
 ) *Player {
 	return &Player{
 		id:   id,
 		name: playername,
 		deck: deck,
-		hand: hand.NewHand(),
-		kawa: kawa.NewKawa(),
-		naki: naki.NewNaki(),
+		hand: hand,
+		kawa: kawa,
+		naki: naki,
 	}
 }
 
@@ -79,27 +82,15 @@ func (p *Player) DahaiDone(deadTile *tile.Tile, isSide bool) error {
 }
 
 func (p *Player) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error {
-	set, err := p.removeTilesFromHand(fromHandTiles)
+	set, err := p.hand.Removes(fromHandTiles)
 	if err != nil {
 		return err
 	}
 	set = append(set, inTile)
 	tile.SortTiles(set)
 
-	return p.naki.AddSet(set, cha)
-}
-
-func (p *Player) removeTilesFromHand(tiles []*tile.Tile) ([]*tile.Tile, error) {
-	outTiles := []*tile.Tile{}
-	for _, tile := range tiles {
-		outTile, err := p.hand.Remove(tile)
-		if err != nil {
-			return outTiles, err
-		}
-		outTiles = append(outTiles, outTile)
-	}
-
-	return outTiles, nil
+	err = p.naki.AddSet(set, cha)
+	return err
 }
 
 func (p *Player) CanNaki(inTile *tile.Tile) bool {

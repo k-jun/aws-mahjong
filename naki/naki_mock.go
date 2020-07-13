@@ -19,5 +19,4 @@ func (n *NakiMock) AddTileToSet(tile *tile.Tile) error {
 
 func (n *NakiMock) Sets() [][]*NakiTile {
 	return n.ExpectedSets
-
 }

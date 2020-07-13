@@ -4,6 +4,7 @@ import (
 	"aws-mahjong/deck"
 	"aws-mahjong/hand"
 	"aws-mahjong/kawa"
+	"aws-mahjong/naki"
 	"aws-mahjong/tile"
 	"errors"
 	"testing"
@@ -44,7 +45,17 @@ func TestTsumo(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer("test_id", c.PlayerName, c.CurrentDeck, nil, nil, false)
+			player := NewPlayer(
+				"test_id",
+				c.PlayerName,
+				nil,
+				nil,
+				false,
+				c.CurrentDeck,
+				&hand.HandMock{},
+				&kawa.KawaMock{},
+				&naki.NakiMock{},
+			)
 			player.tsumo = c.CurrentTsumo
 			err := player.Tsumo()
 			assert.Equal(t, c.ExpectedError, err)
@@ -101,7 +112,17 @@ func TestDahai(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer("test_id", c.PlayerName, c.CurrentDeck, nil, nil, false)
+			player := NewPlayer(
+				"test_id",
+				c.PlayerName,
+				nil,
+				nil,
+				false,
+				c.CurrentDeck,
+				hand.NewHand(),
+				kawa.NewKawa(),
+				&naki.NakiMock{},
+			)
 			player.tsumo = c.CurrentTsumo
 			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
 				t.Fatal()
@@ -165,7 +186,17 @@ func TestCanNaki(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer("test_id", "Otto Murray", deck.NewDeck(), nil, nil, false)
+			player := NewPlayer(
+				"test_id",
+				"Genesis Gottlieb",
+				nil,
+				nil,
+				false,
+				deck.NewDeck(),
+				hand.NewHand(),
+				kawa.NewKawa(),
+				naki.NewNaki(),
+			)
 			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
 				t.Fatal()
 			}
@@ -173,9 +204,33 @@ func TestCanNaki(t *testing.T) {
 			result := player.CanNaki(c.InTile)
 			assert.Equal(t, c.OutBool, result)
 		})
+	}
+}
 
+func TestNaki(t *testing.T) {
+	cases := []struct {
+		Description string
+		MockTiles   []*tile.Tile
+		MockError   error
+		InTile      *tile.Tile
+		InTiles     []*tile.Tile
+		OutError    error
+	}{
+		{
+			Description: "valid case",
+			MockTiles:   []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			MockError:   nil,
+			InTile:      &tile.Manzu3,
+			InTiles:     []*tile.Tile{&tile.Manzu1, &tile.Manzu2},
+			OutError:    nil,
+		},
 	}
 
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+
+		})
+	}
 }
 
 func blankDeck() deck.Deck {
