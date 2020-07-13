@@ -9,6 +9,15 @@ import (
 	"errors"
 )
 
+type Player interface {
+	Hand() hand.Hand
+	Tsumo() error
+	Dahai(outTile *tile.Tile) (*tile.Tile, error)
+	DahaiDone(deadTile *tile.Tile, isSide bool) error
+	Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error
+	CanNakiActions(inTile *tile.Tile) []*NakiAction
+}
+
 var (
 	TsumoAlreadyExistErr = errors.New("tsumo already exist")
 )
@@ -21,7 +30,7 @@ var (
 	Chii NakiAction = "chii"
 )
 
-type Player struct {
+type PlayerImpl struct {
 	// user info
 	id   string
 	name string
@@ -49,8 +58,8 @@ func NewPlayer(
 	hand hand.Hand,
 	kawa kawa.Kawa,
 	naki naki.Naki,
-) *Player {
-	return &Player{
+) Player {
+	return &PlayerImpl{
 		id:   id,
 		name: playername,
 		deck: deck,
@@ -60,7 +69,11 @@ func NewPlayer(
 	}
 }
 
-func (p *Player) Tsumo() error {
+func (p *PlayerImpl) Hand() hand.Hand {
+	return p.hand
+}
+
+func (p *PlayerImpl) Tsumo() error {
 	if p.tsumo != nil {
 		return TsumoAlreadyExistErr
 	}
@@ -73,7 +86,7 @@ func (p *Player) Tsumo() error {
 	return nil
 }
 
-func (p *Player) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
+func (p *PlayerImpl) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
 	if outTile != p.tsumo {
 		_, err := p.hand.Replace(p.tsumo, outTile)
 		if err != nil {
@@ -85,11 +98,11 @@ func (p *Player) Dahai(outTile *tile.Tile) (*tile.Tile, error) {
 	return outTile, nil
 }
 
-func (p *Player) DahaiDone(deadTile *tile.Tile, isSide bool) error {
+func (p *PlayerImpl) DahaiDone(deadTile *tile.Tile, isSide bool) error {
 	return p.kawa.Add(deadTile, isSide)
 }
 
-func (p *Player) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error {
+func (p *PlayerImpl) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error {
 	set, err := p.hand.Removes(fromHandTiles)
 	if err != nil {
 		return err
@@ -101,7 +114,7 @@ func (p *Player) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.Na
 	return err
 }
 
-func (p *Player) CanNakiActions(inTile *tile.Tile) []*NakiAction {
+func (p *PlayerImpl) CanNakiActions(inTile *tile.Tile) []*NakiAction {
 	actions := []*NakiAction{}
 	if p.canChii(inTile) {
 		actions = append(actions, &Chii)
@@ -116,17 +129,17 @@ func (p *Player) CanNakiActions(inTile *tile.Tile) []*NakiAction {
 	return actions
 }
 
-func (p *Player) canPon(inTile *tile.Tile) bool {
+func (p *PlayerImpl) canPon(inTile *tile.Tile) bool {
 	pairs := p.hand.FindPonPair(inTile)
 	return len(pairs) != 0
 }
 
-func (p *Player) canChii(inTile *tile.Tile) bool {
+func (p *PlayerImpl) canChii(inTile *tile.Tile) bool {
 	pairs := p.hand.FindChiiPair(inTile)
 	return len(pairs) != 0
 }
 
-func (p *Player) canKan(inTile *tile.Tile) bool {
+func (p *PlayerImpl) canKan(inTile *tile.Tile) bool {
 	pairs := p.hand.FindKanPair(inTile)
 	return len(pairs) != 0
 }

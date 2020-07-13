@@ -15,28 +15,24 @@ import (
 func TestTsumo(t *testing.T) {
 	cases := []struct {
 		Description   string
-		PlayerName    string
 		CurrentTsumo  *tile.Tile
 		CurrentDeck   deck.Deck
 		ExpectedError error
 	}{
 		{
 			Description:   "valid tsumo",
-			PlayerName:    "Alba Abshire",
 			CurrentTsumo:  nil,
 			CurrentDeck:   deck.NewDeck(),
 			ExpectedError: nil,
 		},
 		{
 			Description:   "invalid tsumo",
-			PlayerName:    "Kaci Larkin",
 			CurrentTsumo:  &tile.West,
 			CurrentDeck:   deck.NewDeck(),
 			ExpectedError: TsumoAlreadyExistErr,
 		},
 		{
 			Description:   "invalid deck",
-			PlayerName:    "Frankie Schumm",
 			CurrentTsumo:  nil,
 			CurrentDeck:   blankDeck(),
 			ExpectedError: deck.RunOutOfTileErr,
@@ -45,18 +41,10 @@ func TestTsumo(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer(
-				"test_id",
-				c.PlayerName,
-				nil,
-				nil,
-				false,
-				c.CurrentDeck,
-				&hand.HandMock{},
-				&kawa.KawaMock{},
-				&naki.NakiMock{},
-			)
-			player.tsumo = c.CurrentTsumo
+			player := &PlayerImpl{
+				tsumo: c.CurrentTsumo,
+				deck:  c.CurrentDeck,
+			}
 			err := player.Tsumo()
 			assert.Equal(t, c.ExpectedError, err)
 		})
@@ -77,7 +65,6 @@ func TestDahai(t *testing.T) {
 	}{
 		{
 			Description:       "valid case",
-			PlayerName:        "Laury Schmeler",
 			CurrentTsumo:      &tile.West,
 			CurrentDeck:       deck.NewDeck(),
 			CurrentHandTiles:  []*tile.Tile{&tile.East},
@@ -88,7 +75,6 @@ func TestDahai(t *testing.T) {
 		},
 		{
 			Description:       "valid case",
-			PlayerName:        "Mrs. Violet West MD",
 			CurrentTsumo:      &tile.West,
 			CurrentDeck:       deck.NewDeck(),
 			CurrentHandTiles:  []*tile.Tile{&tile.East},
@@ -99,7 +85,6 @@ func TestDahai(t *testing.T) {
 		},
 		{
 			Description:       "invalid case",
-			PlayerName:        "Mrs. Mandy Thompson DVM",
 			CurrentTsumo:      &tile.West,
 			CurrentDeck:       deck.NewDeck(),
 			CurrentHandTiles:  []*tile.Tile{&tile.East},
@@ -112,19 +97,14 @@ func TestDahai(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer(
-				"test_id",
-				c.PlayerName,
-				nil,
-				nil,
-				false,
-				c.CurrentDeck,
-				hand.NewHand(),
-				kawa.NewKawa(),
-				&naki.NakiMock{},
-			)
-			player.tsumo = c.CurrentTsumo
-			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
+			player := PlayerImpl{
+				deck:  c.CurrentDeck,
+				hand:  hand.NewHand(),
+				kawa:  kawa.NewKawa(),
+				naki:  &naki.NakiMock{},
+				tsumo: c.CurrentTsumo,
+			}
+			if err := player.Hand().Adds(c.CurrentHandTiles); err != nil {
 				t.Fatal()
 			}
 
@@ -133,7 +113,7 @@ func TestDahai(t *testing.T) {
 				return
 			}
 			assert.Equal(t, c.ExpectedError, err)
-			assert.Equal(t, c.ExpectedHandTiles, player.hand.Tiles())
+			assert.Equal(t, c.ExpectedHandTiles, player.Hand().Tiles())
 			assert.Equal(t, c.ExpectedTile, outTile)
 		})
 	}
@@ -162,7 +142,7 @@ func TestDahaiDone(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := Player{kawa: &kawa.KawaMock{ExpectedError: c.OutError}}
+			player := PlayerImpl{kawa: &kawa.KawaMock{ExpectedError: c.OutError}}
 			err := player.DahaiDone(c.InTile, c.InIsSide)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -198,18 +178,13 @@ func TestCanNakiActions(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			player := NewPlayer(
-				"test_id",
-				"Genesis Gottlieb",
-				nil,
-				nil,
-				false,
-				deck.NewDeck(),
-				hand.NewHand(),
-				kawa.NewKawa(),
-				naki.NewNaki(),
-			)
-			if err := player.hand.Adds(c.CurrentHandTiles); err != nil {
+			player := &PlayerImpl{
+				deck: deck.NewDeck(),
+				hand: hand.NewHand(),
+				kawa: kawa.NewKawa(),
+				naki: naki.NewNaki(),
+			}
+			if err := player.Hand().Adds(c.CurrentHandTiles); err != nil {
 				t.Fatal()
 			}
 
@@ -262,17 +237,12 @@ func TestNaki(t *testing.T) {
 		t.Run(c.Description, func(t *testing.T) {
 			handMock := hand.HandMock{ExpectedTiles: c.MockHandTiles, ExpectedError: c.MockHandError}
 			nakiMock := naki.NakiMock{ExpectedError: c.MockNakiError}
-			player := NewPlayer(
-				"test_id",
-				"Mr. Claud Walker DVM",
-				nil,
-				nil,
-				false,
-				deck.NewDeck(),
-				&handMock,
-				kawa.NewKawa(),
-				&nakiMock,
-			)
+			player := &PlayerImpl{
+				deck: deck.NewDeck(),
+				hand: &handMock,
+				kawa: kawa.NewKawa(),
+				naki: &nakiMock,
+			}
 
 			err := player.Naki(c.InTile, c.InTiles, naki.Jicha)
 			assert.Equal(t, c.OutError, err)
