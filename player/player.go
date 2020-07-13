@@ -39,7 +39,6 @@ type PlayerImpl struct {
 	deck   deck.Deck
 	bakaze *tile.Tile
 	zikaze *tile.Tile
-	isOya  bool
 
 	// player info
 	tsumo *tile.Tile
@@ -53,7 +52,6 @@ func NewPlayer(
 	playername string,
 	bakaze *tile.Tile,
 	zikaze *tile.Tile,
-	isOya bool,
 	deck deck.Deck,
 	hand hand.Hand,
 	kawa kawa.Kawa,
