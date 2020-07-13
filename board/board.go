@@ -22,11 +22,11 @@ type BoardImpl struct {
 	players []player.Player
 	turn    int
 
-	boardNakiTile *tile.Tile
+	nakiTile *tile.Tile
 }
 
 var (
-	BoardNakiTileAlreadyExist = errors.New("baord naki tile already exist")
+	BoardNakiTileAlreadyExist = errors.New("board naki tile already exist")
 	BoardTurnOutOfRange       = errors.New("specified turn is out of range")
 )
 
@@ -46,7 +46,7 @@ func (b *BoardImpl) TurnPlayerTsumo() error {
 }
 
 func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
-	if b.boardNakiTile != nil {
+	if b.nakiTile != nil {
 		return BoardNakiTileAlreadyExist
 	}
 	outTile, err := b.players[b.turn].Dahai(outTile)
@@ -61,7 +61,7 @@ func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
 		}
 		actions := player.CanNakiActions(outTile)
 		if len(actions) != 0 {
-			b.boardNakiTile = outTile
+			b.nakiTile = outTile
 			return nil
 		}
 	}
