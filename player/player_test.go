@@ -154,25 +154,25 @@ func TestCanNakiActions(t *testing.T) {
 		Description      string
 		CurrentHandTiles []*tile.Tile
 		InTile           *tile.Tile
-		OutActions       []*NakiAction
+		OutActions       []*naki.NakiAction
 	}{
 		{
 			Description:      "found pon",
 			CurrentHandTiles: []*tile.Tile{&tile.Manzu3, &tile.Manzu3},
 			InTile:           &tile.Manzu3,
-			OutActions:       []*NakiAction{&Pon},
+			OutActions:       []*naki.NakiAction{&naki.Pon},
 		},
 		{
 			Description:      "found kan, and pon",
 			CurrentHandTiles: []*tile.Tile{&tile.Manzu3, &tile.Manzu3, &tile.Manzu3},
 			InTile:           &tile.Manzu3,
-			OutActions:       []*NakiAction{&Pon, &Kan},
+			OutActions:       []*naki.NakiAction{&naki.Pon, &naki.Kan},
 		},
 		{
 			Description:      "found pon, and chii",
 			CurrentHandTiles: []*tile.Tile{&tile.Manzu4, &tile.Manzu3, &tile.Manzu4, &tile.Manzu5},
 			InTile:           &tile.Manzu4,
-			OutActions:       []*NakiAction{&Chii, &Pon},
+			OutActions:       []*naki.NakiAction{&naki.Chii, &naki.Pon},
 		},
 	}
 

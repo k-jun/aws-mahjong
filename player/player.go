@@ -15,19 +15,11 @@ type Player interface {
 	Dahai(outTile *tile.Tile) (*tile.Tile, error)
 	DahaiDone(deadTile *tile.Tile, isSide bool) error
 	Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error
-	CanNakiActions(inTile *tile.Tile) []*NakiAction
+	CanNakiActions(inTile *tile.Tile) []*naki.NakiAction
 }
 
 var (
 	TsumoAlreadyExistErr = errors.New("tsumo already exist")
-)
-
-type NakiAction = string
-
-var (
-	Pon  NakiAction = "pon"
-	Kan  NakiAction = "kan"
-	Chii NakiAction = "chii"
 )
 
 type PlayerImpl struct {
@@ -112,16 +104,16 @@ func (p *PlayerImpl) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha nak
 	return err
 }
 
-func (p *PlayerImpl) CanNakiActions(inTile *tile.Tile) []*NakiAction {
-	actions := []*NakiAction{}
+func (p *PlayerImpl) CanNakiActions(inTile *tile.Tile) []*naki.NakiAction {
+	actions := []*naki.NakiAction{}
 	if p.canChii(inTile) {
-		actions = append(actions, &Chii)
+		actions = append(actions, &naki.Chii)
 	}
 	if p.canPon(inTile) {
-		actions = append(actions, &Pon)
+		actions = append(actions, &naki.Pon)
 	}
 	if p.canKan(inTile) {
-		actions = append(actions, &Kan)
+		actions = append(actions, &naki.Kan)
 	}
 
 	return actions

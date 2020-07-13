@@ -5,14 +5,12 @@ import (
 	"errors"
 )
 
-type Naki interface {
-	AddSet(tiles []*tile.Tile, cha NakiFrom) error
-	AddTileToSet(inTile *tile.Tile) error
-	Sets() [][]*NakiTile
-}
+type NakiAction = string
 
 var (
-	SetNotFoundErr = errors.New("specified tile's set does not found")
+	Pon  NakiAction = "pon"
+	Kan  NakiAction = "kan"
+	Chii NakiAction = "chii"
 )
 
 type NakiFrom string
@@ -29,6 +27,16 @@ type NakiTile struct {
 	isOpen bool
 	isSide bool
 }
+
+type Naki interface {
+	AddSet(tiles []*tile.Tile, cha NakiFrom) error
+	AddTileToSet(inTile *tile.Tile) error
+	Sets() [][]*NakiTile
+}
+
+var (
+	SetNotFoundErr = errors.New("specified tile's set does not found")
+)
 
 func NewNakiTile(inTile *tile.Tile, isOpen bool, isSide bool) *NakiTile {
 	return &NakiTile{
