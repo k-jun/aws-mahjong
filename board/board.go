@@ -2,73 +2,50 @@ package board
 
 import (
 	"aws-mahjong/deck"
-	"aws-mahjong/hand"
-	"aws-mahjong/kawa"
-	"aws-mahjong/naki"
 	"aws-mahjong/player"
 	"aws-mahjong/tile"
 	"errors"
 )
 
-type Board struct {
+type Board interface {
+	TurnPlayerTsumo() error
+	TurnPlayerDahai(outTile *tile.Tile) error
+	NextTurn()
+	ChangeTurn(playerIdx int) error
+	Status() error
+}
+
+type BoardImpl struct {
 	bakaze  *tile.Tile
 	deck    deck.Deck
 	oya     int
-	players []*player.Player
+	players []player.Player
 	turn    int
 
-	// tmp data
 	boardNakiTile *tile.Tile
-	// TODO mutex
 }
 
 var (
 	BoardNakiTileAlreadyExist = errors.New("baord naki tile already exist")
+	BoardTurnOutOfRange       = errors.New("specified turn is out of range")
 )
 
-type UserInfo struct {
-	ID   string
-	Name string
-}
-
-func NewBoard(users []UserInfo) *Board {
-	newDeck := deck.NewDeck()
-	players := []*player.Player{}
-	bakaze := tile.Bakazes[0]
-	oyaIdx := 0
-
-	for idx, user := range users {
-		newHand := hand.NewHand()
-		newNaki := naki.NewNaki()
-		newKawa := kawa.NewKawa()
-		players = append(players, player.NewPlayer(
-			user.ID,
-			user.Name,
-			bakaze,
-			tile.Zikazes[idx],
-			oyaIdx == idx,
-			newDeck,
-			newHand,
-			newKawa,
-			newNaki,
-		))
-	}
-
-	return &Board{
-		bakaze:  bakaze,
-		deck:    newDeck,
-		oya:     oyaIdx,
+func NewBoard(deck deck.Deck, players []player.Player) Board {
+	return &BoardImpl{
+		bakaze:  tile.Bakazes[0],
+		deck:    deck,
+		oya:     0,
 		players: players,
 		turn:    0,
 	}
 }
 
-func (b *Board) TurnPlayerTsumo() error {
+func (b *BoardImpl) TurnPlayerTsumo() error {
 	err := b.players[b.turn].Tsumo()
 	return err
 }
 
-func (b *Board) TurnPlayerDahai(outTile *tile.Tile) error {
+func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
 	if b.boardNakiTile != nil {
 		return BoardNakiTileAlreadyExist
 	}
@@ -76,13 +53,42 @@ func (b *Board) TurnPlayerDahai(outTile *tile.Tile) error {
 	if err != nil {
 		return err
 	}
-	b.boardNakiTile = outTile
 
 	// check all player's naki
+	for idx, player := range b.players {
+		if idx == b.turn {
+			continue
+		}
+		actions := player.CanNakiActions(outTile)
+		if len(actions) != 0 {
+			b.boardNakiTile = outTile
+			return nil
+		}
+	}
+
+	// change turn
+	b.NextTurn()
+	err = b.TurnPlayerTsumo()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (b *Board) Status() error {
+func (b *BoardImpl) NextTurn() {
+	b.turn = (b.turn + 1) % len(b.players)
+}
+
+func (b *BoardImpl) ChangeTurn(playerIdx int) error {
+	if playerIdx < 0 || playerIdx >= len(b.players) {
+		return BoardTurnOutOfRange
+	}
+	b.turn = playerIdx
+	return nil
+}
+
+func (b *BoardImpl) Status() error {
 	// TODO send all information to client
 	// TODO create view layer to wrap information
 	return nil
