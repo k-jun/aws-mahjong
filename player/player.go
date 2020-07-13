@@ -13,6 +13,14 @@ var (
 	TsumoAlreadyExistErr = errors.New("tsumo already exist")
 )
 
+type NakiAction = string
+
+var (
+	Pon  NakiAction = "pon"
+	Kan  NakiAction = "kan"
+	Chii NakiAction = "chii"
+)
+
 type Player struct {
 	// user info
 	id   string
@@ -93,8 +101,19 @@ func (p *Player) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.Na
 	return err
 }
 
-func (p *Player) CanNaki(inTile *tile.Tile) bool {
-	return p.canPon(inTile) || p.canChii(inTile) || p.canKan(inTile)
+func (p *Player) CanNakiActions(inTile *tile.Tile) []*NakiAction {
+	actions := []*NakiAction{}
+	if p.canChii(inTile) {
+		actions = append(actions, &Chii)
+	}
+	if p.canPon(inTile) {
+		actions = append(actions, &Pon)
+	}
+	if p.canKan(inTile) {
+		actions = append(actions, &Kan)
+	}
+
+	return actions
 }
 
 func (p *Player) canPon(inTile *tile.Tile) bool {

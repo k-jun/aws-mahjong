@@ -169,18 +169,30 @@ func TestDahaiDone(t *testing.T) {
 	}
 }
 
-func TestCanNaki(t *testing.T) {
+func TestCanNakiActions(t *testing.T) {
 	cases := []struct {
 		Description      string
 		CurrentHandTiles []*tile.Tile
 		InTile           *tile.Tile
-		OutBool          bool
+		OutActions       []*NakiAction
 	}{
 		{
 			Description:      "found pon",
 			CurrentHandTiles: []*tile.Tile{&tile.Manzu3, &tile.Manzu3},
 			InTile:           &tile.Manzu3,
-			OutBool:          true,
+			OutActions:       []*NakiAction{&Pon},
+		},
+		{
+			Description:      "found kan, and pon",
+			CurrentHandTiles: []*tile.Tile{&tile.Manzu3, &tile.Manzu3, &tile.Manzu3},
+			InTile:           &tile.Manzu3,
+			OutActions:       []*NakiAction{&Pon, &Kan},
+		},
+		{
+			Description:      "found pon, and chii",
+			CurrentHandTiles: []*tile.Tile{&tile.Manzu4, &tile.Manzu3, &tile.Manzu4, &tile.Manzu5},
+			InTile:           &tile.Manzu4,
+			OutActions:       []*NakiAction{&Chii, &Pon},
 		},
 	}
 
@@ -201,8 +213,8 @@ func TestCanNaki(t *testing.T) {
 				t.Fatal()
 			}
 
-			result := player.CanNaki(c.InTile)
-			assert.Equal(t, c.OutBool, result)
+			actions := player.CanNakiActions(c.InTile)
+			assert.Equal(t, c.OutActions, actions)
 		})
 	}
 }
