@@ -45,6 +45,21 @@ func (b *BoardImpl) TurnPlayerTsumo() error {
 	return err
 }
 
+func (b *BoardImpl) CanOtherPlayersNaki(nakiTile *tile.Tile) bool {
+	for idx, player := range b.players {
+		if idx == b.turn {
+			continue
+		}
+		actions := player.CanNakiActions(nakiTile)
+		if len(actions) != 0 {
+			b.nakiTile = nakiTile
+			return true
+		}
+	}
+	return false
+
+}
+
 func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
 	if b.nakiTile != nil {
 		return BoardNakiTileAlreadyExist
@@ -55,15 +70,9 @@ func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
 	}
 
 	// check all player's naki
-	for idx, player := range b.players {
-		if idx == b.turn {
-			continue
-		}
-		actions := player.CanNakiActions(outTile)
-		if len(actions) != 0 {
-			b.nakiTile = outTile
-			return nil
-		}
+	if b.CanOtherPlayersNaki(outTile) {
+		b.nakiTile = outTile
+		return nil
 	}
 
 	// change turn

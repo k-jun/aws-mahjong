@@ -198,3 +198,45 @@ func TestTurnPlayerDahai(t *testing.T) {
 		})
 	}
 }
+
+func TestCanOtherPlayersNaki(t *testing.T) {
+	cases := []struct {
+		Description         string
+		InTile              *tile.Tile
+		CurrentTurn         int
+		CurrentFirstPlayer  *player.PlayerMock
+		CurrentSecondPlayer *player.PlayerMock
+		OutResult           bool
+	}{
+		{
+			Description:         "true case",
+			InTile:              &tile.Manzu1,
+			CurrentTurn:         0,
+			CurrentFirstPlayer:  &player.PlayerMock{},
+			CurrentSecondPlayer: &player.PlayerMock{ExpectedNakiActions: []*naki.NakiAction{&naki.Pon}},
+			OutResult:           true,
+		},
+		{
+			Description:         "false case",
+			InTile:              &tile.Manzu1,
+			CurrentTurn:         0,
+			CurrentFirstPlayer:  &player.PlayerMock{},
+			CurrentSecondPlayer: &player.PlayerMock{ExpectedNakiActions: []*naki.NakiAction{}},
+			OutResult:           false,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			board := BoardImpl{
+				players: []player.Player{c.CurrentFirstPlayer, c.CurrentSecondPlayer},
+				turn:    c.CurrentTurn,
+			}
+
+			result := board.CanOtherPlayersNaki(c.InTile)
+			assert.Equal(t, c.OutResult, result)
+		})
+
+	}
+
+}
