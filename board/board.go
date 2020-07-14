@@ -2,6 +2,7 @@ package board
 
 import (
 	"aws-mahjong/deck"
+	"aws-mahjong/hand"
 	"aws-mahjong/player"
 	"aws-mahjong/tile"
 	"errors"
@@ -28,6 +29,7 @@ type BoardImpl struct {
 var (
 	BoardNakiTileAlreadyExist = errors.New("board naki tile already exist")
 	BoardTurnOutOfRange       = errors.New("specified turn is out of range")
+	GameAlreadyStarted        = errors.New("game have already started")
 )
 
 func NewBoard(deck deck.Deck, players []player.Player) Board {
@@ -38,6 +40,32 @@ func NewBoard(deck deck.Deck, players []player.Player) Board {
 		players: players,
 		turn:    0,
 	}
+}
+
+func (b *BoardImpl) Start() error {
+	for _, player := range b.players {
+		if len(player.Hand().Tiles()) != 0 {
+			return GameAlreadyStarted
+		}
+	}
+
+	for _, player := range b.players {
+		tiles := []*tile.Tile{}
+		for i := 0; i < hand.HandCount; i++ {
+			tile, err := b.deck.Draw()
+			if err != nil {
+				return err
+			}
+			tiles = append(tiles, tile)
+		}
+
+		err := player.Hand().Adds(tiles)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (b *BoardImpl) TurnPlayerTsumo() error {

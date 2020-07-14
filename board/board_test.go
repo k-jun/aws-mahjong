@@ -1,6 +1,8 @@
 package board
 
 import (
+	"aws-mahjong/deck"
+	"aws-mahjong/hand"
 	"aws-mahjong/naki"
 	"aws-mahjong/player"
 	"aws-mahjong/tile"
@@ -236,7 +238,39 @@ func TestCanOtherPlayersNaki(t *testing.T) {
 			result := board.CanOtherPlayersNaki(c.InTile)
 			assert.Equal(t, c.OutResult, result)
 		})
+	}
+}
 
+func TestStart(t *testing.T) {
+	cases := []struct {
+		Description  string
+		CurrentHands []hand.Hand
+		CurrentDeck  deck.Deck
+		OutError     error
+	}{
+		{
+			Description:  "valid case",
+			CurrentHands: []hand.Hand{&hand.HandMock{ExpectedTiles: []*tile.Tile{}, ExpectedError: nil}},
+			CurrentDeck:  deck.NewDeck(),
+			OutError:     nil,
+		},
+		{
+			Description:  "invalid case",
+			CurrentHands: []hand.Hand{&hand.HandMock{ExpectedTiles: []*tile.Tile{&tile.Chun}, ExpectedError: nil}},
+			CurrentDeck:  deck.NewDeck(),
+			OutError:     GameAlreadyStarted,
+		},
 	}
 
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			players := []player.Player{}
+			for _, h := range c.CurrentHands {
+				players = append(players, &player.PlayerMock{ExpectedHand: h})
+			}
+			board := BoardImpl{players: players, deck: c.CurrentDeck}
+			err := board.Start()
+			assert.Equal(t, c.OutError, err)
+		})
+	}
 }

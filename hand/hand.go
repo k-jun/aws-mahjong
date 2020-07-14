@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	handCount = 13
+	HandCount = 13
 )
 
 type Hand interface {
@@ -44,7 +44,7 @@ func (h *HandImpl) Tiles() []*tile.Tile {
 }
 
 func (h *HandImpl) Add(inTile *tile.Tile) error {
-	if len(h.tiles) > handCount-1 {
+	if len(h.tiles) > HandCount-1 {
 		return TileCountErr
 	}
 	h.tiles = append(h.tiles, inTile)
