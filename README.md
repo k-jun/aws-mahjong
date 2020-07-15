@@ -7,12 +7,16 @@ https://c9katayama.hatenablog.com/entry/2014/12/15/002712
 
 ## Test
 
+
+`count=1`などで見かけ上はcacheされていないように見えるが正しくテストできていない。
+最も確実な方法が今のところcleanすること。
+
 ```sh
-go test ./... -v -failfast
+go clean -testcache && go test ./... -v -failfast
 ```
 
 ```sh
-go test ./server -v -tags=integration
+go clean -testcache && go test ./server -v -tags=integration
 ```
 
 
