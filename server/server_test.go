@@ -4,7 +4,10 @@ package server
 
 import (
 	"aws-mahjong/server/event"
+	"aws-mahjong/server/handler"
 	"aws-mahjong/testutil"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -36,6 +39,32 @@ func TestMain(m *testing.M) {
 	defer wsserver.Close()
 	go http.ListenAndServe(":8000", nil)
 	os.Exit(m.Run())
+}
+
+func TestRooms(t *testing.T) {
+	client, err := socketio_client.NewClient(uri, opts)
+	testRooms := []string{"perspiciatis", "eius", "molestiae"}
+	counter := map[string]bool{}
+	for _, room := range testRooms {
+		testutil.SampleRoomCreate(client, room)
+	}
+
+	response, err := http.Get(uri + "/rooms")
+	assert.NoError(t, err)
+
+	bytes, err := ioutil.ReadAll(response.Body)
+	resBody := []handler.RoomsResponse{}
+	err = json.Unmarshal(bytes, &resBody)
+
+	for _, room := range resBody {
+		counter[room.RoomName] = true
+	}
+
+	for _, roomName := range testRooms {
+		assert.Equal(t, true, counter[roomName])
+
+	}
+
 }
 
 func TestOnConnect(t *testing.T) {

@@ -31,12 +31,12 @@ func CreateRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
 			return
 		}
 
-		if wsserver.RoomLen("/", body.RoomName) != 0 {
+		if roomLen(wsserver, body.RoomName) != 0 {
 			fmt.Println("room_name already token")
 			s.Emit(event.CreateRoomError, "")
 			return
 		}
-		s.Join(body.RoomName)
+		joinRoom(s, body.RoomName)
 	}
 }
 
@@ -55,12 +55,12 @@ func JoinRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
 			return
 		}
 
-		if wsserver.RoomLen("/", body.RoomName) == 0 {
+		if roomLen(wsserver, body.RoomName) == 0 {
 			fmt.Println(RoomNotFound)
 			s.Emit(event.JoinRoomError, RoomNotFound.Error())
+			return
 		}
 
-		s.Join(body.RoomName)
+		joinRoom(s, body.RoomName)
 	}
-
 }

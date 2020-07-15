@@ -1,11 +1,17 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	socketio "github.com/googollee/go-socket.io"
 )
+
+type RoomsResponse struct {
+	RoomName        string `json:"room_name"`
+	RoomCapacity    int    `json:"room_capacity"`
+	RoomMemberCount int    `json:"room_member_count"`
+}
 
 func Rooms(wsserver *socketio.Server) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +19,24 @@ func Rooms(wsserver *socketio.Server) func(w http.ResponseWriter, r *http.Reques
 			MethodNotAllowed(w, r)
 			return
 		}
-		fmt.Println(wsserver.Rooms("/"))
+		resBodyRooms := []RoomsResponse{}
+
+		for _, roomName := range rooms(wsserver) {
+			resBodyRooms = append(resBodyRooms, RoomsResponse{
+				RoomName:        roomName,
+				RoomMemberCount: roomLen(wsserver, roomName),
+			})
+		}
+
+		bytes, err := json.Marshal(&resBodyRooms)
+		if err != nil {
+			InternalServerError(w, r)
+			return
+		}
+
+		if _, err := w.Write(bytes); err != nil {
+			InternalServerError(w, r)
+			return
+		}
 	}
 }
