@@ -17,6 +17,7 @@ func AttachHandlerAndEvent(wsserver *socketio.Server) {
 	// events
 	http.Handle("/socket.io/", wsserver)
 	wsserver.OnEvent("/", event.CreateRoom, handler.CreateRoom(wsserver))
+	wsserver.OnEvent("/", event.JoinRoom, handler.JoinRoom(wsserver))
 
 	wsserver.OnConnect("/", func(s socketio.Conn) error {
 		fmt.Println("connected:", s.ID())

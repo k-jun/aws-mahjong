@@ -1,10 +1,17 @@
 package handler
 
 import (
+	"aws-mahjong/server/event"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	socketio "github.com/googollee/go-socket.io"
+)
+
+var (
+	RoomAlraedyTokenErr = errors.New("room already token")
+	RoomNotFound        = errors.New("room is not found")
 )
 
 type CreateRoomRequest struct {
@@ -20,13 +27,37 @@ func CreateRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
+			s.Emit(event.CreateRoomError, err.Error())
 			return
 		}
-		fmt.Println(body)
 
 		if wsserver.RoomLen("/", body.RoomName) != 0 {
 			fmt.Println("room_name already token")
+			s.Emit(event.CreateRoomError, "")
 			return
+		}
+		s.Join(body.RoomName)
+	}
+}
+
+type JoinRoomRequest struct {
+	UserName string `json:"user_name"`
+	RoomName string `json:"room_name"`
+}
+
+func JoinRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
+	return func(s socketio.Conn, bodyStr string) {
+		var body JoinRoomRequest
+		err := json.Unmarshal([]byte(bodyStr), &body)
+		if err != nil {
+			fmt.Println(err)
+			s.Emit(event.JoinRoomError, err.Error())
+			return
+		}
+
+		if wsserver.RoomLen("/", body.RoomName) == 0 {
+			fmt.Println(RoomNotFound)
+			s.Emit(event.JoinRoomError, RoomNotFound.Error())
 		}
 
 		s.Join(body.RoomName)
