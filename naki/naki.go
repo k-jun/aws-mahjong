@@ -8,9 +8,10 @@ import (
 type NakiAction = string
 
 var (
-	Pon  NakiAction = "pon"
-	Kan  NakiAction = "kan"
-	Chii NakiAction = "chii"
+	Pon    NakiAction = "pon"
+	Kan    NakiAction = "kan"
+	Chii   NakiAction = "chii"
+	Cancel NakiAction = "cancel"
 )
 
 type NakiFrom string

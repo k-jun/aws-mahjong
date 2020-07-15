@@ -32,10 +32,14 @@ http://localhost:8000/
 ```json
 [
   {
-    "room_name": "provident"
+    "room_name": "provident",
+    "room_capacity": 3,
+    "room_member_count": 1
   },
   {
-    "room_name": "fugiat"
+    "room_name": "fugiat",
+    "room_capacity": 4,
+    "room_member_count": 1
   }
 ]
 ```
@@ -43,7 +47,7 @@ http://localhost:8000/
 `default`
 
 NO CONTENT
-
+ 
 
 ## WebSocket Document
 
@@ -69,7 +73,7 @@ http://localhost:8000/ws
 
 ### join_room
 
-部屋の名前を指定してユーザーを参加させる。部屋がない場合には作成し、参加する。
+部屋の名前を指定してユーザーを参加させる。しっかりと`/rooms`の結果で取得したroomにjoinすること。
 
 ```json
 {
@@ -88,6 +92,45 @@ socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、�
   "room_name": "laudantium"
 }
 
+```
+
+
+
+### dahai
+
+牌を手牌から捨てる際に使う。このイベントを送信するとnew_statusが走る。
+基本的にはnew_statusのturn_player_indexに対応するplayerがtsumoを持っている。
+これを捨てるために使用する。
+
+```json
+{
+  "room_name": "laudantium",
+  "dahai": "chun"
+}
+
+```
+
+
+### naki
+
+打牌に対して鳴きを行うか否かを選択する。
+鳴きを行わない場合に関してもcancelというイベントを送信する。
+actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
+
+
+```json
+{
+  "room_name": "laudantium",
+  "action": "cancel"
+}
+```
+
+```json
+{
+  "room_name": "laudantium",
+  "action": "pon",
+  "tiles": ["manzu1", "manzu1"]
+}
 ```
 
 
@@ -129,6 +172,11 @@ socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、�
         {"isSide": false, "name": "manzu3"},
         {"isSide": false, "name": "manzu3"}
       ],
+      "naki_actions": {
+        "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+        "kan": [],
+        "chii": [["manzu1", "manzu2"]]
+      },
       "naki": [
         [
           {"isOpen": false, "isSide": false, "name": "hatu"},
