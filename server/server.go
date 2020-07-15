@@ -4,26 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"aws-mahjong/server/event"
+	"aws-mahjong/server/handler"
+
 	socketio "github.com/googollee/go-socket.io"
 )
 
-func rooms(wsserver *socketio.Server) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			MethodNotAllowed(w, r)
-			return
-		}
-		fmt.Println(wsserver.Rooms("/"))
-	}
-}
-
 func AttachHandlerAndEvent(wsserver *socketio.Server) {
 	// api handlers
-	http.HandleFunc("/rooms", rooms(wsserver))
+	http.HandleFunc("/rooms", handler.Rooms(wsserver))
 
 	// events
 	http.Handle("/socket.io/", wsserver)
-	// wsserver.OnEvent("/", event.LeaveChannel, LeaveChannel)
+	wsserver.OnEvent("/", event.CreateRoom, handler.CreateRoom(wsserver))
 
 	wsserver.OnConnect("/", func(s socketio.Conn) error {
 		fmt.Println("connected:", s.ID())
