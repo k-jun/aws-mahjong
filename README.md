@@ -11,6 +11,10 @@ https://c9katayama.hatenablog.com/entry/2014/12/15/002712
 go test ./... -v -failfast
 ```
 
+```sh
+go test ./server -v -failfast -tags=integration
+```
+
 
 ## Api Document
 
