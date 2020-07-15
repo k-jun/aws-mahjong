@@ -12,7 +12,7 @@ go test ./... -v -failfast
 ```
 
 ```sh
-go test ./server -v -failfast -tags=integration
+go test ./server -v -tags=integration
 ```
 
 
@@ -140,6 +140,26 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 
 ## Server Events
 
+
+### create_room_error
+
+```
+```
+
+### join_room_error
+
+```
+```
+
+### room_status
+
+```json
+{
+  "room_name": "modi",
+  "room_member_count": 1,
+  "room_capacity": 3
+}
+```
 
 ### game_start
 
