@@ -27,3 +27,6 @@ jobs:
         go get -v -t -d ./...
     - name: Test
       run: go test -v ./...
+    - name: Integration Test
+      run: go test -v ./... -tags=integration
+
