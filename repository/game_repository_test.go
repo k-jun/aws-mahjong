@@ -36,7 +36,7 @@ func TestAdd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]game.Game{}}
+			repo := GameRepositoryImpl{games: map[string]game.Game{}}
 			err := repo.Add(c.InRoomName, c.InBoard)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -63,7 +63,7 @@ func TestRemove(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]game.Game{"iusto": &game.GameMock{}}}
+			repo := GameRepositoryImpl{games: map[string]game.Game{"iusto": &game.GameMock{}}}
 			err := repo.Remove(c.InRoomName)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -98,7 +98,7 @@ func TestFind(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
 
-			repo := GameRepository{games: c.CurrentGames}
+			repo := GameRepositoryImpl{games: c.CurrentGames}
 			outGame, err := repo.Find(c.InRoomName)
 			if err != nil && c.OutError == err {
 				return

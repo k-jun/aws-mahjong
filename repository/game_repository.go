@@ -11,17 +11,25 @@ var (
 	RoomNameIsEmpry = errors.New("roomName is empty")
 )
 
+type GameRepository interface {
+	Add(roomName string, board game.Game) error
+	Remove(roomName string) error
+	Find(roomName string) (game.Game, error)
+}
+
 // TODO periodically sync with room repository to save memory
 
-type GameRepository struct {
+type GameRepositoryImpl struct {
 	games map[string]game.Game
 }
 
-func NewGameRepository() *GameRepository {
-	return &GameRepository{games: map[string]game.Game{}}
+func NewGameRepository() GameRepository {
+	return &GameRepositoryImpl{
+		games: map[string]game.Game{},
+	}
 }
 
-func (r *GameRepository) Add(roomName string, board game.Game) error {
+func (r *GameRepositoryImpl) Add(roomName string, board game.Game) error {
 	if roomName == "" {
 		return RoomNameIsEmpry
 	}
@@ -33,7 +41,7 @@ func (r *GameRepository) Add(roomName string, board game.Game) error {
 	return nil
 }
 
-func (r *GameRepository) Remove(roomName string) error {
+func (r *GameRepositoryImpl) Remove(roomName string) error {
 	if r.games[roomName] == nil {
 		return GameNotFoundErr
 	}
@@ -41,7 +49,7 @@ func (r *GameRepository) Remove(roomName string) error {
 	return nil
 }
 
-func (r *GameRepository) Find(roomName string) (game.Game, error) {
+func (r *GameRepositoryImpl) Find(roomName string) (game.Game, error) {
 	if r.games[roomName] == nil {
 		return nil, GameNotFoundErr
 	}
