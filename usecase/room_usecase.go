@@ -26,17 +26,17 @@ func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo repository.Room
 	}
 }
 
-func (u *RoomUsecase) CreateRoom(s socketio.Conn, roomName string, roomCapacity int) error {
+func (u *RoomUsecase) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
 
 	if u.roomRepo.RoomLen(roomName) != 0 {
 		return RoomAlraedyTokenErr
 	}
 	u.roomRepo.JoinRoom(s, roomName)
-	err := u.gameRepo.Add(roomName, game.NewGame(roomCapacity))
+	err := u.gameRepo.Add(roomName, game.NewGame(roomCapacity, username))
 	return err
 }
 
-func (u *RoomUsecase) JoinRoom(s socketio.Conn, roomName string) error {
+func (u *RoomUsecase) JoinRoom(s socketio.Conn, username string, roomName string) error {
 
 	if u.roomRepo.RoomLen(roomName) == 0 {
 		return RoomNotFound
@@ -51,7 +51,7 @@ func (u *RoomUsecase) JoinRoom(s socketio.Conn, roomName string) error {
 	}
 
 	u.roomRepo.JoinRoom(s, roomName)
-	return nil
+	return game.AddUser(username)
 }
 
 func (u *RoomUsecase) LeaveRoom(s socketio.Conn, roomName string) error {
