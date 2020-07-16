@@ -11,13 +11,13 @@ func TestAdd(t *testing.T) {
 	cases := []struct {
 		Description string
 		InRoomName  string
-		InBoard     *game.Game
+		InBoard     *game.GameImpl
 		OutError    error
 	}{
 		{
 			Description: "valid case",
 			InRoomName:  "beatae",
-			InBoard:     &game.Game{},
+			InBoard:     &game.GameImpl{},
 			OutError:    nil,
 		},
 		{
@@ -29,7 +29,7 @@ func TestAdd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]*game.Game{}}
+			repo := GameRepository{games: map[string]*game.GameImpl{}}
 			err := repo.Add(c.InRoomName, c.InBoard)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -56,7 +56,7 @@ func TestRemove(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]*game.Game{"iusto": &game.Game{}}}
+			repo := GameRepository{games: map[string]*game.GameImpl{"iusto": &game.GameImpl{}}}
 			err := repo.Remove(c.InRoomName)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -84,13 +84,14 @@ func TestFind(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]*game.Game{"quis": &game.Game{}}}
+
+			repo := GameRepository{games: map[string]*game.GameImpl{"quis": &game.GameImpl{}}}
 			outGame, err := repo.Find(c.InRoomName)
 			if err != nil && c.OutError == err {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, &game.Game{}, outGame)
+			assert.Equal(t, &game.GameImpl{}, outGame)
 
 		})
 	}

@@ -13,14 +13,14 @@ var (
 // TODO periodically sync with room repository to save memory
 
 type GameRepository struct {
-	games map[string]*game.Game
+	games map[string]*game.GameImpl
 }
 
 func NewGameRepository() *GameRepository {
-	return &GameRepository{games: map[string]*game.Game{}}
+	return &GameRepository{games: map[string]*game.GameImpl{}}
 }
 
-func (r *GameRepository) Add(roomName string, board *game.Game) error {
+func (r *GameRepository) Add(roomName string, board *game.GameImpl) error {
 	if board == nil {
 		return GameIsNil
 	}
@@ -36,7 +36,7 @@ func (r *GameRepository) Remove(roomName string) error {
 	return nil
 }
 
-func (r *GameRepository) Find(roomName string) (*game.Game, error) {
+func (r *GameRepository) Find(roomName string) (*game.GameImpl, error) {
 	if r.games[roomName] == nil {
 		return nil, GameNotFoundErr
 	}
