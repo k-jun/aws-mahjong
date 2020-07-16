@@ -11,17 +11,24 @@ func TestAdd(t *testing.T) {
 	cases := []struct {
 		Description string
 		InRoomName  string
-		InBoard     *game.GameImpl
+		InBoard     game.Game
 		OutError    error
 	}{
 		{
 			Description: "valid case",
 			InRoomName:  "beatae",
-			InBoard:     &game.GameImpl{},
+			InBoard:     &game.GameMock{},
 			OutError:    nil,
 		},
 		{
 			Description: "invalid case",
+			InRoomName:  "",
+			InBoard:     &game.GameMock{},
+			OutError:    RoomNameIsEmpry,
+		},
+		{
+			Description: "invalid case",
+			InRoomName:  "libero",
 			InBoard:     nil,
 			OutError:    GameIsNil,
 		},
@@ -29,7 +36,7 @@ func TestAdd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]*game.GameImpl{}}
+			repo := GameRepository{games: map[string]game.Game{}}
 			err := repo.Add(c.InRoomName, c.InBoard)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -56,7 +63,7 @@ func TestRemove(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := GameRepository{games: map[string]*game.GameImpl{"iusto": &game.GameImpl{}}}
+			repo := GameRepository{games: map[string]game.Game{"iusto": &game.GameMock{}}}
 			err := repo.Remove(c.InRoomName)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -66,34 +73,38 @@ func TestRemove(t *testing.T) {
 
 func TestFind(t *testing.T) {
 	cases := []struct {
-		Description string
-		InRoomName  string
-		OutError    error
+		Description  string
+		CurrentGames map[string]game.Game
+		InRoomName   string
+		OutError     error
+		OutGame      game.Game
 	}{
 		{
-			Description: "valid case",
-			InRoomName:  "quis",
-			OutError:    nil,
+			Description:  "valid case",
+			CurrentGames: map[string]game.Game{"quis": &game.GameMock{}},
+			InRoomName:   "quis",
+			OutError:     nil,
+			OutGame:      &game.GameMock{},
 		},
 		{
-			Description: "invalid case",
-			InRoomName:  "omnis",
-			OutError:    GameNotFoundErr,
+			Description:  "invalid case",
+			CurrentGames: map[string]game.Game{"quis": &game.GameMock{}},
+			InRoomName:   "omnis",
+			OutError:     GameNotFoundErr,
+			OutGame:      nil,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
 
-			repo := GameRepository{games: map[string]*game.GameImpl{"quis": &game.GameImpl{}}}
+			repo := GameRepository{games: c.CurrentGames}
 			outGame, err := repo.Find(c.InRoomName)
 			if err != nil && c.OutError == err {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, &game.GameImpl{}, outGame)
-
+			assert.Equal(t, c.OutGame, outGame)
 		})
 	}
-
 }
