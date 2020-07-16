@@ -31,7 +31,9 @@ func (u *RoomUsecase) CreateRoom(s socketio.Conn, username string, roomName stri
 	if u.roomRepo.RoomLen(roomName) != 0 {
 		return RoomAlraedyTokenErr
 	}
-	err := u.gameRepo.Add(roomName, game.NewGame(roomCapacity, username))
+
+	user := &game.User{ID: s.ID(), Name: username}
+	err := u.gameRepo.Add(roomName, game.NewGame(roomCapacity, user))
 	if err != nil {
 		return err
 	}
@@ -45,17 +47,20 @@ func (u *RoomUsecase) JoinRoom(s socketio.Conn, username string, roomName string
 		return RoomNotFound
 	}
 
-	game, err := u.gameRepo.Find(roomName)
+	roomGame, err := u.gameRepo.Find(roomName)
 	if err != nil {
 		return RoomNotFound
 	}
-	if u.roomRepo.RoomLen(roomName) >= game.Capacity() {
-		return RoomReachMaxMember
-	}
-	err = game.AddUsername(username)
+
+	user := &game.User{ID: s.ID(), Name: username}
+	err = roomGame.AddUser(user)
 	if err != nil {
 		return err
 	}
+
+	// if u.roomRepo.RoomLen(roomName) >= roomGame.Capacity() {
+	// 	return RoomReachMaxMember
+	// }
 	u.roomRepo.JoinRoom(s, roomName)
 	return nil
 }

@@ -11,6 +11,6 @@ func (g *GameMock) Capacity() int {
 	return g.ExpectedCapacity
 }
 
-func (g *GameMock) AddUsername(username string) error {
+func (g *GameMock) AddUser(user *User) error {
 	return g.ExpectedError
 }

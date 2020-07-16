@@ -6,26 +6,31 @@ import (
 )
 
 var (
-	UsernameIsEmpty       = errors.New("username can't be empty")
+	UserIsEmptyErr        = errors.New("user can't be empty")
 	GameReachMaxMemberErr = errors.New("game already fulled")
 )
 
+type User struct {
+	ID   string
+	Name string
+}
+
 type Game interface {
-	AddUsername(username string) error
+	AddUser(user *User) error
 	Capacity() int
 }
 
 type GameImpl struct {
-	capacity  int
-	usernames []string
-	board     *board.Board
+	capacity int
+	users    []*User
+	board    *board.Board
 }
 
-func NewGame(capacity int, username string) Game {
+func NewGame(capacity int, user *User) Game {
 	return &GameImpl{
-		capacity:  capacity,
-		usernames: []string{username},
-		board:     nil,
+		capacity: capacity,
+		users:    []*User{user},
+		board:    nil,
 	}
 }
 
@@ -33,13 +38,13 @@ func (g *GameImpl) Capacity() int {
 	return g.capacity
 }
 
-func (g *GameImpl) AddUsername(username string) error {
-	if username == "" {
-		return UsernameIsEmpty
+func (g *GameImpl) AddUser(user *User) error {
+	if user == nil {
+		return UserIsEmptyErr
 	}
-	if len(g.usernames) >= g.capacity {
+	if len(g.users) >= g.capacity {
 		return GameReachMaxMemberErr
 	}
-	g.usernames = append(g.usernames, username)
+	g.users = append(g.users, user)
 	return nil
 }
