@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	BoardNotFoundErr = errors.New("board not found")
-	BoardIsNil       = errors.New("baord is nil")
+	GameNotFoundErr = errors.New("board not found")
+	GameIsNil       = errors.New("baord is nil")
 )
 
 // TODO periodically sync with room repository to save memory
@@ -22,7 +22,7 @@ func NewGameRepository() *GameRepository {
 
 func (r *GameRepository) Add(roomName string, board *game.Game) error {
 	if board == nil {
-		return BoardIsNil
+		return GameIsNil
 	}
 	r.games[roomName] = board
 	return nil
@@ -30,7 +30,7 @@ func (r *GameRepository) Add(roomName string, board *game.Game) error {
 
 func (r *GameRepository) Remove(roomName string) error {
 	if r.games[roomName] == nil {
-		return BoardNotFoundErr
+		return GameNotFoundErr
 	}
 	delete(r.games, roomName)
 	return nil
@@ -38,7 +38,7 @@ func (r *GameRepository) Remove(roomName string) error {
 
 func (r *GameRepository) Find(roomName string) (*game.Game, error) {
 	if r.games[roomName] == nil {
-		return nil, BoardNotFoundErr
+		return nil, GameNotFoundErr
 	}
 	return r.games[roomName], nil
 }
