@@ -12,11 +12,11 @@ https://c9katayama.hatenablog.com/entry/2014/12/15/002712
 最も確実な方法が今のところcleanすること。
 
 ```sh
-go clean -testcache && go test ./... -v -failfast
+go clean -testcache && go test -v ./... -failfast
 ```
 
 ```sh
-go clean -testcache && go test ./server -v -tags=integration
+go clean -testcache && go test -v ./server -tags=integration
 ```
 
 
@@ -155,7 +155,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ```
 ```
 
-### room_status
+### new_room_status
 
 ```json
 {
