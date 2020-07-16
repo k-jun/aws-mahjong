@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"aws-mahjong/server"
+	"aws-mahjong/storage"
 
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -15,7 +16,8 @@ func main() {
 		panic(err)
 	}
 
-	server.AttachHandlerAndEvent(wsserver)
+	stg := storage.NewStorage(wsserver)
+	server.AttachHandlerAndEvent(wsserver, stg)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

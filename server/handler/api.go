@@ -1,10 +1,9 @@
 package handler
 
 import (
+	"aws-mahjong/storage"
 	"encoding/json"
 	"net/http"
-
-	socketio "github.com/googollee/go-socket.io"
 )
 
 type RoomsResponse struct {
@@ -13,7 +12,7 @@ type RoomsResponse struct {
 	RoomMemberCount int    `json:"room_member_count"`
 }
 
-func Rooms(wsserver *socketio.Server) func(w http.ResponseWriter, r *http.Request) {
+func Rooms(stg *storage.Storage) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			MethodNotAllowed(w, r)
@@ -21,10 +20,10 @@ func Rooms(wsserver *socketio.Server) func(w http.ResponseWriter, r *http.Reques
 		}
 		resBodyRooms := []RoomsResponse{}
 
-		for _, roomName := range rooms(wsserver) {
+		for _, roomName := range stg.Rooms() {
 			resBodyRooms = append(resBodyRooms, RoomsResponse{
 				RoomName:        roomName,
-				RoomMemberCount: roomLen(wsserver, roomName),
+				RoomMemberCount: stg.RoomLen(roomName),
 			})
 		}
 

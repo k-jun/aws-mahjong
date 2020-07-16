@@ -5,6 +5,7 @@ package server
 import (
 	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
+	"aws-mahjong/storage"
 	"aws-mahjong/testutil"
 	"encoding/json"
 	"io/ioutil"
@@ -33,7 +34,9 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	AttachHandlerAndEvent(wsserver)
+	stg := storage.NewStorage(wsserver)
+
+	AttachHandlerAndEvent(wsserver, stg)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

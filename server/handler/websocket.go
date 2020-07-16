@@ -2,6 +2,7 @@ package handler
 
 import (
 	"aws-mahjong/server/event"
+	"aws-mahjong/storage"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,7 +21,7 @@ type CreateRoomRequest struct {
 	RoomCapacity int    `json:"room_capacity"`
 }
 
-func CreateRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
+func CreateRoom(stg *storage.Storage) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body CreateRoomRequest
 
@@ -31,12 +32,12 @@ func CreateRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
 			return
 		}
 
-		if roomLen(wsserver, body.RoomName) != 0 {
+		if stg.RoomLen(body.RoomName) != 0 {
 			fmt.Println("room_name already token")
 			s.Emit(event.CreateRoomError, "")
 			return
 		}
-		joinRoom(s, body.RoomName)
+		stg.JoinRoom(s, body.RoomName)
 	}
 }
 
@@ -45,7 +46,7 @@ type JoinRoomRequest struct {
 	RoomName string `json:"room_name"`
 }
 
-func JoinRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
+func JoinRoom(stg *storage.Storage) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body JoinRoomRequest
 		err := json.Unmarshal([]byte(bodyStr), &body)
@@ -55,12 +56,13 @@ func JoinRoom(wsserver *socketio.Server) func(socketio.Conn, string) {
 			return
 		}
 
-		if roomLen(wsserver, body.RoomName) == 0 {
+		if stg.RoomLen(body.RoomName) == 0 {
 			fmt.Println(RoomNotFound)
 			s.Emit(event.JoinRoomError, RoomNotFound.Error())
 			return
 		}
 
-		joinRoom(s, body.RoomName)
+		stg.JoinRoom(s, body.RoomName)
+
 	}
 }
