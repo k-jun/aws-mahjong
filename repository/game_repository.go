@@ -17,8 +17,6 @@ type GameRepository interface {
 	Find(roomName string) (game.Game, error)
 }
 
-// TODO periodically sync with room repository to save memory
-
 type GameRepositoryImpl struct {
 	games map[string]game.Game
 }

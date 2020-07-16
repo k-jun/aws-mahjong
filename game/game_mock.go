@@ -9,7 +9,6 @@ type GameMock struct {
 
 func (g *GameMock) Capacity() int {
 	return g.ExpectedCapacity
-
 }
 
 func (g *GameMock) AddUsername(username string) error {

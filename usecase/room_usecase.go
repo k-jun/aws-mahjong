@@ -51,7 +51,7 @@ func (u *RoomUsecase) JoinRoom(s socketio.Conn, username string, roomName string
 	}
 
 	u.roomRepo.JoinRoom(s, roomName)
-	return game.AddUser(username)
+	return game.AddUsername(username)
 }
 
 func (u *RoomUsecase) LeaveRoom(s socketio.Conn, roomName string) error {
