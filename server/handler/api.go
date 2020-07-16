@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"aws-mahjong/storage"
+	"aws-mahjong/repository"
 	"encoding/json"
 	"net/http"
 )
@@ -12,7 +12,7 @@ type RoomsResponse struct {
 	RoomMemberCount int    `json:"room_member_count"`
 }
 
-func Rooms(stg *storage.Storage) func(w http.ResponseWriter, r *http.Request) {
+func Rooms(stg *repository.RoomRepository) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			MethodNotAllowed(w, r)

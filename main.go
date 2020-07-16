@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
+	"aws-mahjong/repository"
 	"aws-mahjong/server"
-	"aws-mahjong/storage"
 
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -16,8 +16,8 @@ func main() {
 		panic(err)
 	}
 
-	stg := storage.NewStorage(wsserver)
-	server.AttachHandlerAndEvent(wsserver, stg)
+	repo := repository.NewRoomRepository(wsserver)
+	server.AttachHandlerAndEvent(wsserver, repo)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

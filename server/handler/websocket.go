@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
-	"aws-mahjong/storage"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,7 +21,7 @@ type CreateRoomRequest struct {
 	RoomCapacity int    `json:"room_capacity"`
 }
 
-func CreateRoom(stg *storage.Storage) func(socketio.Conn, string) {
+func CreateRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body CreateRoomRequest
 
@@ -46,7 +46,7 @@ type JoinRoomRequest struct {
 	RoomName string `json:"room_name"`
 }
 
-func JoinRoom(stg *storage.Storage) func(socketio.Conn, string) {
+func JoinRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body JoinRoomRequest
 		err := json.Unmarshal([]byte(bodyStr), &body)

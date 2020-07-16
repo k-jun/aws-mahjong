@@ -1,4 +1,4 @@
-package storage
+package repository
 
 import (
 	"regexp"
@@ -11,25 +11,25 @@ var (
 	re         = regexp.MustCompile(`aws-mahjong.+`)
 )
 
-type Storage struct {
+type RoomRepository struct {
 	wsserver *socketio.Server
 }
 
-func NewStorage(wsserver *socketio.Server) *Storage {
-	return &Storage{wsserver: wsserver}
+func NewRoomRepository(wsserver *socketio.Server) *RoomRepository {
+	return &RoomRepository{wsserver: wsserver}
 }
 
-func (s *Storage) JoinRoom(conn socketio.Conn, roomName string) {
+func (s *RoomRepository) JoinRoom(conn socketio.Conn, roomName string) {
 	conn.Join(roomPrefix + roomName)
 
 }
 
-func (s *Storage) LeaveRoom(conn socketio.Conn, roomName string) {
+func (s *RoomRepository) LeaveRoom(conn socketio.Conn, roomName string) {
 	conn.Leave(roomPrefix + roomName)
 
 }
 
-func (s *Storage) Rooms() []string {
+func (s *RoomRepository) Rooms() []string {
 	names := []string{}
 	for _, name := range s.wsserver.Rooms("/") {
 		if re.MatchString(name) {
@@ -39,7 +39,7 @@ func (s *Storage) Rooms() []string {
 	return names
 }
 
-func (s *Storage) RoomLen(roomName string) int {
+func (s *RoomRepository) RoomLen(roomName string) int {
 	return s.wsserver.RoomLen("/", roomPrefix+roomName)
 
 }

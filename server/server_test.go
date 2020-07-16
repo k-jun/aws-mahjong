@@ -3,9 +3,9 @@
 package server
 
 import (
+	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
-	"aws-mahjong/storage"
 	"aws-mahjong/testutil"
 	"encoding/json"
 	"io/ioutil"
@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	stg := storage.NewStorage(wsserver)
+	stg := repository.NewRoomRepository(wsserver)
 
 	AttachHandlerAndEvent(wsserver, stg)
 
