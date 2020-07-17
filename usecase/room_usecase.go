@@ -16,14 +16,37 @@ var (
 
 type RoomUsecase struct {
 	gameRepo repository.GameRepository
-	roomRepo repository.RoomRepository
+	roomRepo *repository.RoomRepository
 }
 
-func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo repository.RoomRepository) *RoomUsecase {
+func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo *repository.RoomRepository) *RoomUsecase {
 	return &RoomUsecase{
 		gameRepo: gameRepo,
 		roomRepo: roomRepo,
 	}
+}
+
+type RoomInfo struct {
+	Name     string
+	Len      int
+	Capacity int
+}
+
+func (u *RoomUsecase) Rooms() []*RoomInfo {
+	rooms := []*RoomInfo{}
+
+	for _, roomName := range u.roomRepo.Rooms() {
+		g, err := u.gameRepo.Find(roomName)
+		if err != nil {
+			continue
+		}
+		rooms = append(rooms, &RoomInfo{
+			Name:     roomName,
+			Len:      u.roomRepo.RoomLen(roomName),
+			Capacity: g.Capacity(),
+		})
+	}
+	return rooms
 }
 
 func (u *RoomUsecase) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
