@@ -28,7 +28,7 @@ api endpoint
 http://localhost:8000/
 ```
 
-### GET `/rooms`
+### [ ]  GET `/rooms`
 
 現在開かれている部屋の一覧を取得する。
 
@@ -68,7 +68,7 @@ http://localhost:8000/ws
 ## Client Events
 
 
-### create_room
+### [x] create_room
 
 部屋を作成して参加する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
 ```json
@@ -79,7 +79,7 @@ http://localhost:8000/ws
 }
 ```
 
-### join_room
+### [x] join_room
 
 部屋の名前を指定してユーザーを参加させる。しっかりと`/rooms`の結果で取得したroomにjoinすること。
 
@@ -90,7 +90,7 @@ http://localhost:8000/ws
 }
 ```
 
-### leave_room
+### [ ] leave_room
 
 ほとんど使わないと思うが一応。ちなみに退出した場合にはそのゲームは即時終了する。
 socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、その際にも参加していたゲームは強制終了する。
@@ -104,7 +104,7 @@ socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、�
 
 
 
-### dahai
+### [ ] dahai
 
 牌を手牌から捨てる際に使う。このイベントを送信するとnew_statusが走る。
 基本的にはnew_statusのturn_player_indexに対応するplayerがtsumoを持っている。
@@ -119,7 +119,7 @@ socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、�
 ```
 
 
-### naki
+### [ ] naki
 
 打牌に対して鳴きを行うか否かを選択する。
 鳴きを行わない場合に関してもcancelというイベントを送信する。
@@ -145,17 +145,23 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ## Server Events
 
 
-### create_room_error
+### [x] create_room_error
+
+エラーメッセージの文字列が帰ってくる。
 
 ```
+error_message
 ```
 
-### join_room_error
+### [x] join_room_error
+
+エラーメッセージの文字列が帰ってくる。
 
 ```
+error_message
 ```
 
-### new_room_status
+### [ ] new_room_status
 
 ```json
 {
@@ -165,21 +171,21 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 }
 ```
 
-### game_start
+### [ ] game_start
 
 ゲームの開始を通知するだけ。現状は空文字を返すのみ。
 
 ```json
 ```
 
-### game_end
+### [ ] game_end
 
 ゲームの終了を通知する。正常に終了した場合と、誰かが退出して強制的に終了した場合も含む。
 
 ```json
 ```
 
-### new_status
+### [ ] new_status
 
 他のプレイヤーの打牌、鳴きなど状況に変更があった際には更新がこのイベントで通知される。
 
