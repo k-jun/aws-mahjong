@@ -8,6 +8,8 @@ import (
 	"aws-mahjong/server/handler"
 	"aws-mahjong/testutil"
 	"aws-mahjong/usecase"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -47,26 +49,51 @@ func TestMain(m *testing.M) {
 }
 
 func TestRooms(t *testing.T) {
-	// client, err := socketio_client.NewClient(uri, opts)
-	// testRooms := []string{"perspiciatis", "eius", "molestiae"}
-	// counter := map[string]bool{}
-	//
-	// response, err := http.Get(uri + "/rooms")
-	// assert.NoError(t, err)
-	//
-	// bytes, err := ioutil.ReadAll(response.Body)
-	// resBody := []handler.RoomsResponse{}
-	// err = json.Unmarshal(bytes, &resBody)
-	//
-	// for _, room := range resBody {
-	// 	counter[room.RoomName] = true
-	// }
-	//
-	// for _, roomName := range testRooms {
-	// 	assert.Equal(t, true, counter[roomName])
-	//
-	// }
-	//
+
+	cases := []struct {
+		Description  string
+		CurrentRooms []handler.CreateRoomRequest
+		OutRooms     []handler.RoomsResponse
+	}{
+		{
+			Description:  "valid case, single room",
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Fatima.Reilly", RoomCapacity: 2, UserName: "Rosalyn King"}},
+			OutRooms:     []handler.RoomsResponse{{RoomName: "Fatima.Reilly", RoomCapacity: 2, RoomMemberCount: 1}},
+		},
+		{
+			Description: "valid case, multi rooms",
+			CurrentRooms: []handler.CreateRoomRequest{
+				{RoomName: "Wilford30", RoomCapacity: 3, UserName: "Rosalyn King"},
+				{RoomName: "Fatima.Reilly", RoomCapacity: 2, UserName: "Rosalyn King"},
+				{RoomName: "Vincent62", RoomCapacity: 3, UserName: "Rosalyn King"},
+			},
+			OutRooms: []handler.RoomsResponse{
+				{RoomName: "Fatima.Reilly", RoomCapacity: 2, RoomMemberCount: 1},
+				{RoomName: "Vincent62", RoomCapacity: 3, RoomMemberCount: 1},
+				{RoomName: "Wilford30", RoomCapacity: 3, RoomMemberCount: 1},
+			},
+		},
+	}
+
+	client, err := socketio_client.NewClient(uri, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			testutil.CreateRooms(client, c.CurrentRooms)
+
+			response, err := http.Get(uri + "/rooms")
+			assert.NoError(t, err)
+
+			bytes, err := ioutil.ReadAll(response.Body)
+			resBody := []handler.RoomsResponse{}
+			err = json.Unmarshal(bytes, &resBody)
+			assert.Equal(t, c.OutRooms, resBody)
+
+		})
+	}
 }
 
 func TestOnConnect(t *testing.T) {

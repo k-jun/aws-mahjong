@@ -4,6 +4,7 @@ import (
 	"aws-mahjong/game"
 	"aws-mahjong/repository"
 	"errors"
+	"sort"
 
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -43,7 +44,11 @@ type RoomInfo struct {
 func (u *RoomUsecaseImpl) Rooms() []*RoomInfo {
 	rooms := []*RoomInfo{}
 
-	for _, roomName := range u.roomRepo.Rooms() {
+	roomNames := u.roomRepo.Rooms()
+
+	sort.Slice(roomNames, func(i int, j int) bool { return roomNames[i] < roomNames[j] })
+
+	for _, roomName := range roomNames {
 		g, err := u.gameRepo.Find(roomName)
 		if err != nil {
 			continue
