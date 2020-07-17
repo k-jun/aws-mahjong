@@ -2,15 +2,23 @@ package testutil
 
 import (
 	"aws-mahjong/server/event"
+	"aws-mahjong/server/handler"
+	"encoding/json"
 	"time"
 
 	socketio_client "github.com/zhouhui8915/go-socket.io-client"
 )
 
-func SampleRoomCreate(client *socketio_client.Client, roomName string) {
+func CreateRoom(client *socketio_client.Client, room handler.CreateRoomRequest) {
+	body, _ := json.Marshal(&room)
 
-	body := `{"user_name": "Elaina Prosacco IV", "room_name": "` + roomName + `", "room_capacity": 4}`
-
-	client.Emit(event.CreateRoom, body)
+	client.Emit(event.CreateRoom, string(body))
 	time.Sleep(1 * time.Second)
+}
+
+func CreateRooms(client *socketio_client.Client, roomNames []handler.CreateRoomRequest) {
+	for _, room := range roomNames {
+		CreateRoom(client, room)
+
+	}
 }

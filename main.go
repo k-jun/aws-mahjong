@@ -6,6 +6,7 @@ import (
 
 	"aws-mahjong/repository"
 	"aws-mahjong/server"
+	"aws-mahjong/usecase"
 
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -18,7 +19,9 @@ func main() {
 
 	roomRepo := repository.NewRoomRepository(wsserver)
 	gameRepo := repository.NewGameRepository()
-	server.AttachHandlerAndEvent(wsserver, roomRepo, gameRepo)
+
+	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
+	server.AttachHandlerAndEvent(wsserver, roomUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

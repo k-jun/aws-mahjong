@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
 	"aws-mahjong/usecase"
@@ -12,9 +11,7 @@ import (
 	socketio "github.com/googollee/go-socket.io"
 )
 
-func AttachHandlerAndEvent(wsserver *socketio.Server, roomRepo *repository.RoomRepository, gameRepo repository.GameRepository) {
-
-	roomUsecase := usecase.NewRoomUsecase(gameRepo, roomRepo)
+func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUsecase) {
 
 	// api handlers
 	http.HandleFunc("/rooms", handler.Rooms(roomUsecase))

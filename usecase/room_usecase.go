@@ -27,7 +27,7 @@ type RoomUsecaseImpl struct {
 	roomRepo *repository.RoomRepository
 }
 
-func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo *repository.RoomRepository) RoomUsecase {
+func NewRoomUsecase(roomRepo *repository.RoomRepository, gameRepo repository.GameRepository) RoomUsecase {
 	return &RoomUsecaseImpl{
 		gameRepo: gameRepo,
 		roomRepo: roomRepo,
