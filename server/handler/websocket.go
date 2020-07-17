@@ -21,7 +21,7 @@ type CreateRoomRequest struct {
 	RoomCapacity int    `json:"room_capacity"`
 }
 
-func CreateRoom(roomUsecase *usecase.RoomUsecase) func(socketio.Conn, string) {
+func CreateRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body CreateRoomRequest
 
@@ -44,7 +44,7 @@ type JoinRoomRequest struct {
 	RoomName string `json:"room_name"`
 }
 
-func JoinRoom(roomUsecase *usecase.RoomUsecase) func(socketio.Conn, string) {
+func JoinRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body JoinRoomRequest
 		err := json.Unmarshal([]byte(bodyStr), &body)

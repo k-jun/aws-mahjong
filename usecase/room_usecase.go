@@ -14,13 +14,21 @@ var (
 	RoomReachMaxMember  = errors.New("room already fulled")
 )
 
-type RoomUsecase struct {
+type RoomUsecase interface {
+	Rooms() []*RoomInfo
+	CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error
+	JoinRoom(s socketio.Conn, username string, roomName string) error
+	LeaveRoom(s socketio.Conn, roomName string) error
+	LeaveAllRoom(s socketio.Conn) error
+}
+
+type RoomUsecaseImpl struct {
 	gameRepo repository.GameRepository
 	roomRepo *repository.RoomRepository
 }
 
-func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo *repository.RoomRepository) *RoomUsecase {
-	return &RoomUsecase{
+func NewRoomUsecase(gameRepo repository.GameRepository, roomRepo *repository.RoomRepository) RoomUsecase {
+	return &RoomUsecaseImpl{
 		gameRepo: gameRepo,
 		roomRepo: roomRepo,
 	}
@@ -32,7 +40,7 @@ type RoomInfo struct {
 	Capacity int
 }
 
-func (u *RoomUsecase) Rooms() []*RoomInfo {
+func (u *RoomUsecaseImpl) Rooms() []*RoomInfo {
 	rooms := []*RoomInfo{}
 
 	for _, roomName := range u.roomRepo.Rooms() {
@@ -49,7 +57,7 @@ func (u *RoomUsecase) Rooms() []*RoomInfo {
 	return rooms
 }
 
-func (u *RoomUsecase) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
+func (u *RoomUsecaseImpl) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
 
 	if u.roomRepo.RoomLen(roomName) != 0 {
 		return RoomAlraedyTokenErr
@@ -64,7 +72,7 @@ func (u *RoomUsecase) CreateRoom(s socketio.Conn, username string, roomName stri
 	return nil
 }
 
-func (u *RoomUsecase) JoinRoom(s socketio.Conn, username string, roomName string) error {
+func (u *RoomUsecaseImpl) JoinRoom(s socketio.Conn, username string, roomName string) error {
 
 	if u.roomRepo.RoomLen(roomName) == 0 {
 		return RoomNotFound
@@ -88,13 +96,13 @@ func (u *RoomUsecase) JoinRoom(s socketio.Conn, username string, roomName string
 	return nil
 }
 
-func (u *RoomUsecase) LeaveRoom(s socketio.Conn, roomName string) error {
+func (u *RoomUsecaseImpl) LeaveRoom(s socketio.Conn, roomName string) error {
 	u.roomRepo.LeaveRoom(s, roomName)
 	err := u.gameRepo.Remove(roomName)
 	return err
 }
 
-func (u *RoomUsecase) LeaveAllRoom(s socketio.Conn) error {
+func (u *RoomUsecaseImpl) LeaveAllRoom(s socketio.Conn) error {
 	for _, roomName := range s.Rooms() {
 		u.roomRepo.LeaveRoom(s, roomName)
 		err := u.gameRepo.Remove(roomName)

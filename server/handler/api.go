@@ -12,7 +12,7 @@ type RoomsResponse struct {
 	RoomMemberCount int    `json:"room_member_count"`
 }
 
-func Rooms(roomUsecase *usecase.RoomUsecase) func(w http.ResponseWriter, r *http.Request) {
+func Rooms(roomUsecase usecase.RoomUsecase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			MethodNotAllowed(w, r)
