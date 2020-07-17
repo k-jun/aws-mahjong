@@ -12,7 +12,7 @@ var (
 )
 
 type GameRepository interface {
-	Add(roomName string, board game.Game) error
+	Add(roomName string, inGame game.Game) error
 	Remove(roomName string) error
 	Find(roomName string) (game.Game, error)
 }
@@ -27,15 +27,15 @@ func NewGameRepository() GameRepository {
 	}
 }
 
-func (r *GameRepositoryImpl) Add(roomName string, board game.Game) error {
+func (r *GameRepositoryImpl) Add(roomName string, inGame game.Game) error {
 	if roomName == "" {
 		return RoomNameIsEmpry
 	}
 
-	if board == nil {
+	if inGame == nil {
 		return GameIsNil
 	}
-	r.games[roomName] = board
+	r.games[roomName] = inGame
 	return nil
 }
 
