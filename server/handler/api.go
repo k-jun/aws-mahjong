@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"aws-mahjong/repository"
+	"aws-mahjong/usecase"
 	"encoding/json"
 	"net/http"
 )
@@ -12,7 +12,7 @@ type RoomsResponse struct {
 	RoomMemberCount int    `json:"room_member_count"`
 }
 
-func Rooms(stg *repository.RoomRepository) func(w http.ResponseWriter, r *http.Request) {
+func Rooms(roomUsecase *usecase.RoomUsecase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			MethodNotAllowed(w, r)
@@ -20,10 +20,11 @@ func Rooms(stg *repository.RoomRepository) func(w http.ResponseWriter, r *http.R
 		}
 		resBodyRooms := []RoomsResponse{}
 
-		for _, roomName := range stg.Rooms() {
+		for _, roomInfo := range roomUsecase.Rooms() {
 			resBodyRooms = append(resBodyRooms, RoomsResponse{
-				RoomName:        roomName,
-				RoomMemberCount: stg.RoomLen(roomName),
+				RoomName:        roomInfo.Name,
+				RoomMemberCount: roomInfo.Len,
+				RoomCapacity:    roomInfo.Capacity,
 			})
 		}
 

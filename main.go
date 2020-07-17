@@ -16,8 +16,9 @@ func main() {
 		panic(err)
 	}
 
-	repo := repository.NewRoomRepository(wsserver)
-	server.AttachHandlerAndEvent(wsserver, repo)
+	roomRepo := repository.NewRoomRepository(wsserver)
+	gameRepo := repository.NewGameRepository()
+	server.AttachHandlerAndEvent(wsserver, roomRepo, gameRepo)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

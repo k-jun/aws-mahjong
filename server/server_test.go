@@ -34,9 +34,10 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	stg := repository.NewRoomRepository(wsserver)
+	roomRepo := repository.NewRoomRepository(wsserver)
+	gameRepo := repository.NewGameRepository()
 
-	AttachHandlerAndEvent(wsserver, stg)
+	AttachHandlerAndEvent(wsserver, roomRepo, gameRepo)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

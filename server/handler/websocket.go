@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
+	"aws-mahjong/usecase"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,7 +21,7 @@ type CreateRoomRequest struct {
 	RoomCapacity int    `json:"room_capacity"`
 }
 
-func CreateRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
+func CreateRoom(roomUsecase *usecase.RoomUsecase) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body CreateRoomRequest
 
@@ -32,12 +32,10 @@ func CreateRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
 			return
 		}
 
-		if stg.RoomLen(body.RoomName) != 0 {
-			fmt.Println("room_name already token")
-			s.Emit(event.CreateRoomError, "")
-			return
+		if err = roomUsecase.CreateRoom(s, body.UserName, body.RoomName, body.RoomCapacity); err != nil {
+			fmt.Println(err)
+			s.Emit(event.CreateRoomError, err.Error())
 		}
-		stg.JoinRoom(s, body.RoomName)
 	}
 }
 
@@ -46,7 +44,7 @@ type JoinRoomRequest struct {
 	RoomName string `json:"room_name"`
 }
 
-func JoinRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
+func JoinRoom(roomUsecase *usecase.RoomUsecase) func(socketio.Conn, string) {
 	return func(s socketio.Conn, bodyStr string) {
 		var body JoinRoomRequest
 		err := json.Unmarshal([]byte(bodyStr), &body)
@@ -55,14 +53,10 @@ func JoinRoom(stg *repository.RoomRepository) func(socketio.Conn, string) {
 			s.Emit(event.JoinRoomError, err.Error())
 			return
 		}
-
-		if stg.RoomLen(body.RoomName) == 0 {
-			fmt.Println(RoomNotFound)
-			s.Emit(event.JoinRoomError, RoomNotFound.Error())
-			return
+		if err = roomUsecase.JoinRoom(s, body.UserName, body.RoomName); err != nil {
+			fmt.Println(err)
+			s.Emit(event.JoinRoomError, err.Error())
 		}
-
-		stg.JoinRoom(s, body.RoomName)
 
 	}
 }
