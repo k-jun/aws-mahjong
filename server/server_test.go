@@ -49,6 +49,11 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func TestOnConnect(t *testing.T) {
+	_, err := socketio_client.NewClient(uri, opts)
+	assert.NoError(t, err)
+}
+
 func TestRooms(t *testing.T) {
 
 	cases := []struct {
@@ -108,11 +113,6 @@ func TestRooms(t *testing.T) {
 
 		})
 	}
-}
-
-func TestOnConnect(t *testing.T) {
-	_, err := socketio_client.NewClient(uri, opts)
-	assert.NoError(t, err)
 }
 
 func TestCreateRoom(t *testing.T) {
