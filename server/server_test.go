@@ -165,8 +165,9 @@ func TestCreateRoom(t *testing.T) {
 			outError := ""
 			testutil.CreateRooms(client, c.CurrentRooms)
 
-			client.On(event.CreateRoomError, func(payload string) {
-				outError = payload
+			client.On(event.RoomError, func(payload string) {
+				resBody := getErrorBody(payload)
+				outError = resBody.ErrorMessage
 			})
 
 			client.Emit(event.CreateRoom, c.InBody)
@@ -220,8 +221,9 @@ func TestJoinRoom(t *testing.T) {
 			outError := ""
 			testutil.CreateRooms(client, c.CurrentRooms)
 
-			client.On(event.JoinRoomError, func(payload string) {
-				outError = payload
+			client.On(event.RoomError, func(payload string) {
+				resBody := getErrorBody(payload)
+				outError = resBody.ErrorMessage
 			})
 			client.Emit(event.JoinRoom, c.InBody)
 			time.Sleep(1 * time.Second)
@@ -271,8 +273,9 @@ func TestLeaveRoom(t *testing.T) {
 			testutil.JoinRoom(c.CurrentClient, c.CurrentJoinRoom)
 			outError := ""
 
-			c.CurrentClient.On(event.LeaveRoomError, func(payload string) {
-				outError = payload
+			c.CurrentClient.On(event.RoomError, func(payload string) {
+				resBody := getErrorBody(payload)
+				outError = resBody.ErrorMessage
 			})
 
 			c.CurrentClient.Emit(event.LeaveRoom, c.InBody)
@@ -330,4 +333,14 @@ func TestNewRoomStatus(t *testing.T) {
 
 		})
 	}
+}
+
+func getErrorBody(body string) handler.RoomErrorResponse {
+
+	resBody := handler.RoomErrorResponse{}
+	err := json.Unmarshal([]byte(body), &resBody)
+	if err != nil {
+		panic(err)
+	}
+	return resBody
 }

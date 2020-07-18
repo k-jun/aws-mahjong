@@ -26,7 +26,6 @@ func (s *RoomRepository) JoinRoom(conn socketio.Conn, roomName string) {
 
 func (s *RoomRepository) LeaveRoom(conn socketio.Conn, roomName string) {
 	conn.Leave(roomPrefix + roomName)
-
 }
 
 func (s *RoomRepository) Rooms() []string {

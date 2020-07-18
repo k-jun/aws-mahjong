@@ -34,20 +34,20 @@ func CreateRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.CreateRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.CreateRoom, err.Error()))
 			return
 		}
 
 		if err = roomUsecase.CreateRoom(s, body.UserName, body.RoomName, body.RoomCapacity); err != nil {
 			fmt.Println(err)
-			s.Emit(event.CreateRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.CreateRoom, err.Error()))
 			return
 		}
 
 		resBody, err := roomStatus(roomUsecase, body.RoomName)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.CreateRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.NewRoomStatus, err.Error()))
 			return
 		}
 
@@ -66,19 +66,19 @@ func JoinRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.JoinRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.JoinRoom, err.Error()))
 			return
 		}
 		if err = roomUsecase.JoinRoom(s, body.UserName, body.RoomName); err != nil {
 			fmt.Println(err)
-			s.Emit(event.JoinRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.JoinRoom, err.Error()))
 			return
 		}
 
 		resBody, err := roomStatus(roomUsecase, body.RoomName)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.JoinRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.NewRoomStatus, err.Error()))
 			return
 		}
 		s.Emit(event.NewRoomStatus, resBody)
@@ -96,14 +96,13 @@ func LeaveRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.LeaveRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.LeaveRoom, err.Error()))
 			return
 		}
 
 		if err = roomUsecase.LeaveRoom(s, body.RoomName); err != nil {
 			fmt.Println(err)
-			s.Emit(event.LeaveRoomError, err.Error())
+			s.Emit(event.RoomError, roomError(s, event.LeaveRoom, err.Error()))
 		}
 	}
-
 }
