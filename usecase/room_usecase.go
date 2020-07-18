@@ -3,6 +3,7 @@ package usecase
 import (
 	"aws-mahjong/game"
 	"aws-mahjong/repository"
+	"aws-mahjong/server/event"
 	"errors"
 	"sort"
 
@@ -18,6 +19,7 @@ var (
 type RoomUsecase interface {
 	Rooms() []*RoomInfo
 	Room(roomName string) (*RoomInfo, error)
+	NewRoomStatus(roomName string, payload string)
 	CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error
 	JoinRoom(s socketio.Conn, username string, roomName string) error
 	LeaveRoom(s socketio.Conn, roomName string) error
@@ -74,6 +76,10 @@ func (u *RoomUsecaseImpl) Room(roomName string) (*RoomInfo, error) {
 	return foundRoom, nil
 }
 
+func (u *RoomUsecaseImpl) NewRoomStatus(roomName string, payload string) {
+	u.roomRepo.BroadcastToRoom(roomName, event.NewRoomStatus, payload)
+}
+
 func (u *RoomUsecaseImpl) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
 
 	if u.roomRepo.RoomLen(roomName) != 0 {
@@ -110,18 +116,40 @@ func (u *RoomUsecaseImpl) JoinRoom(s socketio.Conn, username string, roomName st
 		return err
 	}
 
-	// if u.roomRepo.RoomLen(roomName) >= roomGame.Capacity() {
-	// 	return RoomReachMaxMember
-	// }
+	if u.roomRepo.RoomLen(roomName) >= roomGame.Capacity() {
+		return RoomReachMaxMember
+	}
 	u.roomRepo.JoinRoom(s, roomName)
 	return nil
 }
 
 func (u *RoomUsecaseImpl) LeaveRoom(s socketio.Conn, roomName string) error {
-	err := u.gameRepo.Remove(roomName)
+	roomGame, err := u.gameRepo.Find(roomName)
+	if err != nil {
+		return RoomNotFound
+	}
+
+	if u.roomRepo.RoomLen(roomName) == 1 {
+		// last one person leave
+		err = u.gameRepo.Remove(roomName)
+		if err != nil {
+			return err
+		}
+	}
+
+	if roomGame.Board() == nil {
+		// game not started
+		user := &game.User{ID: s.ID()}
+		err = roomGame.RemoveUser(user)
+	} else {
+		// game started
+		err = u.gameRepo.Remove(roomName)
+	}
+
 	if err != nil {
 		return err
 	}
+
 	u.roomRepo.LeaveRoom(s, roomName)
 	return err
 }
