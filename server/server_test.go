@@ -263,7 +263,7 @@ func TestLeaveRoom(t *testing.T) {
 			CurrentRooms:    []handler.CreateRoomRequest{{RoomName: "Bud.Kirlin", UserName: "Dr. Lucas Simonis Sr.", RoomCapacity: 3}},
 			CurrentJoinRoom: handler.JoinRoomRequest{RoomName: "Bud.Kirlin", UserName: "Virgie Ankunding III"},
 			InBody:          `{"room_name": "Roel.Cummerata"}`,
-			OutError:        repository.GameNotFoundErr.Error(),
+			OutError:        usecase.RoomNotFound.Error(),
 		},
 	}
 
@@ -295,39 +295,66 @@ func TestNewRoomStatus(t *testing.T) {
 		t.Fatal(err)
 	}
 	cases := []struct {
-		Description   string
-		CurrentClient *socketio_client.Client
-		CurrentRooms  []handler.CreateRoomRequest
-		InEventName   string
-		InBody        string
-		OutBody       string
+		Description       string
+		CurrentClient     *socketio_client.Client
+		CurrentRooms      []handler.CreateRoomRequest
+		CurrentJoinClient *socketio_client.Client
+		CurrentJoinRoom   handler.JoinRoomRequest
+		InClient          *socketio_client.Client
+		InEventName       string
+		InBody            string
+		OutClient         *socketio_client.Client
+		OutBody           string
 	}{
 		{
-			Description:   "valid case, create room",
-			CurrentClient: client2,
-			CurrentRooms:  []handler.CreateRoomRequest{},
-			InEventName:   event.CreateRoom,
-			InBody:        `{"user_name": "Celine Marks", "room_name": "Roger.Predovic", "room_capacity": 3}`,
-			OutBody:       `{"room_name":"Roger.Predovic","room_member_count":1,"room_capacity":3}`,
+			Description:       "valid case, create room",
+			CurrentClient:     client1,
+			CurrentRooms:      []handler.CreateRoomRequest{},
+			CurrentJoinClient: nil,
+			CurrentJoinRoom:   handler.JoinRoomRequest{},
+			InClient:          client1,
+			InEventName:       event.CreateRoom,
+			InBody:            `{"user_name": "Celine Marks", "room_name": "Roger.Predovic", "room_capacity": 3}`,
+			OutClient:         client1,
+			OutBody:           `{"room_name":"Roger.Predovic","room_member_count":1,"room_capacity":3}`,
 		},
 		{
-			Description:   "valid case, join room",
-			CurrentClient: client2,
-			CurrentRooms:  []handler.CreateRoomRequest{{RoomName: "Charlotte.Ritchie", UserName: "Mr. Pablo Langworth", RoomCapacity: 4}},
-			InEventName:   event.JoinRoom,
-			InBody:        `{"user_name": "Malcolm Ferry", "room_name": "Charlotte.Ritchie"}`,
-			OutBody:       `{"room_name":"Charlotte.Ritchie","room_member_count":2,"room_capacity":4}`,
+			Description:       "valid case, join room",
+			CurrentClient:     client2,
+			CurrentRooms:      []handler.CreateRoomRequest{{RoomName: "Charlotte.Ritchie", UserName: "Mr. Pablo Langworth", RoomCapacity: 4}},
+			CurrentJoinClient: nil,
+			CurrentJoinRoom:   handler.JoinRoomRequest{},
+			InClient:          client1,
+			InEventName:       event.JoinRoom,
+			InBody:            `{"user_name": "Malcolm Ferry", "room_name": "Charlotte.Ritchie"}`,
+			OutClient:         client2,
+			OutBody:           `{"room_name":"Charlotte.Ritchie","room_member_count":2,"room_capacity":4}`,
+		},
+		{
+			Description:       "valid case, leave room",
+			CurrentClient:     client2,
+			CurrentRooms:      []handler.CreateRoomRequest{{RoomName: "Christ.Ondricka", UserName: "Mr. Pablo Langworth", RoomCapacity: 4}},
+			CurrentJoinClient: client1,
+			CurrentJoinRoom:   handler.JoinRoomRequest{UserName: "Stanton Fay Sr.", RoomName: "Christ.Ondricka"},
+			InClient:          client1,
+			InEventName:       event.LeaveRoom,
+			InBody:            `{"room_name": "Christ.Ondricka"}`,
+			OutClient:         client2,
+			OutBody:           `{"room_name":"Christ.Ondricka","room_member_count":1,"room_capacity":4}`,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			testutil.CreateRooms(client1, c.CurrentRooms)
+			testutil.CreateRooms(c.CurrentClient, c.CurrentRooms)
+			if c.CurrentJoinClient != nil {
+				testutil.JoinRoom(c.CurrentJoinClient, c.CurrentJoinRoom)
+			}
 			outBody := ""
-			c.CurrentClient.On(event.NewRoomStatus, func(payload string) {
+			c.OutClient.On(event.NewRoomStatus, func(payload string) {
 				outBody = payload
 			})
-			c.CurrentClient.Emit(c.InEventName, c.InBody)
+			c.InClient.Emit(c.InEventName, c.InBody)
 			time.Sleep(1 * time.Second)
 			assert.Equal(t, c.OutBody, outBody)
 

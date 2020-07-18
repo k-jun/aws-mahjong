@@ -19,6 +19,10 @@ func NewRoomRepository(wsserver *socketio.Server) *RoomRepository {
 	return &RoomRepository{wsserver: wsserver}
 }
 
+func (s *RoomRepository) BroadcastToRoom(roomName string, eventName string, payload string) {
+	s.wsserver.BroadcastToRoom("/", roomPrefix+roomName, eventName, payload)
+}
+
 func (s *RoomRepository) JoinRoom(conn socketio.Conn, roomName string) {
 	conn.Join(roomPrefix + roomName)
 

@@ -15,12 +15,6 @@ var (
 	RoomNotFound        = errors.New("room is not found")
 )
 
-type NewRoomStatus struct {
-	RoomName        string `json:"room_name"`
-	RoomMemberCount int    `json:"room_member_count"`
-	RoomCapacity    int    `json:"room_capacity"`
-}
-
 type CreateRoomRequest struct {
 	UserName     string `json:"user_name"`
 	RoomName     string `json:"room_name"`
@@ -34,24 +28,24 @@ func CreateRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.CreateRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.CreateRoom, err.Error()))
 			return
 		}
 
 		if err = roomUsecase.CreateRoom(s, body.UserName, body.RoomName, body.RoomCapacity); err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.CreateRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.CreateRoom, err.Error()))
 			return
 		}
 
 		resBody, err := roomStatus(roomUsecase, body.RoomName)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.NewRoomStatus, err.Error()))
+			s.Emit(event.RoomError, roomError(event.NewRoomStatus, err.Error()))
 			return
 		}
 
-		s.Emit(event.NewRoomStatus, resBody)
+		roomUsecase.NewRoomStatus(body.RoomName, resBody)
 	}
 }
 
@@ -66,23 +60,22 @@ func JoinRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.JoinRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.JoinRoom, err.Error()))
 			return
 		}
 		if err = roomUsecase.JoinRoom(s, body.UserName, body.RoomName); err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.JoinRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.JoinRoom, err.Error()))
 			return
 		}
 
 		resBody, err := roomStatus(roomUsecase, body.RoomName)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.NewRoomStatus, err.Error()))
+			s.Emit(event.RoomError, roomError(event.NewRoomStatus, err.Error()))
 			return
 		}
-		s.Emit(event.NewRoomStatus, resBody)
-
+		roomUsecase.NewRoomStatus(body.RoomName, resBody)
 	}
 }
 
@@ -96,13 +89,22 @@ func LeaveRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		err := json.Unmarshal([]byte(bodyStr), &body)
 		if err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.LeaveRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.LeaveRoom, err.Error()))
 			return
 		}
 
 		if err = roomUsecase.LeaveRoom(s, body.RoomName); err != nil {
 			fmt.Println(err)
-			s.Emit(event.RoomError, roomError(s, event.LeaveRoom, err.Error()))
+			s.Emit(event.RoomError, roomError(event.LeaveRoom, err.Error()))
+			return
 		}
+
+		resBody, err := roomStatus(roomUsecase, body.RoomName)
+		if err != nil {
+			fmt.Println(err)
+			s.Emit(event.RoomError, roomError(event.NewRoomStatus, err.Error()))
+			return
+		}
+		roomUsecase.NewRoomStatus(body.RoomName, resBody)
 	}
 }

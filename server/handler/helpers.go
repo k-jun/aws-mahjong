@@ -3,9 +3,13 @@ package handler
 import (
 	"aws-mahjong/usecase"
 	"encoding/json"
-
-	socketio "github.com/googollee/go-socket.io"
 )
+
+type NewRoomStatus struct {
+	RoomName        string `json:"room_name"`
+	RoomMemberCount int    `json:"room_member_count"`
+	RoomCapacity    int    `json:"room_capacity"`
+}
 
 func roomStatus(roomUsecase usecase.RoomUsecase, roomName string) (string, error) {
 
@@ -32,7 +36,7 @@ type RoomErrorResponse struct {
 	ErrorMessage string `json:"error_message"`
 }
 
-func roomError(s socketio.Conn, eventName string, errorMessage string) string {
+func roomError(eventName string, errorMessage string) string {
 	resBody := RoomErrorResponse{
 		EventName:    eventName,
 		ErrorMessage: errorMessage,
