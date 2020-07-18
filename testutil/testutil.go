@@ -16,9 +16,14 @@ func CreateRoom(client *socketio_client.Client, room handler.CreateRoomRequest) 
 	time.Sleep(1 * time.Second)
 }
 
-func CreateRooms(client *socketio_client.Client, roomNames []handler.CreateRoomRequest) {
-	for _, room := range roomNames {
+func CreateRooms(client *socketio_client.Client, rooms []handler.CreateRoomRequest) {
+	for _, room := range rooms {
 		CreateRoom(client, room)
-
 	}
+}
+
+func JoinRoom(client *socketio_client.Client, room handler.JoinRoomRequest) {
+	body, _ := json.Marshal(&room)
+	client.Emit(event.JoinRoom, string(body))
+	time.Sleep(1 * time.Second)
 }

@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	GameNotFoundErr = errors.New("board not found")
-	GameIsNil       = errors.New("baord is nil")
+	GameNotFoundErr = errors.New("game not found")
+	GameIsNil       = errors.New("game is nil")
 	RoomNameIsEmpry = errors.New("roomName is empty")
 )
 

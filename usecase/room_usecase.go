@@ -106,8 +106,11 @@ func (u *RoomUsecaseImpl) JoinRoom(s socketio.Conn, username string, roomName st
 }
 
 func (u *RoomUsecaseImpl) LeaveRoom(s socketio.Conn, roomName string) error {
-	u.roomRepo.LeaveRoom(s, roomName)
 	err := u.gameRepo.Remove(roomName)
+	if err != nil {
+		return err
+	}
+	u.roomRepo.LeaveRoom(s, roomName)
 	return err
 }
 

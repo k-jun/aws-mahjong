@@ -212,20 +212,72 @@ func TestJoinRoom(t *testing.T) {
 
 	client, err := socketio_client.NewClient(socketUri, opts)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			isError := ""
+			outError := ""
 			testutil.CreateRooms(client, c.CurrentRooms)
 
 			client.On(event.JoinRoomError, func(payload string) {
-				isError = payload
+				outError = payload
 			})
 			client.Emit(event.JoinRoom, c.InBody)
 			time.Sleep(1 * time.Second)
-			assert.Equal(t, c.OutError, isError)
+			assert.Equal(t, c.OutError, outError)
+		})
+	}
+}
+
+func TestLeaveRoom(t *testing.T) {
+	client1, err := socketio_client.NewClient(socketUri, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client2, err := socketio_client.NewClient(socketUri, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cases := []struct {
+		Description     string
+		CurrentClient   *socketio_client.Client
+		CurrentRooms    []handler.CreateRoomRequest
+		CurrentJoinRoom handler.JoinRoomRequest
+		InBody          string
+		OutError        string
+	}{
+		{
+			Description:     "valid case",
+			CurrentClient:   client2,
+			CurrentRooms:    []handler.CreateRoomRequest{{RoomName: "uArmstrong", UserName: "Frances Schamberger", RoomCapacity: 3}},
+			CurrentJoinRoom: handler.JoinRoomRequest{RoomName: "uArmstrong", UserName: "Virgie Ankunding III"},
+			InBody:          `{"room_name": "uArmstrong"}`,
+			OutError:        "",
+		},
+		{
+			Description:     "invalid case, roomName not found",
+			CurrentClient:   client2,
+			CurrentRooms:    []handler.CreateRoomRequest{{RoomName: "Bud.Kirlin", UserName: "Dr. Lucas Simonis Sr.", RoomCapacity: 3}},
+			CurrentJoinRoom: handler.JoinRoomRequest{RoomName: "Bud.Kirlin", UserName: "Virgie Ankunding III"},
+			InBody:          `{"room_name": "Roel.Cummerata"}`,
+			OutError:        repository.GameNotFoundErr.Error(),
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			testutil.CreateRooms(client1, c.CurrentRooms)
+			testutil.JoinRoom(c.CurrentClient, c.CurrentJoinRoom)
+			outError := ""
+
+			c.CurrentClient.On(event.LeaveRoomError, func(payload string) {
+				outError = payload
+			})
+
+			c.CurrentClient.Emit(event.LeaveRoom, c.InBody)
+			time.Sleep(1 * time.Second)
+			assert.Equal(t, c.OutError, outError)
 		})
 	}
 }
