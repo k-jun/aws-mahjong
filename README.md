@@ -169,7 +169,7 @@ error_message
 error_message
 ```
 
-### [ ] new_room_status
+### [x] new_room_status
 
 ```json
 {
