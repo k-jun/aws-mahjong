@@ -145,7 +145,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ## Server Events
 
 
-### [ ] room_error
+### [x] room_error
 
 エラーメッセージの文字列が帰ってくる。
 部屋の作成、参加、退出などのエラーを返す。
