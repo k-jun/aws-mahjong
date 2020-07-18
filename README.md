@@ -188,39 +188,118 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ```json
 {
   "bakaze": "east",
-  "deck_card_count": 36, 
-  "oya_player_index": 1,
-  "turn_player_index": 0,
-  "jicha_player_index": 2,
-  "players": [
-    {
-      "name": "",
-      "zikaze": "east",
-      "tsumo": "manzu3",
-      "hand": ["hanzu3", "souzu3"],
-      "kawa": [
-        {"isSide": false, "name": "manzu3"},
-        {"isSide": false, "name": "manzu3"}
+  "deck_count": 36, 
+  "jicha": {
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "hand": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
       ],
-      "naki_actions": {
-        "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
-        "kan": [],
-        "chii": [["manzu1", "manzu2"]]
-      },
-      "naki": [
-        [
-          {"isOpen": false, "isSide": false, "name": "hatu"},
-          {"isOpen": false, "isSide": false, "name": "hatu"},
-          {"isOpen": false, "isSide": true, "name": "hatu"}
-        ],
-        [
-          {"isOpen": true, "isSide": false, "name": "manzu1"},
-          {"isOpen": false, "isSide": false, "name": "manzu1"},
-          {"isOpen": false, "isSide": false, "name": "manzu1"},
-          {"isOpen": true, "isSide": false, "name": "manzu1"}
-        ]
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
       ]
-    }
-  ]
+    ]
+  },
+  "shimocha": {
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "hand": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
+      ],
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      ]
+    ]
+  },
+  "toimen": {
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "hand": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
+      ],
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      ]
+    ]
+  },
+  "kamicha": {
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "hand": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
+      ],
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      ]
+    ]
+  }
 }
 ```
