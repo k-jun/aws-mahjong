@@ -7,6 +7,7 @@ import (
 	"aws-mahjong/naki"
 	"aws-mahjong/tile"
 	"errors"
+	"fmt"
 )
 
 type Player interface {
@@ -16,6 +17,7 @@ type Player interface {
 	DahaiDone(deadTile *tile.Tile, isSide bool) error
 	Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error
 	CanNakiActions(inTile *tile.Tile) []*naki.NakiAction
+	Status(inTile *tile.Tile) *PlayerStatus
 }
 
 var (
@@ -132,4 +134,49 @@ func (p *PlayerImpl) canChii(inTile *tile.Tile) bool {
 func (p *PlayerImpl) canKan(inTile *tile.Tile) bool {
 	pairs := p.hand.FindKanPair(inTile)
 	return len(pairs) != 0
+}
+
+type PlayerStatus struct {
+	Name             string
+	Zikaze           string
+	Tsumo            string
+	Hand             []string
+	Kawa             []*kawa.KawaStatus
+	NakiActionStatus *NakiActionStatus
+	Naki             [][]*naki.NakiStatus
+}
+
+func (p *PlayerImpl) Status(nakiTile *tile.Tile) *PlayerStatus {
+	fmt.Println(p.naki)
+	fmt.Println(p.naki.Status())
+	return &PlayerStatus{
+		Name:             p.name,
+		Zikaze:           p.zikaze.Name(),
+		Tsumo:            p.safeTsumoName(),
+		Hand:             p.hand.Status(),
+		Kawa:             p.kawa.Status(),
+		NakiActionStatus: p.NakiActionStatus(nakiTile),
+		Naki:             p.naki.Status(),
+	}
+}
+
+func (p *PlayerImpl) safeTsumoName() string {
+	if p.tsumo == nil {
+		return ""
+	}
+	return p.tsumo.Name()
+}
+
+type NakiActionStatus struct {
+	Pon  [][2]*tile.Tile
+	Kan  [][3]*tile.Tile
+	Chii [][2]*tile.Tile
+}
+
+func (p *PlayerImpl) NakiActionStatus(inTile *tile.Tile) *NakiActionStatus {
+	return &NakiActionStatus{
+		Pon:  p.hand.FindPonPair(inTile),
+		Kan:  p.hand.FindKanPair(inTile),
+		Chii: p.hand.FindPonPair(inTile),
+	}
 }

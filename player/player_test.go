@@ -250,6 +250,64 @@ func TestNaki(t *testing.T) {
 	}
 }
 
+func TestStatus(t *testing.T) {
+	cases := []struct {
+		Description         string
+		CurrentName         string
+		CurrentHand         hand.Hand
+		CurrentKawa         kawa.Kawa
+		CurrentNaki         naki.Naki
+		CurrentTsumo        *tile.Tile
+		CurrentZihai        *tile.Tile
+		InTile              *tile.Tile
+		OutNakiActionStatus *NakiActionStatus
+		OutTsumo            string
+	}{
+		{
+			Description:  "valid case",
+			CurrentName:  "Edgar O'Connell I",
+			CurrentZihai: &tile.East,
+			CurrentTsumo: nil,
+			CurrentHand: &hand.HandMock{
+				ExpectedStatus: []string{"manzu1", "manzu2", "manzu3"},
+				ExpectedPair2:  [][2]*tile.Tile{{&tile.Chun, &tile.East}},
+				ExpectedPair3:  [][3]*tile.Tile{{&tile.Chun, &tile.East, &tile.Haku}},
+			},
+			CurrentKawa: &kawa.KawaMock{ExpectedStatus: []*kawa.KawaStatus{{Name: "manzu1", IsSide: true}, {Name: "east", IsSide: false}}},
+			CurrentNaki: &naki.NakiMock{ExpectedStatus: [][]*naki.NakiStatus{
+				{{Name: "pinzu1", IsOpen: true, IsSide: true}, {Name: "pinzu1", IsOpen: false, IsSide: true}, {Name: "pinzu1", IsOpen: false, IsSide: false}},
+				{{Name: "souzu1", IsOpen: true, IsSide: true}, {Name: "souzu1", IsOpen: false, IsSide: true}, {Name: "souzu1", IsOpen: false, IsSide: false}},
+			}},
+			InTile: &tile.Manzu4,
+			OutNakiActionStatus: &NakiActionStatus{
+				Pon:  [][2]*tile.Tile{{&tile.Chun, &tile.East}},
+				Chii: [][2]*tile.Tile{{&tile.Chun, &tile.East}},
+				Kan:  [][3]*tile.Tile{{&tile.Chun, &tile.East, &tile.Haku}},
+			},
+			OutTsumo: "",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			player := &PlayerImpl{
+				hand:   c.CurrentHand,
+				kawa:   c.CurrentKawa,
+				naki:   c.CurrentNaki,
+				zikaze: c.CurrentZihai,
+				tsumo:  c.CurrentTsumo,
+			}
+			status := player.Status(c.InTile)
+			assert.Equal(t, c.CurrentHand.Status(), status.Hand)
+			assert.Equal(t, c.CurrentKawa.Status(), status.Kawa)
+			assert.Equal(t, c.CurrentNaki.Status(), status.Naki)
+			assert.Equal(t, c.OutTsumo, status.Tsumo)
+			assert.Equal(t, c.OutNakiActionStatus, status.NakiActionStatus)
+
+		})
+	}
+}
+
 func blankDeck() deck.Deck {
 	deck := deck.NewDeck()
 	for {

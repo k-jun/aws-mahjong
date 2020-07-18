@@ -13,6 +13,7 @@ type PlayerMock struct {
 	ExpectedError       error
 	ExpectedTile        *tile.Tile
 	ExpectedNakiActions []*naki.NakiAction
+	ExpectedStatus      *PlayerStatus
 }
 
 func (p *PlayerMock) Hand() hand.Hand {
@@ -37,5 +38,10 @@ func (p *PlayerMock) Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha nak
 
 func (p *PlayerMock) CanNakiActions(inTile *tile.Tile) []*naki.NakiAction {
 	return p.ExpectedNakiActions
+
+}
+
+func (p *PlayerMock) Status(inTile *tile.Tile) *PlayerStatus {
+	return p.ExpectedStatus
 
 }
