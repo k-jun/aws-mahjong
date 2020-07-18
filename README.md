@@ -167,7 +167,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 }
 ```
 
-### [ ] game_start
+### [x] game_start
 
 ゲームの開始を通知するだけ。現状は空文字を返すのみ。
 
