@@ -152,21 +152,21 @@ func (b *BoardImpl) Status(playerID string) *BoardStatus {
 		DeckCound: b.deck.Count(),
 	}
 
-	playerIdx := 0
+	myIdx := 0
 	playerStatuses := []*player.PlayerStatus{}
 	for idx, player := range b.players {
 		playerStatus := player.Status(b.nakiTile)
 		if playerStatus.ID == playerID {
-			playerIdx = idx
+			myIdx = idx
 		}
 		playerStatuses = append(playerStatuses, playerStatus)
 	}
 
-	status.Oya = string(getCha(playerIdx, b.oya))
-	status.Turn = string(getCha(playerIdx, b.turn))
+	status.Oya = string(getCha(myIdx, b.oya))
+	status.Turn = string(getCha(myIdx, b.turn))
 
 	for idx, s := range playerStatuses {
-		switch getCha(playerIdx, idx) {
+		switch getCha(myIdx, idx) {
 		case Kamicha:
 			status.Kamicha = s
 		case Toimen:
