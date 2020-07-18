@@ -7,4 +7,6 @@ var (
 
 	NewRoomStatus = "new_room_status"
 	RoomError     = "room_error"
+
+	GameStart = "game_start"
 )

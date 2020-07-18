@@ -120,6 +120,11 @@ func (u *RoomUsecaseImpl) JoinRoom(s socketio.Conn, username string, roomName st
 		return RoomReachMaxMember
 	}
 	u.roomRepo.JoinRoom(s, roomName)
+
+	if u.roomRepo.RoomLen(roomName) == roomGame.Capacity() {
+		u.roomRepo.BroadcastToRoom(roomName, event.GameStart, "")
+	}
+
 	return nil
 }
 

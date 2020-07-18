@@ -27,3 +27,9 @@ func JoinRoom(client *socketio_client.Client, room handler.JoinRoomRequest) {
 	client.Emit(event.JoinRoom, string(body))
 	time.Sleep(1 * time.Second)
 }
+
+func JoinRooms(clients []*socketio_client.Client, room handler.JoinRoomRequest) {
+	for _, client := range clients {
+		JoinRoom(client, room)
+	}
+}
