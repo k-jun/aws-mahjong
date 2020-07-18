@@ -26,3 +26,7 @@ func (g *GameMock) RemoveUser(user *User) error {
 func (g *GameMock) Board() board.Board {
 	return g.ExpectedBoard
 }
+
+func (g *GameMock) GameStart() error {
+	return g.ExpectedError
+}

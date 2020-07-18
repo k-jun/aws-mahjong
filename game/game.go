@@ -2,6 +2,12 @@ package game
 
 import (
 	"aws-mahjong/board"
+	"aws-mahjong/deck"
+	"aws-mahjong/hand"
+	"aws-mahjong/kawa"
+	"aws-mahjong/naki"
+	"aws-mahjong/player"
+	"aws-mahjong/tile"
 	"errors"
 )
 
@@ -15,6 +21,7 @@ var (
 	UserNotFound          = errors.New("user is not found")
 	GameReachMaxMemberErr = errors.New("game already fulled")
 	GameCapacityInvalid   = errors.New("game capacity is invalid")
+	GameMemberInvalid     = errors.New("game member is invalid")
 )
 
 type User struct {
@@ -27,6 +34,7 @@ type Game interface {
 	RemoveUser(user *User) error
 	Capacity() int
 	Board() board.Board
+	GameStart() error
 }
 
 type GameImpl struct {
@@ -81,4 +89,33 @@ func (g *GameImpl) AddUser(user *User) error {
 	}
 	g.users = append(g.users, user)
 	return nil
+}
+
+func (g *GameImpl) GameStart() error {
+
+	if len(g.users) != g.capacity {
+		return GameMemberInvalid
+	}
+
+	newDeck := deck.NewDeck()
+	players := []player.Player{}
+
+	for idx, user := range g.users {
+		newHand := hand.NewHand()
+		newKawa := kawa.NewKawa()
+		newNaki := naki.NewNaki()
+		players = append(players, player.NewPlayer(
+			user.ID,
+			user.Name,
+			tile.Bakazes[0],
+			tile.Zikazes[idx],
+			newDeck,
+			newHand,
+			newKawa,
+			newNaki,
+		))
+	}
+	newBoard := board.NewBoard(newDeck, players)
+	g.board = newBoard
+	return g.board.Start()
 }

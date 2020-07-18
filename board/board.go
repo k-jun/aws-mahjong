@@ -13,6 +13,7 @@ type Board interface {
 	TurnPlayerDahai(outTile *tile.Tile) error
 	NextTurn()
 	ChangeTurn(playerIdx int) error
+	Start() error
 	Status() error
 }
 

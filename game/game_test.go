@@ -90,9 +90,52 @@ func TestRemoveUser(t *testing.T) {
 
 			err := game.RemoveUser(c.InUser)
 			assert.Equal(t, c.OutError, err)
+		})
+	}
 
+}
+
+func TestGameStart(t *testing.T) {
+	cases := []struct {
+		Description     string
+		CurrentCapacity int
+		CurrentUsers    []*User
+		OutError        error
+	}{
+		{
+			Description:     "valid case",
+			CurrentCapacity: 4,
+			CurrentUsers: []*User{
+				{ID: "1", Name: "Angela Hudson"},
+				{ID: "2", Name: "Angela Hudson"},
+				{ID: "3", Name: "Angela Hudson"},
+				{ID: "4", Name: "Angela Hudson"},
+			},
+			OutError: nil,
+		},
+		{
+			Description:     "invalid case",
+			CurrentCapacity: 3,
+			CurrentUsers: []*User{
+				{ID: "1", Name: "Angela Hudson"},
+				{ID: "2", Name: "Angela Hudson"},
+				{ID: "3", Name: "Angela Hudson"},
+				{ID: "4", Name: "Angela Hudson"},
+			},
+			OutError: GameMemberInvalid,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			game := GameImpl{
+				users:    c.CurrentUsers,
+				capacity: c.CurrentCapacity,
+			}
+
+			err := game.GameStart()
+			assert.Equal(t, c.OutError, err)
 		})
 
 	}
-
 }
