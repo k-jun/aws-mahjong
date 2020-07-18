@@ -281,3 +281,53 @@ func TestLeaveRoom(t *testing.T) {
 		})
 	}
 }
+
+func TestNewRoomStatus(t *testing.T) {
+	client1, err := socketio_client.NewClient(socketUri, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client2, err := socketio_client.NewClient(socketUri, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cases := []struct {
+		Description   string
+		CurrentClient *socketio_client.Client
+		CurrentRooms  []handler.CreateRoomRequest
+		InEventName   string
+		InBody        string
+		OutBody       string
+	}{
+		{
+			Description:   "valid case, create room",
+			CurrentClient: client2,
+			CurrentRooms:  []handler.CreateRoomRequest{},
+			InEventName:   event.CreateRoom,
+			InBody:        `{"user_name": "Celine Marks", "room_name": "Roger.Predovic", "room_capacity": 3}`,
+			OutBody:       `{"room_name":"Roger.Predovic","room_member_count":1,"room_capacity":3}`,
+		},
+		{
+			Description:   "valid case, join room",
+			CurrentClient: client2,
+			CurrentRooms:  []handler.CreateRoomRequest{{RoomName: "Charlotte.Ritchie", UserName: "Mr. Pablo Langworth", RoomCapacity: 4}},
+			InEventName:   event.JoinRoom,
+			InBody:        `{"user_name": "Malcolm Ferry", "room_name": "Charlotte.Ritchie"}`,
+			OutBody:       `{"room_name":"Charlotte.Ritchie","room_member_count":2,"room_capacity":4}`,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			testutil.CreateRooms(client1, c.CurrentRooms)
+			outBody := ""
+			c.CurrentClient.On(event.NewRoomStatus, func(payload string) {
+				outBody = payload
+			})
+			c.CurrentClient.Emit(c.InEventName, c.InBody)
+			time.Sleep(1 * time.Second)
+			assert.Equal(t, c.OutBody, outBody)
+
+		})
+	}
+}

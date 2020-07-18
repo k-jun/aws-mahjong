@@ -17,6 +17,7 @@ var (
 
 type RoomUsecase interface {
 	Rooms() []*RoomInfo
+	Room(roomName string) (*RoomInfo, error)
 	CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error
 	JoinRoom(s socketio.Conn, username string, roomName string) error
 	LeaveRoom(s socketio.Conn, roomName string) error
@@ -49,17 +50,28 @@ func (u *RoomUsecaseImpl) Rooms() []*RoomInfo {
 	sort.Slice(roomNames, func(i int, j int) bool { return roomNames[i] < roomNames[j] })
 
 	for _, roomName := range roomNames {
-		g, err := u.gameRepo.Find(roomName)
+		r, err := u.Room(roomName)
 		if err != nil {
 			continue
 		}
-		rooms = append(rooms, &RoomInfo{
-			Name:     roomName,
-			Len:      u.roomRepo.RoomLen(roomName),
-			Capacity: g.Capacity(),
-		})
+		rooms = append(rooms, r)
 	}
 	return rooms
+}
+
+func (u *RoomUsecaseImpl) Room(roomName string) (*RoomInfo, error) {
+
+	g, err := u.gameRepo.Find(roomName)
+	if err != nil {
+		return nil, RoomNotFound
+	}
+	foundRoom := &RoomInfo{
+		Name:     roomName,
+		Len:      u.roomRepo.RoomLen(roomName),
+		Capacity: g.Capacity(),
+	}
+
+	return foundRoom, nil
 }
 
 func (u *RoomUsecaseImpl) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {

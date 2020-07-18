@@ -15,6 +15,12 @@ var (
 	RoomNotFound        = errors.New("room is not found")
 )
 
+type NewRoomStatus struct {
+	RoomName        string `json:"room_name"`
+	RoomMemberCount int    `json:"room_member_count"`
+	RoomCapacity    int    `json:"room_capacity"`
+}
+
 type CreateRoomRequest struct {
 	UserName     string `json:"user_name"`
 	RoomName     string `json:"room_name"`
@@ -35,7 +41,17 @@ func CreateRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		if err = roomUsecase.CreateRoom(s, body.UserName, body.RoomName, body.RoomCapacity); err != nil {
 			fmt.Println(err)
 			s.Emit(event.CreateRoomError, err.Error())
+			return
 		}
+
+		resBody, err := roomStatus(roomUsecase, body.RoomName)
+		if err != nil {
+			fmt.Println(err)
+			s.Emit(event.CreateRoomError, err.Error())
+			return
+		}
+
+		s.Emit(event.NewRoomStatus, resBody)
 	}
 }
 
@@ -56,7 +72,16 @@ func JoinRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 		if err = roomUsecase.JoinRoom(s, body.UserName, body.RoomName); err != nil {
 			fmt.Println(err)
 			s.Emit(event.JoinRoomError, err.Error())
+			return
 		}
+
+		resBody, err := roomStatus(roomUsecase, body.RoomName)
+		if err != nil {
+			fmt.Println(err)
+			s.Emit(event.JoinRoomError, err.Error())
+			return
+		}
+		s.Emit(event.NewRoomStatus, resBody)
 
 	}
 }
