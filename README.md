@@ -28,7 +28,7 @@ api endpoint
 http://localhost:8000/
 ```
 
-### [ ]  GET `/rooms`
+### [x]  GET `/rooms`
 
 現在開かれている部屋の一覧を取得する。
 
@@ -90,7 +90,7 @@ http://localhost:8000/ws
 }
 ```
 
-### [ ] leave_room
+### [x] leave_room
 
 ほとんど使わないと思うが一応。ちなみに退出した場合にはそのゲームは即時終了する。
 socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、その際にも参加していたゲームは強制終了する。
