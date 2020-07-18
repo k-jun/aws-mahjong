@@ -92,8 +92,8 @@ http://localhost:8000/ws
 
 ### [x] leave_room
 
-ほとんど使わないと思うが一応。ちなみに退出した場合にはそのゲームは即時終了する。
-socket.ioは接続が切れた際に自動的にdisconnectしてくれるが、その際にも参加していたゲームは強制終了する。
+現在joinしている部屋から退出する。ちなみにゲームが開始されてから退出した場合は開始中の
+ゲームは強制終了する。
 
 ```json
 {
@@ -145,28 +145,16 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ## Server Events
 
 
-### [x] create_room_error
+### [ ] room_error
 
 エラーメッセージの文字列が帰ってくる。
+部屋の作成、参加、退出などのエラーを返す。
 
 ```
-error_message
-```
-
-### [x] join_room_error
-
-エラーメッセージの文字列が帰ってくる。
-
-```
-error_message
-```
-
-### [x] leave_room_error
-
-エラーメッセージの文字列が返ってくる。
-
-```
-error_message
+{
+  "event_name": "create_room"
+  "error_message": "room_already_taken"
+}
 ```
 
 ### [x] new_room_status
