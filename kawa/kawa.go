@@ -5,6 +5,7 @@ import "aws-mahjong/tile"
 type Kawa interface {
 	Tiles() []*KawaTile
 	Add(inTile *tile.Tile, isSide bool) error
+	Status() []*KawaStatus
 }
 
 type KawaTile struct {
@@ -36,4 +37,21 @@ func (k *KawaImpl) Tiles() []*KawaTile {
 func (k *KawaImpl) Add(inTile *tile.Tile, isSide bool) error {
 	k.tiles = append(k.tiles, NewKawaTile(inTile, isSide))
 	return nil
+}
+
+type KawaStatus struct {
+	IsSide bool
+	Name   string
+}
+
+func (k *KawaImpl) Status() []*KawaStatus {
+	status := []*KawaStatus{}
+
+	for _, kawatile := range k.Tiles() {
+		status = append(status, &KawaStatus{
+			IsSide: kawatile.isSide,
+			Name:   kawatile.tile.Name(),
+		})
+	}
+	return status
 }
