@@ -9,6 +9,7 @@ import (
 
 type Deck interface {
 	Draw() (*tile.Tile, error)
+	Count() int
 }
 
 type DeckImpl struct {
@@ -29,6 +30,10 @@ func NewDeck() Deck {
 	deck := DeckImpl{tiles: tiles}
 	deck.shuffle()
 	return &deck
+}
+
+func (d *DeckImpl) Count() int {
+	return len(d.tiles)
 }
 
 func (d *DeckImpl) Draw() (*tile.Tile, error) {
