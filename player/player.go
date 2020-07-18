@@ -136,6 +136,7 @@ func (p *PlayerImpl) canKan(inTile *tile.Tile) bool {
 }
 
 type PlayerStatus struct {
+	ID               string
 	Name             string
 	Zikaze           string
 	Tsumo            string
@@ -147,6 +148,7 @@ type PlayerStatus struct {
 
 func (p *PlayerImpl) Status(nakiTile *tile.Tile) *PlayerStatus {
 	return &PlayerStatus{
+		ID:               p.id,
 		Name:             p.name,
 		Zikaze:           p.zikaze.Name(),
 		Tsumo:            p.safeTsumoName(),

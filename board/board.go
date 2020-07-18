@@ -14,7 +14,6 @@ type Board interface {
 	NextTurn()
 	ChangeTurn(playerIdx int) error
 	Start() error
-	Status() error
 }
 
 type BoardImpl struct {
@@ -126,8 +125,75 @@ func (b *BoardImpl) ChangeTurn(playerIdx int) error {
 	return nil
 }
 
-func (b *BoardImpl) Status() error {
-	// TODO send all information to client
-	// TODO create view layer to wrap information
-	return nil
+type BoardStatus struct {
+	Bakaze    string
+	DeckCound int
+	Oya       string
+	Turn      string
+	Jicha     *player.PlayerStatus
+	Kamicha   *player.PlayerStatus
+	Toimen    *player.PlayerStatus
+	Shimocha  *player.PlayerStatus
+}
+
+type Cha string
+
+var (
+	Kamicha  Cha = "kamicha"
+	Toimen   Cha = "toimen"
+	Shimocha Cha = "shimocha"
+	Jicha    Cha = "jicha"
+	Nil      Cha = ""
+)
+
+func (b *BoardImpl) Status(playerID string) *BoardStatus {
+	status := &BoardStatus{
+		Bakaze:    b.bakaze.Name(),
+		DeckCound: b.deck.Count(),
+	}
+
+	playerIdx := 0
+	playerStatuses := []*player.PlayerStatus{}
+	for idx, player := range b.players {
+		playerStatus := player.Status(b.nakiTile)
+		if playerStatus.ID == playerID {
+			playerIdx = idx
+		}
+		playerStatuses = append(playerStatuses, playerStatus)
+	}
+
+	status.Oya = string(getCha(playerIdx, b.oya))
+	status.Turn = string(getCha(playerIdx, b.turn))
+
+	for idx, s := range playerStatuses {
+		switch getCha(playerIdx, idx) {
+		case Kamicha:
+			status.Kamicha = s
+		case Toimen:
+			status.Toimen = s
+		case Shimocha:
+			status.Shimocha = s
+		case Jicha:
+			status.Jicha = s
+		default:
+			continue
+		}
+	}
+
+	return status
+}
+
+func getCha(jichaIdx int, tachaIdx int) Cha {
+	switch jichaIdx - tachaIdx {
+	case 3, -1:
+		return Shimocha
+	case 2, -2:
+		return Toimen
+	case 1, -3:
+		return Kamicha
+	case 0:
+		return Jicha
+	default:
+		return Nil
+	}
 }

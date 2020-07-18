@@ -274,3 +274,89 @@ func TestStart(t *testing.T) {
 		})
 	}
 }
+
+func TestStatus(t *testing.T) {
+
+	status1 := &player.PlayerStatus{ID: "123"}
+	status2 := &player.PlayerStatus{ID: "124"}
+	status3 := &player.PlayerStatus{ID: "125"}
+	status4 := &player.PlayerStatus{ID: "126"}
+
+	cases := []struct {
+		Description    string
+		CurrentBakaze  *tile.Tile
+		CurrentDeck    deck.Deck
+		CurrentPlayers []player.Player
+		CurrentTurn    int
+		CurrentOya     int
+		InPlayerID     string
+		OutOya         string
+		OutTurn        string
+		OutJicha       *player.PlayerStatus
+		OutShimocha    *player.PlayerStatus
+		OutToimen      *player.PlayerStatus
+		OutKamicha     *player.PlayerStatus
+	}{
+		{
+			Description:   "valid case",
+			CurrentBakaze: &tile.East,
+			CurrentDeck:   deck.NewDeck(),
+			CurrentPlayers: []player.Player{
+				&player.PlayerMock{ExpectedStatus: status1},
+				&player.PlayerMock{ExpectedStatus: status2},
+				&player.PlayerMock{ExpectedStatus: status3},
+				&player.PlayerMock{ExpectedStatus: status4},
+			},
+			CurrentOya:  0,
+			CurrentTurn: 0,
+			InPlayerID:  status1.ID,
+			OutOya:      "jicha",
+			OutTurn:     "jicha",
+			OutJicha:    status1,
+			OutShimocha: status2,
+			OutToimen:   status3,
+			OutKamicha:  status4,
+		},
+		{
+			Description:   "valid case, shimocha",
+			CurrentBakaze: &tile.East,
+			CurrentDeck:   deck.NewDeck(),
+			CurrentPlayers: []player.Player{
+				&player.PlayerMock{ExpectedStatus: status1},
+				&player.PlayerMock{ExpectedStatus: status2},
+				&player.PlayerMock{ExpectedStatus: status3},
+				&player.PlayerMock{ExpectedStatus: status4},
+			},
+			CurrentOya:  2,
+			CurrentTurn: 3,
+			InPlayerID:  status2.ID,
+			OutOya:      "shimocha",
+			OutTurn:     "toimen",
+			OutJicha:    status2,
+			OutShimocha: status3,
+			OutToimen:   status4,
+			OutKamicha:  status1,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			board := BoardImpl{
+				bakaze:  c.CurrentBakaze,
+				deck:    c.CurrentDeck,
+				players: c.CurrentPlayers,
+				turn:    c.CurrentTurn,
+				oya:     c.CurrentOya,
+			}
+
+			status := board.Status(c.InPlayerID)
+			assert.Equal(t, c.OutOya, status.Oya)
+			assert.Equal(t, c.OutTurn, status.Turn)
+			assert.Equal(t, c.OutJicha, status.Jicha)
+			assert.Equal(t, c.OutShimocha, status.Shimocha)
+			assert.Equal(t, c.OutToimen, status.Toimen)
+			assert.Equal(t, c.OutKamicha, status.Kamicha)
+
+		})
+	}
+}
