@@ -60,3 +60,25 @@ func JoinRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
 
 	}
 }
+
+type LeaveRoomRequest struct {
+	RoomName string `json:"room_name"`
+}
+
+func LeaveRoom(roomUsecase usecase.RoomUsecase) func(socketio.Conn, string) {
+	return func(s socketio.Conn, bodyStr string) {
+		body := LeaveRoomRequest{}
+		err := json.Unmarshal([]byte(bodyStr), &body)
+		if err != nil {
+			fmt.Println(err)
+			s.Emit(event.LeaveRoomError, err.Error())
+			return
+		}
+
+		if err = roomUsecase.LeaveRoom(s, body.RoomName); err != nil {
+			fmt.Println(err)
+			s.Emit(event.LeaveRoomError, err.Error())
+		}
+	}
+
+}

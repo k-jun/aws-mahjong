@@ -7,4 +7,5 @@ var (
 
 	CreateRoomError = "create_room_error"
 	JoinRoomError   = "join_room_error"
+	LeaveRoomError  = "leave_room_error"
 )

@@ -20,6 +20,7 @@ func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUs
 	http.Handle("/socket.io/", wsserver)
 	wsserver.OnEvent("/", event.CreateRoom, handler.CreateRoom(roomUsecase))
 	wsserver.OnEvent("/", event.JoinRoom, handler.JoinRoom(roomUsecase))
+	wsserver.OnEvent("/", event.LeaveRoom, handler.LeaveRoom(roomUsecase))
 
 	wsserver.OnConnect("/", func(s socketio.Conn) error {
 		fmt.Println("connected:", s.ID())
@@ -28,6 +29,6 @@ func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUs
 
 	wsserver.OnDisconnect("/", func(s socketio.Conn, _ string) {
 		fmt.Println("disconnected:", s.ID())
-		s.LeaveAll()
+		roomUsecase.LeaveAllRoom(s)
 	})
 }

@@ -161,6 +161,14 @@ error_message
 error_message
 ```
 
+### [x] leave_room_error
+
+エラーメッセージの文字列が返ってくる。
+
+```
+error_message
+```
+
 ### [ ] new_room_status
 
 ```json
