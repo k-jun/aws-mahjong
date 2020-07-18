@@ -103,6 +103,9 @@ func (h *HandImpl) Replace(inTile *tile.Tile, outTile *tile.Tile) (*tile.Tile, e
 
 func (h *HandImpl) FindPonPair(inTile *tile.Tile) [][2]*tile.Tile {
 	pairs := [][2]*tile.Tile{}
+	if inTile == nil {
+		return pairs
+	}
 
 	hitTiles := []*tile.Tile{}
 
@@ -138,6 +141,9 @@ func (h *HandImpl) FindPonPair(inTile *tile.Tile) [][2]*tile.Tile {
 
 func (h *HandImpl) FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile {
 	pairs := [][2]*tile.Tile{}
+	if inTile == nil {
+		return pairs
+	}
 
 	if inTile.IsZihai() {
 		return pairs
@@ -179,6 +185,9 @@ func (h *HandImpl) FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile {
 
 func (h *HandImpl) FindKanPair(inTile *tile.Tile) [][3]*tile.Tile {
 	pairs := [][3]*tile.Tile{}
+	if inTile == nil {
+		return pairs
+	}
 
 	hitTiles := []*tile.Tile{}
 

@@ -7,7 +7,6 @@ import (
 	"aws-mahjong/naki"
 	"aws-mahjong/tile"
 	"errors"
-	"fmt"
 )
 
 type Player interface {
@@ -147,8 +146,6 @@ type PlayerStatus struct {
 }
 
 func (p *PlayerImpl) Status(nakiTile *tile.Tile) *PlayerStatus {
-	fmt.Println(p.naki)
-	fmt.Println(p.naki.Status())
 	return &PlayerStatus{
 		Name:             p.name,
 		Zikaze:           p.zikaze.Name(),
