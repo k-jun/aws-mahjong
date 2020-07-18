@@ -144,3 +144,46 @@ func TestAddTileToSet(t *testing.T) {
 		})
 	}
 }
+
+func TestStatus(t *testing.T) {
+	cases := []struct {
+		Description string
+		CurrentSets [][]*NakiTile
+		OutStatus   [][]*NakiStatus
+	}{
+		{
+			Description: "valid case",
+			CurrentSets: [][]*NakiTile{
+				{
+					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
+					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: true},
+					&NakiTile{tile: &tile.Chun, isOpen: true, isSide: false},
+				},
+				{
+					&NakiTile{tile: &tile.Hatu, isOpen: true, isSide: false},
+					&NakiTile{tile: &tile.Hatu, isOpen: true, isSide: true},
+					&NakiTile{tile: &tile.Hatu, isOpen: true, isSide: false},
+				},
+			},
+			OutStatus: [][]*NakiStatus{
+				{
+					&NakiStatus{Name: tile.Chun.Name(), IsOpen: true, IsSide: false},
+					&NakiStatus{Name: tile.Chun.Name(), IsOpen: true, IsSide: true},
+					&NakiStatus{Name: tile.Chun.Name(), IsOpen: true, IsSide: false},
+				},
+				{
+					&NakiStatus{Name: tile.Hatu.Name(), IsOpen: true, IsSide: false},
+					&NakiStatus{Name: tile.Hatu.Name(), IsOpen: true, IsSide: true},
+					&NakiStatus{Name: tile.Hatu.Name(), IsOpen: true, IsSide: false},
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			naki := NakiImpl{sets: c.CurrentSets}
+			assert.Equal(t, c.OutStatus, naki.Status())
+		})
+	}
+}

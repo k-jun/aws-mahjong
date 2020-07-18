@@ -33,6 +33,7 @@ type Naki interface {
 	AddSet(tiles []*tile.Tile, cha NakiFrom) error
 	AddTileToSet(inTile *tile.Tile) error
 	Sets() [][]*NakiTile
+	Status() [][]*NakiStatus
 }
 
 var (
@@ -110,4 +111,27 @@ func (n *NakiImpl) AddTileToSet(inTile *tile.Tile) error {
 	}
 
 	return SetNotFoundErr
+}
+
+type NakiStatus struct {
+	IsOpen bool
+	IsSide bool
+	Name   string
+}
+
+func (n *NakiImpl) Status() [][]*NakiStatus {
+	status := [][]*NakiStatus{}
+
+	for _, set := range n.Sets() {
+		statusSet := []*NakiStatus{}
+		for _, nakiTile := range set {
+			statusSet = append(statusSet, &NakiStatus{
+				Name:   nakiTile.tile.Name(),
+				IsOpen: nakiTile.isOpen,
+				IsSide: nakiTile.isSide,
+			})
+		}
+		status = append(status, statusSet)
+	}
+	return status
 }
