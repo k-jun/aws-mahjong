@@ -3,6 +3,7 @@
 package server
 
 import (
+	"aws-mahjong/game"
 	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
@@ -57,18 +58,18 @@ func TestRooms(t *testing.T) {
 	}{
 		{
 			Description:  "valid case, single room",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Fatima.Reilly", RoomCapacity: 2, UserName: "Rosalyn King"}},
-			OutRooms:     []handler.RoomsResponse{{RoomName: "Fatima.Reilly", RoomCapacity: 2, RoomMemberCount: 1}},
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Fatima.Reilly", RoomCapacity: 3, UserName: "Rosalyn King"}},
+			OutRooms:     []handler.RoomsResponse{{RoomName: "Fatima.Reilly", RoomCapacity: 3, RoomMemberCount: 1}},
 		},
 		{
 			Description: "valid case, multi rooms",
 			CurrentRooms: []handler.CreateRoomRequest{
 				{RoomName: "Wilford30", RoomCapacity: 3, UserName: "Rosalyn King"},
-				{RoomName: "Fatima.Reilly", RoomCapacity: 2, UserName: "Rosalyn King"},
+				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, UserName: "Rosalyn King"},
 				{RoomName: "Vincent62", RoomCapacity: 3, UserName: "Rosalyn King"},
 			},
 			OutRooms: []handler.RoomsResponse{
-				{RoomName: "Fatima.Reilly", RoomCapacity: 2, RoomMemberCount: 1},
+				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, RoomMemberCount: 1},
 				{RoomName: "Vincent62", RoomCapacity: 3, RoomMemberCount: 1},
 				{RoomName: "Wilford30", RoomCapacity: 3, RoomMemberCount: 1},
 			},
@@ -90,7 +91,20 @@ func TestRooms(t *testing.T) {
 			bytes, err := ioutil.ReadAll(response.Body)
 			resBody := []handler.RoomsResponse{}
 			err = json.Unmarshal(bytes, &resBody)
-			assert.Equal(t, c.OutRooms, resBody)
+
+			// really bad checking
+			for _, room := range c.OutRooms {
+				isExist := false
+				for _, resRoom := range resBody {
+					if resRoom.RoomName != room.RoomName {
+						continue
+					}
+					isExist = true
+					assert.Equal(t, room.RoomCapacity, resRoom.RoomCapacity)
+					assert.Equal(t, room.RoomMemberCount, resRoom.RoomMemberCount)
+				}
+				assert.Equal(t, true, isExist)
+			}
 
 		})
 	}
@@ -107,37 +121,37 @@ func TestCreateRoom(t *testing.T) {
 		Description  string
 		CurrentRooms []handler.CreateRoomRequest
 		InBody       string
-		OutError     bool
+		OutError     string
 	}{
 		{
 			Description:  "valid case",
 			CurrentRooms: []handler.CreateRoomRequest{},
-			InBody:       `{"user_name": "Malcolm Ferry", "room_name": "repellendus", "room_capacity": 1}`,
-			OutError:     false,
+			InBody:       `{"user_name": "Malcolm Ferry", "room_name": "repellendus", "room_capacity": 3}`,
+			OutError:     "",
 		},
 		{
 			Description:  "invalid case, name already taken",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "aut", UserName: "Ansel66", RoomCapacity: 2}},
-			InBody:       `{"user_name": "Mireya VonRueden", "room_name": "aut", "room_capacity": 2}`,
-			OutError:     true,
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "aut", UserName: "Ansel66", RoomCapacity: 3}},
+			InBody:       `{"user_name": "Mireya VonRueden", "room_name": "aut", "room_capacity": 3}`,
+			OutError:     usecase.RoomAlraedyTakenErr.Error(),
 		},
 		{
 			Description:  "invalid case, invalid json",
 			CurrentRooms: []handler.CreateRoomRequest{},
-			InBody:       `{user_name": "Mireya VonRueden", "room_name": "repellendus", "room_capacity": 2}`,
-			OutError:     true,
+			InBody:       `{user_name": "Mireya VonRueden", "room_name": "Emerald.Haley", "room_capacity": 3}`,
+			OutError:     "invalid character 'u' looking for beginning of object key string",
 		},
 		{
 			Description:  "invalid case, invalid capacity",
 			CurrentRooms: []handler.CreateRoomRequest{},
-			InBody:       `{user_name": "Mireya VonRueden", "room_name": "repellendus", "room_capacity": 0}`,
-			OutError:     true,
+			InBody:       `{"user_name": "Mireya VonRueden", "room_name": "Ullrich.Neha", "room_capacity": 0}`,
+			OutError:     game.GameCapacityInvalid.Error(),
 		},
 		{
 			Description:  "invalid case, invalid capacity",
 			CurrentRooms: []handler.CreateRoomRequest{},
-			InBody:       `{user_name": "Mireya VonRueden", "room_name": "repellendus", "room_capacity": -1}`,
-			OutError:     true,
+			InBody:       `{"user_name": "Mireya VonRueden", "room_name": "Phoebe.Abshire", "room_capacity": -1}`,
+			OutError:     game.GameCapacityInvalid.Error(),
 		},
 	}
 
@@ -148,16 +162,16 @@ func TestCreateRoom(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			isError := false
+			outError := ""
 			testutil.CreateRooms(client, c.CurrentRooms)
 
 			client.On(event.CreateRoomError, func(payload string) {
-				isError = true
+				outError = payload
 			})
 
 			client.Emit(event.CreateRoom, c.InBody)
 			time.Sleep(1 * time.Second)
-			assert.Equal(t, c.OutError, isError)
+			assert.Equal(t, c.OutError, outError)
 		})
 	}
 }
@@ -168,31 +182,31 @@ func TestJoinRoom(t *testing.T) {
 		Description  string
 		CurrentRooms []handler.CreateRoomRequest
 		InBody       string
-		OutError     bool
+		OutError     string
 	}{
 		{
 			Description:  "valid case",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Burdette75", UserName: "Christ Konopelski DDS", RoomCapacity: 2}},
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Burdette75", UserName: "Christ Konopelski DDS", RoomCapacity: 4}},
 			InBody:       `{"user_name": "Malcolm Ferry", "room_name": "Burdette75"}`,
-			OutError:     false,
+			OutError:     "",
 		},
 		{
 			Description:  "invalid case, room does not exist",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Rowe.Madilyn", UserName: "Christ Konopelski DDS", RoomCapacity: 2}},
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Rowe.Madilyn", UserName: "Christ Konopelski DDS", RoomCapacity: 3}},
 			InBody:       `{"user_name": "Malcolm Ferry", "room_name": "wWhite"}`,
-			OutError:     true,
+			OutError:     usecase.RoomNotFound.Error(),
 		},
 		{
 			Description:  "invalid case, invalid json",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Kathryn06", UserName: "Noble Heidenreich II", RoomCapacity: 2}},
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Kathryn06", UserName: "Noble Heidenreich II", RoomCapacity: 4}},
 			InBody:       `"user_name": "Malcolm Ferry", "room_name": "Kathryn06"}`,
-			OutError:     true,
+			OutError:     "invalid character ':' after top-level value",
 		},
 		{
 			Description:  "invalid case, capacity over",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Vance40", UserName: "Noble Heidenreich II", RoomCapacity: 1}},
+			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Vance40", UserName: "Noble Heidenreich II", RoomCapacity: 3}},
 			InBody:       `{"user_name": "Malcolm Ferry", "room_name": "Vance40"}`,
-			OutError:     true,
+			OutError:     "",
 		},
 	}
 
@@ -203,11 +217,11 @@ func TestJoinRoom(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			isError := false
+			isError := ""
 			testutil.CreateRooms(client, c.CurrentRooms)
 
 			client.On(event.JoinRoomError, func(payload string) {
-				isError = true
+				isError = payload
 			})
 			client.Emit(event.JoinRoom, c.InBody)
 			time.Sleep(1 * time.Second)

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	RoomAlraedyTokenErr = errors.New("room already token")
+	RoomAlraedyTakenErr = errors.New("room already taken")
 	RoomNotFound        = errors.New("room is not found")
 	RoomReachMaxMember  = errors.New("room already fulled")
 )
@@ -65,11 +65,15 @@ func (u *RoomUsecaseImpl) Rooms() []*RoomInfo {
 func (u *RoomUsecaseImpl) CreateRoom(s socketio.Conn, username string, roomName string, roomCapacity int) error {
 
 	if u.roomRepo.RoomLen(roomName) != 0 {
-		return RoomAlraedyTokenErr
+		return RoomAlraedyTakenErr
 	}
 
 	user := &game.User{ID: s.ID(), Name: username}
-	err := u.gameRepo.Add(roomName, game.NewGame(roomCapacity, user))
+	newGame, err := game.NewGame(roomCapacity, user)
+	if err != nil {
+		return err
+	}
+	err = u.gameRepo.Add(roomName, newGame)
 	if err != nil {
 		return err
 	}

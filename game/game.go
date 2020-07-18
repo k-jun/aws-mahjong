@@ -6,8 +6,14 @@ import (
 )
 
 var (
+	capacityMax = 4
+	capacityMin = 3
+)
+
+var (
 	UserIsEmptyErr        = errors.New("user can't be empty")
 	GameReachMaxMemberErr = errors.New("game already fulled")
+	GameCapacityInvalid   = errors.New("game capacity is invalid")
 )
 
 type User struct {
@@ -26,12 +32,18 @@ type GameImpl struct {
 	board    *board.Board
 }
 
-func NewGame(capacity int, user *User) Game {
-	return &GameImpl{
+func NewGame(capacity int, user *User) (Game, error) {
+	if capacity > capacityMax || capacity < capacityMin {
+		return nil, GameCapacityInvalid
+	}
+
+	newGame := &GameImpl{
 		capacity: capacity,
 		users:    []*User{user},
 		board:    nil,
 	}
+
+	return newGame, nil
 }
 
 func (g *GameImpl) Capacity() int {
