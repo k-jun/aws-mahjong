@@ -20,6 +20,7 @@ type Hand interface {
 	FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile
 	FindPonPair(inTile *tile.Tile) [][2]*tile.Tile
 	FindKanPair(inTile *tile.Tile) [][3]*tile.Tile
+	Status() []string
 }
 
 var (
@@ -217,4 +218,13 @@ func (h *HandImpl) findByKinds(kinds []*tile.TileKind) []*tile.Tile {
 	}
 
 	return tiles
+}
+
+func (h *HandImpl) Status() []string {
+	status := []string{}
+	for _, tile := range h.Tiles() {
+		status = append(status, tile.Name())
+	}
+
+	return status
 }

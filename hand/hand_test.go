@@ -343,3 +343,24 @@ func TestFindKanPair(t *testing.T) {
 	}
 
 }
+
+func TestStatus(t *testing.T) {
+	cases := []struct {
+		Description  string
+		CurrentTiles []*tile.Tile
+		OutStatus    []string
+	}{
+		{
+			Description:  "valid case",
+			CurrentTiles: []*tile.Tile{&tile.Manzu5, &tile.Manzu5Aka, &tile.Manzu5},
+			OutStatus:    []string{"manzu5", "manzu5", "manzu5aka"},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			hand := &HandImpl{tiles: c.CurrentTiles}
+			assert.Equal(t, c.OutStatus, hand.Status())
+		})
+	}
+}

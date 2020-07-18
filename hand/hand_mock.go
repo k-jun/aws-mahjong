@@ -5,11 +5,12 @@ import "aws-mahjong/tile"
 var _ Hand = &HandMock{}
 
 type HandMock struct {
-	ExpectedTile  *tile.Tile
-	ExpectedTiles []*tile.Tile
-	ExpectedError error
-	ExpectedPair2 [][2]*tile.Tile
-	ExpectedPair3 [][3]*tile.Tile
+	ExpectedTile   *tile.Tile
+	ExpectedTiles  []*tile.Tile
+	ExpectedError  error
+	ExpectedPair2  [][2]*tile.Tile
+	ExpectedPair3  [][3]*tile.Tile
+	ExpectedStatus []string
 }
 
 func (h *HandMock) Tiles() []*tile.Tile {
@@ -46,4 +47,8 @@ func (h *HandMock) FindPonPair(inTile *tile.Tile) [][2]*tile.Tile {
 
 func (h *HandMock) FindKanPair(inTile *tile.Tile) [][3]*tile.Tile {
 	return h.ExpectedPair3
+}
+
+func (h *HandMock) Status() []string {
+	return h.ExpectedStatus
 }
