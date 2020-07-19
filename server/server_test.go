@@ -5,6 +5,7 @@ package server
 import (
 	"aws-mahjong/repository"
 	"aws-mahjong/usecase"
+	"context"
 	"net/http"
 	"os"
 	"testing"
@@ -38,7 +39,9 @@ func TestMain(m *testing.M) {
 
 	go wsserver.Serve()
 	defer wsserver.Close()
-	go http.ListenAndServe(":8000", nil)
+	srv := &http.Server{Addr: ":8000"}
+	go srv.ListenAndServe()
+	defer srv.Shutdown(context.Background())
 	os.Exit(m.Run())
 }
 
