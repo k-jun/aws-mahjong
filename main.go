@@ -21,7 +21,8 @@ func main() {
 	gameRepo := repository.NewGameRepository()
 
 	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
-	server.AttachHandlerAndEvent(wsserver, roomUsecase)
+	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
+	server.AttachHandlerAndEvent(wsserver, roomUsecase, gameUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

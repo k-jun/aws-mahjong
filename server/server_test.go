@@ -20,9 +20,8 @@ var (
 		Transport: "websocket",
 		Query:     make(map[string]string),
 	}
-	uri         = "http://localhost:8000"
-	socketUri   = uri + "/socket.io/"
-	roomUsecase usecase.RoomUsecase
+	uri       = "http://localhost:8000"
+	socketUri = uri + "/socket.io/"
 )
 
 func TestMain(m *testing.M) {
@@ -33,9 +32,10 @@ func TestMain(m *testing.M) {
 
 	roomRepo := repository.NewRoomRepository(wsserver)
 	gameRepo := repository.NewGameRepository()
-	roomUsecase = usecase.NewRoomUsecase(roomRepo, gameRepo)
+	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
+	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
 
-	AttachHandlerAndEvent(wsserver, roomUsecase)
+	AttachHandlerAndEvent(wsserver, roomUsecase, gameUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

@@ -11,7 +11,7 @@ import (
 	socketio "github.com/googollee/go-socket.io"
 )
 
-func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUsecase) {
+func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUsecase, gameUsecase usecase.GameUsecase) {
 
 	// api handlers
 	http.HandleFunc("/rooms", handler.Rooms(roomUsecase))
