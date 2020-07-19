@@ -174,7 +174,7 @@ func (h *HandImpl) FindChiiPair(inTile *tile.Tile) [][2]*tile.Tile {
 	}
 
 	// inTile is on right
-	if num <= 3 {
+	if num >= 3 {
 		leftKind := tile.TileKindFromString(strconv.Itoa(num - 2))
 		centerKind := tile.TileKindFromString(strconv.Itoa(num - 1))
 		lambda(leftKind, centerKind)
