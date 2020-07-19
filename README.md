@@ -181,7 +181,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ```json
 ```
 
-### [ ] game_error
+### [x] game_error
 
 誰かが退出して強制終了した場合、nakiが遅くでnakiができなかった場合などに発火する。
 ```
