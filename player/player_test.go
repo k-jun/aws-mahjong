@@ -260,7 +260,7 @@ func TestStatus(t *testing.T) {
 		CurrentTsumo        *tile.Tile
 		CurrentZihai        *tile.Tile
 		InTile              *tile.Tile
-		OutNakiActionStatus *NakiActionStatus
+		OutNakiActionStatus *NakiActions
 		OutTsumo            string
 	}{
 		{
