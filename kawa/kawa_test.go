@@ -27,23 +27,23 @@ func TestAdd(t *testing.T) {
 			InIsSide:     false,
 			InTile:       &tile.Chun,
 			OutError:     nil,
-			OutTiles:     []*KawaTile{&KawaTile{tile: &tile.Chun, isSide: false}},
+			OutTiles:     []*KawaTile{{tile: &tile.Chun, isSide: false}},
 		},
 		{
 			Description: "valid case",
 			CurrentTiles: []*KawaTile{
-				&KawaTile{tile: &tile.Chun, isSide: false},
-				&KawaTile{tile: &tile.Souzu1, isSide: false},
-				&KawaTile{tile: &tile.Souzu5, isSide: false},
+				{tile: &tile.Chun, isSide: false},
+				{tile: &tile.Souzu1, isSide: false},
+				{tile: &tile.Souzu5, isSide: false},
 			},
 			InIsSide: true,
 			InTile:   &tile.Haku,
 			OutError: nil,
 			OutTiles: []*KawaTile{
-				&KawaTile{tile: &tile.Chun, isSide: false},
-				&KawaTile{tile: &tile.Souzu1, isSide: false},
-				&KawaTile{tile: &tile.Souzu5, isSide: false},
-				&KawaTile{tile: &tile.Haku, isSide: true},
+				{tile: &tile.Chun, isSide: false},
+				{tile: &tile.Souzu1, isSide: false},
+				{tile: &tile.Souzu5, isSide: false},
+				{tile: &tile.Haku, isSide: true},
 			},
 		},
 	}
@@ -67,14 +67,14 @@ func TestStatus(t *testing.T) {
 		{
 			Description: "valid case",
 			CurrentTiles: []*KawaTile{
-				&KawaTile{tile: &tile.Chun, isSide: false},
-				&KawaTile{tile: &tile.Souzu1, isSide: false},
-				&KawaTile{tile: &tile.Souzu5, isSide: false},
+				{tile: &tile.Chun, isSide: false},
+				{tile: &tile.Souzu1, isSide: false},
+				{tile: &tile.Souzu5, isSide: false},
 			},
 			OutStatus: []*KawaStatus{
-				&KawaStatus{IsSide: false, Name: tile.Chun.Name()},
-				&KawaStatus{IsSide: false, Name: tile.Souzu1.Name()},
-				&KawaStatus{IsSide: false, Name: tile.Souzu5.Name()},
+				{IsSide: false, Name: tile.Chun.Name()},
+				{IsSide: false, Name: tile.Souzu1.Name()},
+				{IsSide: false, Name: tile.Souzu5.Name()},
 			},
 		},
 	}
