@@ -181,7 +181,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 ```json
 ```
 
-### [ ] new_status
+### [x] new_game_status
 
 他のプレイヤーの打牌、鳴きなど状況に変更があった際には更新がこのイベントで通知される。
 
