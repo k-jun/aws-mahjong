@@ -4,7 +4,6 @@ import (
 	"aws-mahjong/game"
 	"aws-mahjong/repository"
 	"aws-mahjong/server/event"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
@@ -138,16 +137,7 @@ func (u *RoomUsecaseImpl) JoinRoom(s socketio.Conn, username string, roomName st
 			fmt.Println(err)
 			return err
 		}
-
-		u.roomRepo.ForEach(roomName, func(s socketio.Conn) {
-			status := roomGame.Board().Status(s.ID())
-			bytes, err := json.Marshal(status)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			s.Emit(event.NewGameStatus, string(bytes))
-		})
+		newGameStatus(u.roomRepo, roomName, roomGame)
 	}
 
 	return nil
