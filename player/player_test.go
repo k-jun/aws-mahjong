@@ -279,7 +279,7 @@ func TestStatus(t *testing.T) {
 				{{Name: "souzu1", IsOpen: true, IsSide: true}, {Name: "souzu1", IsOpen: false, IsSide: true}, {Name: "souzu1", IsOpen: false, IsSide: false}},
 			}},
 			InTile: &tile.Manzu4,
-			OutNakiActionStatus: &NakiActionStatus{
+			OutNakiActionStatus: &NakiActions{
 				Pon:  [][2]*tile.Tile{{&tile.Chun, &tile.East}},
 				Chii: [][2]*tile.Tile{{&tile.Chun, &tile.East}},
 				Kan:  [][3]*tile.Tile{{&tile.Chun, &tile.East, &tile.Haku}},
@@ -302,7 +302,7 @@ func TestStatus(t *testing.T) {
 			assert.Equal(t, c.CurrentKawa.Status(), status.Kawa)
 			assert.Equal(t, c.CurrentNaki.Status(), status.Naki)
 			assert.Equal(t, c.OutTsumo, status.Tsumo)
-			assert.Equal(t, c.OutNakiActionStatus, status.NakiActionStatus)
+			assert.Equal(t, c.OutNakiActionStatus, status.NakiActions)
 
 		})
 	}
