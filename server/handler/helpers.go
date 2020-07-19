@@ -36,7 +36,7 @@ type RoomErrorResponse struct {
 	ErrorMessage string `json:"error_message"`
 }
 
-func roomError(eventName string, errorMessage string) string {
+func websocketError(eventName string, errorMessage string) string {
 	resBody := RoomErrorResponse{
 		EventName:    eventName,
 		ErrorMessage: errorMessage,
