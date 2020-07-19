@@ -51,12 +51,14 @@ func NewPlayer(
 	naki naki.Naki,
 ) Player {
 	return &PlayerImpl{
-		id:   id,
-		name: playername,
-		deck: deck,
-		hand: hand,
-		kawa: kawa,
-		naki: naki,
+		id:     id,
+		name:   playername,
+		bakaze: bakaze,
+		zikaze: zikaze,
+		deck:   deck,
+		hand:   hand,
+		kawa:   kawa,
+		naki:   naki,
 	}
 }
 
@@ -150,7 +152,7 @@ func (p *PlayerImpl) Status(nakiTile *tile.Tile) *PlayerStatus {
 	return &PlayerStatus{
 		ID:          p.id,
 		Name:        p.name,
-		Zikaze:      p.zikaze.Name(),
+		Zikaze:      p.safeZihaiName(),
 		Tsumo:       p.safeTsumoName(),
 		Hand:        p.hand.Status(),
 		Kawa:        p.kawa.Status(),
@@ -164,6 +166,14 @@ func (p *PlayerImpl) safeTsumoName() string {
 		return ""
 	}
 	return p.tsumo.Name()
+}
+
+func (p *PlayerImpl) safeZihaiName() string {
+	if p.zikaze == nil {
+		return ""
+	}
+	return p.zikaze.Name()
+
 }
 
 type NakiActions struct {
