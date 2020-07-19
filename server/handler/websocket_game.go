@@ -11,8 +11,8 @@ import (
 )
 
 type GameDahaiRequest struct {
-	RoomName string
-	Dahai    string
+	RoomName string `json:"room_name"`
+	Dahai    string `json:"dahai"`
 }
 
 func GameDahai(gameUsecase usecase.GameUsecase) func(socketio.Conn, string) {
