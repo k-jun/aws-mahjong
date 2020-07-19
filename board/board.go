@@ -99,10 +99,10 @@ func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
 	}
 
 	// check all player's naki
-	if b.CanOtherPlayersNaki(outTile) {
-		b.nakiTile = outTile
-		return nil
-	}
+	// if b.CanOtherPlayersNaki(outTile) {
+	// 	b.nakiTile = outTile
+	// 	return nil
+	// }
 
 	// change turn
 	b.NextTurn()
