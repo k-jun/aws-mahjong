@@ -3,11 +3,12 @@ package usecase
 import (
 	"aws-mahjong/naki"
 	"aws-mahjong/repository"
+	"aws-mahjong/tile"
 )
 
 type GameUsecase interface {
-	Dahai(roomName string, dahai string) error
-	Naki(roomName string, action naki.NakiAction, tiles []string) error
+	Dahai(roomName string, dahai *tile.Tile) error
+	Naki(roomName string, action naki.NakiAction, tiles []*tile.Tile) error
 }
 
 type GameUsecaseImpl struct {
@@ -22,10 +23,10 @@ func NewGameUsecase(roomRepo *repository.RoomRepository, gameRepo repository.Gam
 	}
 }
 
-func (u *GameUsecaseImpl) Dahai(roomName string, dahai string) error {
+func (u *GameUsecaseImpl) Dahai(roomName string, dahai *tile.Tile) error {
 	return nil
 }
 
-func (u *GameUsecaseImpl) Naki(roomName string, action naki.NakiAction, tiles []string) error {
+func (u *GameUsecaseImpl) Naki(roomName string, action naki.NakiAction, tiles []*tile.Tile) error {
 	return nil
 }

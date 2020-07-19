@@ -16,11 +16,14 @@ func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUs
 	// api handlers
 	http.HandleFunc("/rooms", handler.Rooms(roomUsecase))
 
-	// events
+	// room events
 	http.Handle("/socket.io/", wsserver)
 	wsserver.OnEvent("/", event.CreateRoom, handler.CreateRoom(roomUsecase))
 	wsserver.OnEvent("/", event.JoinRoom, handler.JoinRoom(roomUsecase))
 	wsserver.OnEvent("/", event.LeaveRoom, handler.LeaveRoom(roomUsecase))
+
+	// game events
+	wsserver.OnEvent("/", event.GameDahai, handler.GameDahai(gameUsecase))
 
 	wsserver.OnConnect("/", func(s socketio.Conn) error {
 		fmt.Println("connected:", s.ID())

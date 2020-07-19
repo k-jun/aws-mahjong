@@ -1,9 +1,14 @@
 package tile
 
 import (
+	"errors"
 	"log"
 	"sort"
 	"strconv"
+)
+
+var (
+	InvalidTileNameErr = errors.New("invalid tile name")
 )
 
 type TileKind string
@@ -74,6 +79,17 @@ func (t *Tile) KindSMP() *TileKind {
 	return nil
 }
 
+func TileFromString(tileName string) (*Tile, error) {
+	for _, tile := range AllTailKind {
+		if tile.Name() == tileName {
+			return &tile, nil
+		}
+
+	}
+	return nil, InvalidTileNameErr
+
+}
+
 func TileKindFromString(kind string) *TileKind {
 	converter := map[string]*TileKind{
 		"suhai":   &suhai,
@@ -94,7 +110,6 @@ func TileKindFromString(kind string) *TileKind {
 		"kaze":    &kaze,
 		"yakuhai": &yakuhai,
 	}
-
 	return converter[kind]
 }
 
