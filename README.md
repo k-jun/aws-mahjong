@@ -104,7 +104,7 @@ http://localhost:8000/ws
 
 
 
-### [ ] game_dahai
+### [x] game_dahai
 
 牌を手牌から捨てる際に使う。このイベントを送信するとnew_statusが走る。
 基本的にはnew_statusのturn_player_indexに対応するplayerがtsumoを持っている。
