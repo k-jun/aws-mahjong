@@ -17,6 +17,10 @@ type DeckImpl struct {
 }
 
 var (
+	TimeNowUnix = time.Now().Unix()
+)
+
+var (
 	RunOutOfTileErr = errors.New("no tile exist on deck")
 )
 
@@ -43,10 +47,9 @@ func (d *DeckImpl) Draw() (*tile.Tile, error) {
 		return &tile, nil
 	}
 	return nil, RunOutOfTileErr
-
 }
 
 func (d *DeckImpl) shuffle() {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(TimeNowUnix)
 	rand.Shuffle(len(d.tiles), func(i, j int) { d.tiles[i], d.tiles[j] = d.tiles[j], d.tiles[i] })
 }

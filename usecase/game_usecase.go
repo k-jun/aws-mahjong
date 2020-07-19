@@ -24,6 +24,14 @@ func NewGameUsecase(roomRepo *repository.RoomRepository, gameRepo repository.Gam
 }
 
 func (u *GameUsecaseImpl) Dahai(roomName string, dahai *tile.Tile) error {
+	roomGame, err := u.gameRepo.Find(roomName)
+	if err != nil {
+		return err
+	}
+	if err = roomGame.Board().TurnPlayerDahai(dahai); err != nil {
+		return err
+	}
+	newGameStatus(u.roomRepo, roomName, roomGame)
 	return nil
 }
 

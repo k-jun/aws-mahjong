@@ -1,9 +1,8 @@
-// +build integration
-
 package server
 
 import (
 	"aws-mahjong/board"
+	"aws-mahjong/deck"
 	"aws-mahjong/hand"
 	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
@@ -99,6 +98,8 @@ func TestNewGameStatus(t *testing.T) {
 		InClient            *socketio_client.Client
 		InBody              string
 		OutClient           *socketio_client.Client
+		OutZikaze           string
+		OutPlayerName       string
 	}{
 		{
 			Description:         "valid case",
@@ -108,9 +109,25 @@ func TestNewGameStatus(t *testing.T) {
 			CurrentJoinRoom:     handler.JoinRoomRequest{RoomName: "Wilhelmine23", UserName: "Lisa DuBuque"},
 			InClient:            client4,
 			InBody:              `{"room_name": "Wilhelmine23", "user_name": "Miss Hertha Casper V"}`,
+			OutClient:           client1,
+			OutPlayerName:       "Victor Lynch DDS",
+			OutZikaze:           tile.East.Name(),
+		},
+		{
+			Description:         "valid case",
+			CurrentCreateClient: client1,
+			CurrentCreateRoom:   handler.CreateRoomRequest{RoomName: "yBalistreri", UserName: "Victor Lynch DDS", RoomCapacity: 4},
+			CurrentJoinClients:  []*socketio_client.Client{client2, client3},
+			CurrentJoinRoom:     handler.JoinRoomRequest{RoomName: "yBalistreri", UserName: "Lisa DuBuque"},
+			InClient:            client4,
+			InBody:              `{"room_name": "yBalistreri", "user_name": "Miss Hertha Casper V"}`,
 			OutClient:           client4,
+			OutPlayerName:       "Miss Hertha Casper V",
+			OutZikaze:           tile.North.Name(),
 		},
 	}
+	// testTime, _ := time.Parse("2006-01-02", "1997-12-21")
+	// deck.TimeNowUnix = testTime.Unix()
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
@@ -118,22 +135,65 @@ func TestNewGameStatus(t *testing.T) {
 			testutil.JoinRooms(c.CurrentJoinClients, c.CurrentJoinRoom)
 
 			IsFired := false
+			resBody := board.BoardStatus{}
 			c.OutClient.On(event.NewGameStatus, func(payload string) {
-				resBody := board.BoardStatus{}
 				err := json.Unmarshal([]byte(payload), &resBody)
 				if err != nil {
 					return
 				}
-				assert.Equal(t, tile.East.Name(), resBody.Bakaze)
-				assert.Equal(t, 83, resBody.DeckCound)
-				assert.Equal(t, tile.North.Name(), resBody.Jicha.Zikaze)
-				assert.Equal(t, "Miss Hertha Casper V", resBody.Jicha.Name)
-				assert.Equal(t, hand.HandCount, len(resBody.Jicha.Hand))
 				IsFired = true
 			})
 			c.InClient.Emit(event.JoinRoom, c.InBody)
 			time.Sleep(1 * time.Second)
 			assert.Equal(t, true, IsFired)
+			assert.Equal(t, tile.East.Name(), resBody.Bakaze)
+			assert.Equal(t, 83, resBody.DeckCound)
+			assert.Equal(t, c.OutZikaze, resBody.Jicha.Zikaze)
+			assert.Equal(t, c.OutPlayerName, resBody.Jicha.Name)
+			assert.Equal(t, hand.HandCount, len(resBody.Jicha.Hand))
 		})
 	}
+}
+
+func TestGameDahai(t *testing.T) {
+	cases := []struct {
+		Description         string
+		CurrentRoomName     string
+		CurrentRoomCapaticy int
+		InClientIdx         int
+		InBody              string
+	}{
+		{
+			Description:         "valid case",
+			CurrentRoomName:     "Carmella28",
+			CurrentRoomCapaticy: 3,
+			InClientIdx:         0,
+			InBody:              `{"room_name": "Carmella28", "dahai": "manzu1"}`,
+		},
+	}
+
+	testTime, _ := time.Parse("2006-01-02", "1997-12-21")
+	deck.TimeNowUnix = testTime.Unix()
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			resBody := board.BoardStatus{}
+			IsFired := false
+			clients := testutil.CreateAndJoinClientsToRoom(uri, opts, c.CurrentRoomName, c.CurrentRoomCapaticy)
+
+			clients[c.InClientIdx].On(event.NewGameStatus, func(payload string) {
+				err := json.Unmarshal([]byte(payload), &resBody)
+				if err != nil {
+					return
+				}
+				IsFired = true
+			})
+			clients[c.InClientIdx].Emit(event.GameDahai, c.InBody)
+			time.Sleep(1 * time.Second)
+			assert.Equal(t, true, IsFired)
+			assert.Equal(t, "pinzu6", resBody.Shimocha.Tsumo)
+		})
+	}
+
+	deck.TimeNowUnix = time.Now().Unix()
 }
