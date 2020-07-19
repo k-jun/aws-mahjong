@@ -136,26 +136,26 @@ func (p *PlayerImpl) canKan(inTile *tile.Tile) bool {
 }
 
 type PlayerStatus struct {
-	ID               string
-	Name             string
-	Zikaze           string
-	Tsumo            string
-	Hand             []string
-	Kawa             []*kawa.KawaStatus
-	NakiActionStatus *NakiActionStatus
-	Naki             [][]*naki.NakiStatus
+	ID          string
+	Name        string               `json:"name"`
+	Zikaze      string               `json:"zikaze"`
+	Tsumo       string               `json:"tsumo"`
+	Hand        []string             `json:"hand"`
+	Kawa        []*kawa.KawaStatus   `json:"kawa"`
+	NakiActions *NakiActions         `json:"naki_actions"`
+	Naki        [][]*naki.NakiStatus `json:"naki"`
 }
 
 func (p *PlayerImpl) Status(nakiTile *tile.Tile) *PlayerStatus {
 	return &PlayerStatus{
-		ID:               p.id,
-		Name:             p.name,
-		Zikaze:           p.zikaze.Name(),
-		Tsumo:            p.safeTsumoName(),
-		Hand:             p.hand.Status(),
-		Kawa:             p.kawa.Status(),
-		NakiActionStatus: p.NakiActionStatus(nakiTile),
-		Naki:             p.naki.Status(),
+		ID:          p.id,
+		Name:        p.name,
+		Zikaze:      p.zikaze.Name(),
+		Tsumo:       p.safeTsumoName(),
+		Hand:        p.hand.Status(),
+		Kawa:        p.kawa.Status(),
+		NakiActions: p.NakiActionStatus(nakiTile),
+		Naki:        p.naki.Status(),
 	}
 }
 
@@ -166,14 +166,14 @@ func (p *PlayerImpl) safeTsumoName() string {
 	return p.tsumo.Name()
 }
 
-type NakiActionStatus struct {
-	Pon  [][2]*tile.Tile
-	Kan  [][3]*tile.Tile
-	Chii [][2]*tile.Tile
+type NakiActions struct {
+	Pon  [][2]*tile.Tile `json:"pon"`
+	Kan  [][3]*tile.Tile `json:"kan"`
+	Chii [][2]*tile.Tile `json:"chii"`
 }
 
-func (p *PlayerImpl) NakiActionStatus(inTile *tile.Tile) *NakiActionStatus {
-	return &NakiActionStatus{
+func (p *PlayerImpl) NakiActionStatus(inTile *tile.Tile) *NakiActions {
+	return &NakiActions{
 		Pon:  p.hand.FindPonPair(inTile),
 		Kan:  p.hand.FindKanPair(inTile),
 		Chii: p.hand.FindPonPair(inTile),

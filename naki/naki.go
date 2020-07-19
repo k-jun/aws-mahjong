@@ -114,9 +114,9 @@ func (n *NakiImpl) AddTileToSet(inTile *tile.Tile) error {
 }
 
 type NakiStatus struct {
-	IsOpen bool
-	IsSide bool
-	Name   string
+	IsOpen bool   `json:"is_open"`
+	IsSide bool   `json:"is_side"`
+	Name   string `json:"name"`
 }
 
 func (n *NakiImpl) Status() [][]*NakiStatus {

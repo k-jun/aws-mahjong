@@ -126,14 +126,14 @@ func (b *BoardImpl) ChangeTurn(playerIdx int) error {
 }
 
 type BoardStatus struct {
-	Bakaze    string
-	DeckCound int
-	Oya       string
-	Turn      string
-	Jicha     *player.PlayerStatus
-	Kamicha   *player.PlayerStatus
-	Toimen    *player.PlayerStatus
-	Shimocha  *player.PlayerStatus
+	Bakaze    string               `json:"bakaze"`
+	DeckCound int                  `json:"deck_count"`
+	Oya       string               `json:"oya"`
+	Turn      string               `json:"turn"`
+	Jicha     *player.PlayerStatus `json:"jicha"`
+	Kamicha   *player.PlayerStatus `json:"kamicha"`
+	Toimen    *player.PlayerStatus `json:"toimen"`
+	Shimocha  *player.PlayerStatus `json:"shimocha"`
 }
 
 type Cha string

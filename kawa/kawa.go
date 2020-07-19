@@ -40,8 +40,8 @@ func (k *KawaImpl) Add(inTile *tile.Tile, isSide bool) error {
 }
 
 type KawaStatus struct {
-	IsSide bool
-	Name   string
+	IsSide bool   `json:"is_side"`
+	Name   string `json:"name"`
 }
 
 func (k *KawaImpl) Status() []*KawaStatus {
