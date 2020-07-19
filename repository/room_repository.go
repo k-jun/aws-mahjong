@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"regexp"
 
 	socketio "github.com/googollee/go-socket.io"
@@ -40,6 +41,12 @@ func (s *RoomRepository) Rooms() []string {
 		}
 	}
 	return names
+}
+
+func (s *RoomRepository) ForEach(roomName string, lambda socketio.EachFunc) {
+	fmt.Println(roomPrefix + roomName)
+	s.wsserver.ForEach("/", roomPrefix+roomName, lambda)
+
 }
 
 func (s *RoomRepository) RoomLen(roomName string) int {

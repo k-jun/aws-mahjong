@@ -14,6 +14,7 @@ type Board interface {
 	NextTurn()
 	ChangeTurn(playerIdx int) error
 	Start() error
+	Status(playerID string) *BoardStatus
 }
 
 type BoardImpl struct {

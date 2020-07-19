@@ -8,5 +8,6 @@ var (
 	NewRoomStatus = "new_room_status"
 	RoomError     = "room_error"
 
-	GameStart = "game_start"
+	GameStart     = "game_start"
+	NewGameStatus = "new_game_status"
 )
