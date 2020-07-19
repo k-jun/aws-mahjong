@@ -104,7 +104,7 @@ http://localhost:8000/ws
 
 
 
-### [ ] dahai
+### [ ] game_dahai
 
 牌を手牌から捨てる際に使う。このイベントを送信するとnew_statusが走る。
 基本的にはnew_statusのturn_player_indexに対応するplayerがtsumoを持っている。
@@ -119,7 +119,7 @@ http://localhost:8000/ws
 ```
 
 
-### [ ] naki
+### [ ] game_naki
 
 打牌に対して鳴きを行うか否かを選択する。
 鳴きを行わない場合に関してもcancelというイベントを送信する。
@@ -176,9 +176,19 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 
 ### [ ] game_end
 
-ゲームの終了を通知する。正常に終了した場合と、誰かが退出して強制的に終了した場合も含む。
+ゲームの終了を通知する。
 
 ```json
+```
+
+### [ ] game_error
+
+誰かが退出して強制終了した場合、nakiが遅くでnakiができなかった場合などに発火する。
+```
+{
+  "event_name": "create_room"
+  "error_message": "room_already_taken"
+}
 ```
 
 ### [x] new_game_status
