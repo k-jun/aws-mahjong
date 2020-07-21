@@ -1,0 +1,48 @@
+name: Create PR
+
+on:
+  push:
+    branches:
+    - feature/issue-[0-9]+
+
+jobs:
+  create-pr:
+    name: Create PR
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Get issue number
+      id: issue-number
+      run: |
+        echo "::set-output name=number::${GITHUB_REF##*-}"
+        echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+    - name: Exist pull request
+      id: issue-exist
+      run: |
+        COUNT=`curl -sS \
+          -G https://api.github.com/repos/${{ github.repository }}/pulls \
+          -d 'base=master' \
+          -d 'head=yuki0n0-simplenews:${{ steps.issue-number.outputs.branch }}' \
+          -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | jq '. | length'`
+        echo "::set-output name=count::$COUNT"
+    - name: Get issue title
+      if: steps.issue-exist.outputs.count == 0
+      id: issue-title
+      env:
+        URL: https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.issue-number.outputs.number }}
+      run: |
+        TITLE=`curl -sS $URL --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | jq -r .title`
+        echo "::set-output name=title::$TITLE"
+    - name: Create PR
+      if: steps.issue-exist.outputs.count == 0
+      run: |
+        curl -sS \
+          -X POST https://api.github.com/repos/${{ github.repository }}/pulls \
+          -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          -H 'content-type: application/json' \
+          -d '{
+            "title": "#${{ steps.issue-number.outputs.number }} ${{ steps.issue-title.outputs.title }}",
+            "body": "close #${{ steps.issue-number.outputs.number }}",
+            "head": "${{ steps.issue-number.outputs.branch }}",
+            "base": "master"
+          }'
