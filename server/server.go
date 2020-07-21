@@ -4,26 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"aws-mahjong/server/event"
 	"aws-mahjong/server/handler"
 	"aws-mahjong/usecase"
 
 	socketio "github.com/googollee/go-socket.io"
+	"github.com/gorilla/mux"
 )
 
-func AttachHandlerAndEvent(wsserver *socketio.Server, roomUsecase usecase.RoomUsecase, gameUsecase usecase.GameUsecase) {
-
+func AttachHandlerAndEvent(router *mux.Router, wsserver *socketio.Server, roomUsecase usecase.RoomUsecase, gameUsecase usecase.GameUsecase) {
 	// api handlers
-	http.HandleFunc("/rooms", handler.Rooms(roomUsecase))
+	router.HandleFunc("/rooms", handler.Rooms(roomUsecase)).Methods(http.MethodGet)
 
 	// room events
-	http.Handle("/socket.io/", wsserver)
-	wsserver.OnEvent("/", event.CreateRoom, handler.CreateRoom(roomUsecase))
-	wsserver.OnEvent("/", event.JoinRoom, handler.JoinRoom(roomUsecase))
-	wsserver.OnEvent("/", event.LeaveRoom, handler.LeaveRoom(roomUsecase))
-
-	// game events
-	wsserver.OnEvent("/", event.GameDahai, handler.GameDahai(gameUsecase))
+	router.Handle("/socket.io/", wsserver)
 
 	wsserver.OnConnect("/", func(s socketio.Conn) error {
 		fmt.Println("connected:", s.ID())

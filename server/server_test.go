@@ -7,11 +7,10 @@ import (
 	"aws-mahjong/usecase"
 	"context"
 	"net/http"
-	"os"
 	"testing"
 
 	socketio "github.com/googollee/go-socket.io"
-	"github.com/stretchr/testify/assert"
+	"github.com/gorilla/mux"
 	socketio_client "github.com/zhouhui8915/go-socket.io-client"
 )
 
@@ -34,18 +33,16 @@ func TestMain(m *testing.M) {
 	gameRepo := repository.NewGameRepository()
 	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
 	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
+	router := mux.NewRouter()
 
-	AttachHandlerAndEvent(wsserver, roomUsecase, gameUsecase)
+	AttachHandlerAndEvent(router, wsserver, roomUsecase, gameUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()
-	srv := &http.Server{Addr: ":8000"}
+	srv := &http.Server{
+		Addr:    ":8000",
+		Handler: router,
+	}
 	go srv.ListenAndServe()
 	defer srv.Shutdown(context.Background())
-	os.Exit(m.Run())
-}
-
-func TestOnConnect(t *testing.T) {
-	_, err := socketio_client.NewClient(uri, opts)
-	assert.NoError(t, err)
 }
