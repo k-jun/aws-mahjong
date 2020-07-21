@@ -28,6 +28,8 @@ api endpoint
 http://localhost:8000/
 ```
 
+---
+
 ### [x]  GET `/rooms`
 
 現在開かれている部屋の一覧を取得する。
@@ -55,7 +57,210 @@ http://localhost:8000/
 `default`
 
 NO CONTENT
+
+---
+
+### [ ] POST `/rooms`
+
+部屋を作成する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
+```json
+{
+  "user_name": "Elwin Ebert",
+  "room_name": "possimus",
+  "room_capacity": 3
+}
+```
  
+**RESPONSE**
+
+`status 200`
+
+
+```json
+{
+  "room_name": "fugiat",
+  "room_capacity": 4
+}
+```
+
+`default`
+
+NO CONTENT
+
+---
+
+### [ ] PUT `/rooms/{room_name}/join`
+
+部屋に参加する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
+`user_id`に関してはクライエント側で適当に生成する。他のプレイヤーとかぶらなければ正直なんの値でも良い。
+```json
+{
+  "user_id": "ba214aff-365b-398f-8492-80e3057f0d44"
+}
+```
+ 
+**RESPONSE**
+
+`status 200`
+
+
+```json
+{
+  "room_capacity": 4,
+  "room_member_count": 1
+}
+```
+
+`default`
+
+NO CONTENT
+
+---
+
+### [ ] PUT `/rooms/{room_name}/leave`
+
+現在joinしている部屋から退出する。ちなみにゲームが開始されてからの退出は受け付けていない。
+
+```json
+{
+  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1"
+}
+
+```
+
+
+**RESPONSE**
+
+`status 200`
+
+
+```json
+{
+  "room_capacity": 4,
+  "room_member_count": 1
+}
+```
+
+`default`
+
+NO CONTENT
+
+---
+
+
+### [ ] POST `/rooms/{room_name}/dahai`
+
+haiの箇所に入る値はサーバーから送信される牌の名前をそのまま使用で問題ない。
+
+
+```json
+{
+  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1",
+  "hai": "chun"
+}
+```
+
+**RESPONSE**
+
+`status 200`
+
+
+```json
+{
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "tehai": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
+      ],
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      ]
+    ]
+}
+```
+
+`default`
+
+NO CONTENT
+
+---
+
+
+### [ ] POST `/rooms/{room_name}/naki`
+
+```json
+{
+  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1",
+  "naki": "cancel"
+}
+```
+
+```json
+{
+  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1",
+  "naki": "pon",
+  "mentsu": []
+}
+```
+
+**RESPONSE**
+
+`status 200`
+
+
+```json
+{
+    "name": "",
+    "zikaze": "east",
+    "tsumo": "manzu3",
+    "tehai": ["hanzu3", "souzu3"],
+    "kawa": [
+      {"isSide": false, "name": "manzu3"},
+      {"isSide": false, "name": "manzu3"}
+    ],
+    "naki_actions": {
+      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+      "kan": [],
+      "chii": [["manzu1", "manzu2"]]
+    },
+    "naki": [
+      [
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": false, "name": "hatu"},
+        {"isOpen": false, "isSide": true, "name": "hatu"}
+      ],
+      [
+        {"isOpen": true, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": false, "isSide": false, "name": "manzu1"},
+        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      ]
+    ]
+}
+```
+
+`default`
+
+NO CONTENT
+
+---
 
 ## WebSocket Document
 
@@ -65,99 +270,10 @@ websocket endpoint
 http://localhost:8000/ws
 ```
 
-## Client Events
-
-
-### [x] create_room
-
-部屋を作成して参加する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
-```json
-{
-  "user_name": "Elwin Ebert",
-  "room_name": "possimus",
-  "room_capacity": 3
-}
-```
-
-### [x] join_room
-
-部屋の名前を指定してユーザーを参加させる。しっかりと`/rooms`の結果で取得したroomにjoinすること。
-
-```json
-{
-  "user_name": "Ms. Lilliana Walker",
-  "room_name": "porro"
-}
-```
-
-### [x] leave_room
-
-現在joinしている部屋から退出する。ちなみにゲームが開始されてから退出した場合は開始中の
-ゲームは強制終了する。
-
-```json
-{
-  "room_name": "laudantium"
-}
-
-```
-
-
-
-### [x] game_dahai
-
-牌を手牌から捨てる際に使う。このイベントを送信するとnew_statusが走る。
-基本的にはnew_statusのturn_player_indexに対応するplayerがtsumoを持っている。
-これを捨てるために使用する。
-
-```json
-{
-  "room_name": "laudantium",
-  "dahai": "chun"
-}
-
-```
-
-
-### [ ] game_naki
-
-打牌に対して鳴きを行うか否かを選択する。
-鳴きを行わない場合に関してもcancelというイベントを送信する。
-actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
-
-
-```json
-{
-  "room_name": "laudantium",
-  "action": "cancel"
-}
-```
-
-```json
-{
-  "room_name": "laudantium",
-  "action": "pon",
-  "tiles": ["manzu1", "manzu1"]
-}
-```
-
-
 ## Server Events
 
 
-### [x] room_error
-
-エラーメッセージの文字列が帰ってくる。
-部屋の作成、参加、退出などのエラーを返す。
-
-```
-{
-  "event_name": "create_room"
-  "error_message": "room_already_taken"
-}
-```
-
-### [x] new_room_status
+### [ ] room_status
 
 ```json
 {
@@ -167,31 +283,7 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 }
 ```
 
-### [x] game_start
-
-ゲームの開始を通知するだけ。現状は空文字を返すのみ。
-
-```json
-```
-
-### [ ] game_end
-
-ゲームの終了を通知する。
-
-```json
-```
-
-### [x] game_error
-
-誰かが退出して強制終了した場合、nakiが遅くでnakiができなかった場合などに発火する。
-```
-{
-  "event_name": "create_room"
-  "error_message": "room_already_taken"
-}
-```
-
-### [x] new_game_status
+### [ ] game_status
 
 他のプレイヤーの打牌、鳴きなど状況に変更があった際には更新がこのイベントで通知される。
 
@@ -199,117 +291,38 @@ actionsの種類に関しては`/naki/naki.go`のNakiActionを参照。
 {
   "bakaze": "east",
   "deck_count": 36, 
-  "jicha": {
-    "name": "",
-    "zikaze": "east",
-    "tsumo": "manzu3",
-    "hand": ["hanzu3", "souzu3"],
-    "kawa": [
-      {"isSide": false, "name": "manzu3"},
-      {"isSide": false, "name": "manzu3"}
-    ],
-    "naki_actions": {
-      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
-      "kan": [],
-      "chii": [["manzu1", "manzu2"]]
-    },
-    "naki": [
-      [
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": true, "name": "hatu"}
+  "turn_player_index": 0,
+  "oya_player_index": 0,
+  "players": [
+    {
+      "id": "b3448161-f9dc-343c-a3d5-fae551d1158a",
+      "name": "",
+      "zikaze": "east",
+      "tsumo": "manzu3",
+      "hand": ["hanzu3", "souzu3"],
+      "kawa": [
+        {"isSide": false, "name": "manzu3"},
+        {"isSide": false, "name": "manzu3"}
       ],
-      [
-        {"isOpen": true, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": true, "isSide": false, "name": "manzu1"}
+      "naki_actions": {
+        "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
+        "kan": [],
+        "chii": [["manzu1", "manzu2"]]
+      },
+      "naki": [
+        [
+          {"isOpen": false, "isSide": false, "name": "hatu"},
+          {"isOpen": false, "isSide": false, "name": "hatu"},
+          {"isOpen": false, "isSide": true, "name": "hatu"}
+        ],
+        [
+          {"isOpen": true, "isSide": false, "name": "manzu1"},
+          {"isOpen": false, "isSide": false, "name": "manzu1"},
+          {"isOpen": false, "isSide": false, "name": "manzu1"},
+          {"isOpen": true, "isSide": false, "name": "manzu1"}
+        ]
       ]
-    ]
-  },
-  "shimocha": {
-    "name": "",
-    "zikaze": "east",
-    "tsumo": "manzu3",
-    "hand": ["hanzu3", "souzu3"],
-    "kawa": [
-      {"isSide": false, "name": "manzu3"},
-      {"isSide": false, "name": "manzu3"}
-    ],
-    "naki_actions": {
-      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
-      "kan": [],
-      "chii": [["manzu1", "manzu2"]]
-    },
-    "naki": [
-      [
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": true, "name": "hatu"}
-      ],
-      [
-        {"isOpen": true, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": true, "isSide": false, "name": "manzu1"}
-      ]
-    ]
-  },
-  "toimen": {
-    "name": "",
-    "zikaze": "east",
-    "tsumo": "manzu3",
-    "hand": ["hanzu3", "souzu3"],
-    "kawa": [
-      {"isSide": false, "name": "manzu3"},
-      {"isSide": false, "name": "manzu3"}
-    ],
-    "naki_actions": {
-      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
-      "kan": [],
-      "chii": [["manzu1", "manzu2"]]
-    },
-    "naki": [
-      [
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": true, "name": "hatu"}
-      ],
-      [
-        {"isOpen": true, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": true, "isSide": false, "name": "manzu1"}
-      ]
-    ]
-  },
-  "kamicha": {
-    "name": "",
-    "zikaze": "east",
-    "tsumo": "manzu3",
-    "hand": ["hanzu3", "souzu3"],
-    "kawa": [
-      {"isSide": false, "name": "manzu3"},
-      {"isSide": false, "name": "manzu3"}
-    ],
-    "naki_actions": {
-      "pon": [["manzu1", "manzu1"], ["manzu2", "manzu2"]],
-      "kan": [],
-      "chii": [["manzu1", "manzu2"]]
-    },
-    "naki": [
-      [
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": false, "name": "hatu"},
-        {"isOpen": false, "isSide": true, "name": "hatu"}
-      ],
-      [
-        {"isOpen": true, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": false, "isSide": false, "name": "manzu1"},
-        {"isOpen": true, "isSide": false, "name": "manzu1"}
-      ]
-    ]
-  }
+    }
+  ]
 }
 ```
