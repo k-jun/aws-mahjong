@@ -7,7 +7,7 @@ var _ RoomRepository = &RoomRepositoryMock{}
 type RoomRepositoryMock struct {
 	ExpectedGame  *game.Game
 	ExpectedError error
-	ExpectedRooms []*RoomStatus
+	ExpectedRooms map[string]game.Game
 }
 
 func (r *RoomRepositoryMock) Add(roomName string, inGame game.Game) error {
@@ -22,6 +22,6 @@ func (r *RoomRepositoryMock) Find(roomName string) (*game.Game, error) {
 	return r.ExpectedGame, r.ExpectedError
 }
 
-func (r *RoomRepositoryMock) Rooms() []*RoomStatus {
+func (r *RoomRepositoryMock) Rooms() map[string]game.Game {
 	return r.ExpectedRooms
 }

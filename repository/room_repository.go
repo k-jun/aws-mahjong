@@ -15,16 +15,16 @@ type RoomRepository interface {
 	Add(roomName string, inGame game.Game) error
 	Remove(roomName string) error
 	Find(roomName string) (*game.Game, error)
-	Rooms() []*RoomStatus
+	Rooms() map[string]game.Game
 }
 
 type RoomRepositoryImpl struct {
-	games map[string]game.Game
+	rooms map[string]game.Game
 }
 
 func NewGameRepository() RoomRepository {
 	return &RoomRepositoryImpl{
-		games: map[string]game.Game{},
+		rooms: map[string]game.Game{},
 	}
 }
 
@@ -36,41 +36,26 @@ func (r *RoomRepositoryImpl) Add(roomName string, inGame game.Game) error {
 	if inGame == nil {
 		return GameIsNil
 	}
-	r.games[roomName] = inGame
+	r.rooms[roomName] = inGame
 	return nil
 }
 
 func (r *RoomRepositoryImpl) Remove(roomName string) error {
-	if r.games[roomName] == nil {
+	if r.rooms[roomName] == nil {
 		return GameNotFoundErr
 	}
-	delete(r.games, roomName)
+	delete(r.rooms, roomName)
 	return nil
 }
 
 func (r *RoomRepositoryImpl) Find(roomName string) (*game.Game, error) {
-	if r.games[roomName] == nil {
+	if r.rooms[roomName] == nil {
 		return nil, GameNotFoundErr
 	}
-	g := r.games[roomName]
+	g := r.rooms[roomName]
 	return &g, nil
 }
 
-type RoomStatus struct {
-	Name     string
-	Len      int
-	Capacity int
-}
-
-func (r *RoomRepositoryImpl) Rooms() []*RoomStatus {
-	rooms := []*RoomStatus{}
-	for key, game := range r.games {
-		rooms = append(rooms, &RoomStatus{
-			Name:     key,
-			Len:      len(game.Users()),
-			Capacity: game.Capacity(),
-		})
-	}
-
-	return rooms
+func (r *RoomRepositoryImpl) Rooms() map[string]game.Game {
+	return r.rooms
 }

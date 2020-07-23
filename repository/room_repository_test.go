@@ -36,7 +36,7 @@ func TestAdd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := RoomRepositoryImpl{games: map[string]game.Game{}}
+			repo := RoomRepositoryImpl{rooms: map[string]game.Game{}}
 			err := repo.Add(c.InRoomName, c.InBoard)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -63,7 +63,7 @@ func TestRemove(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			repo := RoomRepositoryImpl{games: map[string]game.Game{"iusto": &game.GameMock{}}}
+			repo := RoomRepositoryImpl{rooms: map[string]game.Game{"iusto": &game.GameMock{}}}
 			err := repo.Remove(c.InRoomName)
 			assert.Equal(t, c.OutError, err)
 		})
@@ -98,62 +98,13 @@ func TestFind(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
 
-			repo := RoomRepositoryImpl{games: c.CurrentGames}
+			repo := RoomRepositoryImpl{rooms: c.CurrentGames}
 			outGame, err := repo.Find(c.InRoomName)
 			if err != nil && c.OutError == err {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
 			assert.Equal(t, c.OutGame, *outGame)
-		})
-	}
-}
-
-func TestRooms(t *testing.T) {
-	cases := []struct {
-		Description  string
-		CurrentRooms map[string]game.Game
-		OutRooms     []*RoomStatus
-	}{
-		{
-			Description: "valid case",
-			CurrentRooms: map[string]game.Game{
-				"Jeramie48": &game.GameMock{
-					ExpectedCapacity: 4,
-					ExpectedUsers: []*game.User{
-						&game.User{},
-						&game.User{},
-					},
-				},
-				"Considine.Laurine": &game.GameMock{
-					ExpectedCapacity: 3,
-					ExpectedUsers: []*game.User{
-						&game.User{},
-						&game.User{},
-					},
-				},
-			},
-			OutRooms: []*RoomStatus{
-				&RoomStatus{
-					Name:     "Jeramie48",
-					Len:      2,
-					Capacity: 4,
-				},
-				&RoomStatus{
-					Name:     "Considine.Laurine",
-					Len:      2,
-					Capacity: 3,
-				},
-			},
-		},
-	}
-
-	for _, c := range cases {
-		t.Run(c.Description, func(t *testing.T) {
-			repo := RoomRepositoryImpl{
-				games: c.CurrentRooms,
-			}
-			assert.Equal(t, c.OutRooms, repo.Rooms())
 		})
 	}
 }
