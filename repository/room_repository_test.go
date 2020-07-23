@@ -104,7 +104,7 @@ func TestFind(t *testing.T) {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutGame, *outGame)
+			assert.Equal(t, c.OutGame, outGame)
 		})
 	}
 }

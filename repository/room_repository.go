@@ -14,7 +14,7 @@ var (
 type RoomRepository interface {
 	Add(roomName string, inGame game.Game) error
 	Remove(roomName string) error
-	Find(roomName string) (*game.Game, error)
+	Find(roomName string) (game.Game, error)
 	Rooms() map[string]game.Game
 }
 
@@ -48,12 +48,11 @@ func (r *RoomRepositoryImpl) Remove(roomName string) error {
 	return nil
 }
 
-func (r *RoomRepositoryImpl) Find(roomName string) (*game.Game, error) {
+func (r *RoomRepositoryImpl) Find(roomName string) (game.Game, error) {
 	if r.rooms[roomName] == nil {
 		return nil, GameNotFoundErr
 	}
-	g := r.rooms[roomName]
-	return &g, nil
+	return r.rooms[roomName], nil
 }
 
 func (r *RoomRepositoryImpl) Rooms() map[string]game.Game {

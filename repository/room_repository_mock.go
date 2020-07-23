@@ -5,7 +5,7 @@ import "aws-mahjong/game"
 var _ RoomRepository = &RoomRepositoryMock{}
 
 type RoomRepositoryMock struct {
-	ExpectedGame  *game.Game
+	ExpectedGame  game.Game
 	ExpectedError error
 	ExpectedRooms map[string]game.Game
 }
@@ -18,7 +18,7 @@ func (r *RoomRepositoryMock) Remove(roomName string) error {
 	return r.ExpectedError
 }
 
-func (r *RoomRepositoryMock) Find(roomName string) (*game.Game, error) {
+func (r *RoomRepositoryMock) Find(roomName string) (game.Game, error) {
 	return r.ExpectedGame, r.ExpectedError
 }
 
