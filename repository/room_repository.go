@@ -1,55 +1,76 @@
 package repository
 
 import (
-	"fmt"
-	"regexp"
-
-	socketio "github.com/googollee/go-socket.io"
+	"aws-mahjong/game"
+	"errors"
 )
 
 var (
-	roomPrefix = "aws-mahjong/"
-	re         = regexp.MustCompile(`aws-mahjong.+`)
+	GameNotFoundErr = errors.New("game not found")
+	GameIsNil       = errors.New("game is nil")
+	RoomNameIsEmpry = errors.New("roomName is empty")
 )
 
-type RoomRepository struct {
-	wsserver *socketio.Server
+type RoomRepository interface {
+	Add(roomName string, inGame game.Game) error
+	Remove(roomName string) error
+	Find(roomName string) (*game.Game, error)
+	Rooms() []*RoomStatus
 }
 
-func NewRoomRepository(wsserver *socketio.Server) *RoomRepository {
-	return &RoomRepository{wsserver: wsserver}
+type RoomRepositoryImpl struct {
+	games map[string]game.Game
 }
 
-func (s *RoomRepository) BroadcastToRoom(roomName string, eventName string, payload string) {
-	s.wsserver.BroadcastToRoom("/", roomPrefix+roomName, eventName, payload)
-}
-
-func (s *RoomRepository) JoinRoom(conn socketio.Conn, roomName string) {
-	conn.Join(roomPrefix + roomName)
-
-}
-
-func (s *RoomRepository) LeaveRoom(conn socketio.Conn, roomName string) {
-	conn.Leave(roomPrefix + roomName)
-}
-
-func (s *RoomRepository) Rooms() []string {
-	names := []string{}
-	for _, name := range s.wsserver.Rooms("/") {
-		if re.MatchString(name) {
-			names = append(names, name[len(roomPrefix):])
-		}
+func NewGameRepository() RoomRepository {
+	return &RoomRepositoryImpl{
+		games: map[string]game.Game{},
 	}
-	return names
 }
 
-func (s *RoomRepository) ForEach(roomName string, lambda socketio.EachFunc) {
-	fmt.Println(roomPrefix + roomName)
-	s.wsserver.ForEach("/", roomPrefix+roomName, lambda)
+func (r *RoomRepositoryImpl) Add(roomName string, inGame game.Game) error {
+	if roomName == "" {
+		return RoomNameIsEmpry
+	}
 
+	if inGame == nil {
+		return GameIsNil
+	}
+	r.games[roomName] = inGame
+	return nil
 }
 
-func (s *RoomRepository) RoomLen(roomName string) int {
-	return s.wsserver.RoomLen("/", roomPrefix+roomName)
+func (r *RoomRepositoryImpl) Remove(roomName string) error {
+	if r.games[roomName] == nil {
+		return GameNotFoundErr
+	}
+	delete(r.games, roomName)
+	return nil
+}
 
+func (r *RoomRepositoryImpl) Find(roomName string) (*game.Game, error) {
+	if r.games[roomName] == nil {
+		return nil, GameNotFoundErr
+	}
+	g := r.games[roomName]
+	return &g, nil
+}
+
+type RoomStatus struct {
+	Name     string
+	Len      int
+	Capacity int
+}
+
+func (r *RoomRepositoryImpl) Rooms() []*RoomStatus {
+	rooms := []*RoomStatus{}
+	for key, game := range r.games {
+		rooms = append(rooms, &RoomStatus{
+			Name:     key,
+			Len:      len(game.Users()),
+			Capacity: game.Capacity(),
+		})
+	}
+
+	return rooms
 }
