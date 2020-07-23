@@ -32,6 +32,7 @@ type User struct {
 type Game interface {
 	AddUser(user *User) error
 	RemoveUser(user *User) error
+	Users() []*User
 	Capacity() int
 	Board() board.Board
 	GameStart() error
@@ -63,6 +64,10 @@ func (g *GameImpl) Board() board.Board {
 
 func (g *GameImpl) Capacity() int {
 	return g.capacity
+}
+
+func (g *GameImpl) Users() []*User {
+	return g.users
 }
 
 func (g *GameImpl) RemoveUser(user *User) error {

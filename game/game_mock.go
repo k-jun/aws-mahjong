@@ -8,6 +8,7 @@ type GameMock struct {
 	ExpectedCapacity int
 	ExpectedError    error
 	ExpectedBoard    board.Board
+	ExpectedUsers    []*User
 }
 
 func (g *GameMock) Capacity() int {
@@ -29,4 +30,8 @@ func (g *GameMock) Board() board.Board {
 
 func (g *GameMock) GameStart() error {
 	return g.ExpectedError
+}
+
+func (g *GameMock) Users() []*User {
+	return g.ExpectedUsers
 }
