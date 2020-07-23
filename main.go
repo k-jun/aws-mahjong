@@ -9,6 +9,7 @@ import (
 	"aws-mahjong/usecase"
 
 	socketio "github.com/googollee/go-socket.io"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -22,7 +23,8 @@ func main() {
 
 	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
 	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
-	server.AttachHandlerAndEvent(wsserver, roomUsecase, gameUsecase)
+	router := mux.NewRouter()
+	server.AttachHandlerAndEvent(router, wsserver, roomUsecase, gameUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()
