@@ -104,7 +104,56 @@ func TestFind(t *testing.T) {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
-			assert.Equal(t, c.OutGame, outGame)
+			assert.Equal(t, c.OutGame, *outGame)
+		})
+	}
+}
+
+func TestRooms(t *testing.T) {
+	cases := []struct {
+		Description  string
+		CurrentRooms map[string]game.Game
+		OutRooms     []*RoomStatus
+	}{
+		{
+			Description: "valid case",
+			CurrentRooms: map[string]game.Game{
+				"Jeramie48": &game.GameMock{
+					ExpectedCapacity: 4,
+					ExpectedUsers: []*game.User{
+						&game.User{},
+						&game.User{},
+					},
+				},
+				"Considine.Laurine": &game.GameMock{
+					ExpectedCapacity: 3,
+					ExpectedUsers: []*game.User{
+						&game.User{},
+						&game.User{},
+					},
+				},
+			},
+			OutRooms: []*RoomStatus{
+				&RoomStatus{
+					Name:     "Jeramie48",
+					Len:      2,
+					Capacity: 4,
+				},
+				&RoomStatus{
+					Name:     "Considine.Laurine",
+					Len:      2,
+					Capacity: 3,
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			repo := RoomRepositoryImpl{
+				games: c.CurrentRooms,
+			}
+			assert.Equal(t, c.OutRooms, repo.Rooms())
 		})
 	}
 }
