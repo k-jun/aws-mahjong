@@ -35,3 +35,13 @@ func NewStatusRoomResponse(status *usecase.RoomStatus) *RoomResponse {
 		RoomLen:      status.Len,
 	}
 }
+
+type JoinRoomRequest struct {
+	UserId   string `json:"user_id"`
+	UserName string `json:"user_name"`
+}
+
+type LeaveRoomRequest struct {
+	UserId   string `json:"user_id"`
+	UserName string `json:"user_name"`
+}

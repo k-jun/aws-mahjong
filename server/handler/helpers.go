@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gorilla/mux"
+)
+
+var (
+	RoomName = "room_name"
 )
 
 func ExtractBody(r *http.Request, body interface{}) error {
@@ -12,6 +18,10 @@ func ExtractBody(r *http.Request, body interface{}) error {
 		return err
 	}
 	return json.Unmarshal(bytes, body)
+}
+
+func ExtractPathParams(r *http.Request) map[string]string {
+	return mux.Vars(r)
 }
 
 // func roomStatus(roomUsecase usecase.RoomUsecase, roomName string) (string, error) {

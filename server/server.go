@@ -15,6 +15,8 @@ func AttachHandlerAndEvent(router *mux.Router, wsserver *socketio.Server, roomUs
 	// api handlers
 	router.HandleFunc("/rooms", handler.Rooms(roomUsecase)).Methods(http.MethodGet)
 	router.HandleFunc("/rooms", handler.CreateRoom(roomUsecase)).Methods(http.MethodPost)
+	router.HandleFunc("/rooms/{room_name}/join", handler.JoinRoom(roomUsecase)).Methods(http.MethodPut)
+	router.HandleFunc("/rooms/{room_name}/leave", handler.LeaveRoom(roomUsecase)).Methods(http.MethodPut)
 
 	// room events
 	router.Handle("/socket.io/", wsserver)

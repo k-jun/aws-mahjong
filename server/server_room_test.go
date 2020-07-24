@@ -80,3 +80,69 @@ func TestCreateRoom(t *testing.T) {
 	}
 
 }
+
+func TestJoinRoom(t *testing.T) {
+	cases := []struct {
+		Description    string
+		CurrentUsecase usecase.RoomUsecase
+		InRoomName     string
+		InBody         string
+		OutCode        int
+		OutStatus      view.RoomResponse
+	}{
+		{
+			Description: "valid case",
+			CurrentUsecase: &usecase.RoomUsecaseMock{
+				ExpectedRoomStatus: &usecase.RoomStatus{Name: "Gage Schoen", Len: 2, Capacity: 4},
+			},
+			InRoomName: "Zboncak.Cole",
+			InBody:     `{"user_id": "67664e29-6983-31e2-9469-29668841baa5", "user_name": "Mr. Cory Goyette"}`,
+			OutCode:    200,
+			OutStatus:  view.RoomResponse{RoomName: "Gage Schoen", RoomLen: 2, RoomCapacity: 4},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			router := makeServer(c.CurrentUsecase)
+			res := testutil.MakeRequest(router, http.MethodPut, "/rooms/"+c.InRoomName+"/join", c.InBody)
+			if res.Code != 200 && c.OutCode == res.Code {
+				return
+			}
+			assert.Equal(t, c.OutCode, res.Code)
+			resBody := view.RoomResponse{}
+			err := json.Unmarshal(res.Body.Bytes(), &resBody)
+			assert.NoError(t, err)
+			assert.Equal(t, c.OutStatus, resBody)
+		})
+	}
+}
+
+func TestLeave(t *testing.T) {
+
+	cases := []struct {
+		Description    string
+		CurrentUsecase usecase.RoomUsecase
+		InRoomName     string
+		InBody         string
+		OutCode        int
+		OutStatus      view.RoomResponse
+	}{
+		{
+			Description:    "valid case",
+			CurrentUsecase: &usecase.RoomUsecaseMock{},
+			InRoomName:     "Zboncak.Cole",
+			InBody:         `{"user_id": "67664e29-6983-31e2-9469-29668841baa5", "user_name": "Mr. Cory Goyette"}`,
+			OutCode:        200,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			router := makeServer(c.CurrentUsecase)
+			res := testutil.MakeRequest(router, http.MethodPut, "/rooms/"+c.InRoomName+"/leave", c.InBody)
+			assert.Equal(t, c.OutCode, res.Code)
+		})
+
+	}
+}

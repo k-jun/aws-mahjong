@@ -59,3 +59,54 @@ func CreateRoom(roomUsecase usecase.RoomUsecase) func(w http.ResponseWriter, r *
 
 	}
 }
+
+func JoinRoom(roomUsecase usecase.RoomUsecase) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		body := view.JoinRoomRequest{}
+		err := ExtractBody(r, &body)
+		if err != nil {
+			log.Println(err)
+			BadRequest(w, r)
+			return
+		}
+		params := ExtractPathParams(r)
+		status, err := roomUsecase.JoinRoom(body.UserId, body.UserName, params[RoomName])
+		if err != nil {
+			log.Println(err)
+			BadRequest(w, r)
+			return
+		}
+
+		resBody := view.NewStatusRoomResponse(status)
+		bytes, err := json.Marshal(resBody)
+		if err != nil {
+			log.Println(err)
+			InternalServerError(w, r)
+			return
+		}
+		if _, err = w.Write(bytes); err != nil {
+			log.Println(err)
+			InternalServerError(w, r)
+		}
+
+	}
+}
+
+func LeaveRoom(roomUsecase usecase.RoomUsecase) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		body := view.LeaveRoomRequest{}
+		err := ExtractBody(r, &body)
+		if err != nil {
+			log.Println(err)
+			BadRequest(w, r)
+			return
+		}
+		params := ExtractPathParams(r)
+		err = roomUsecase.LeaveRoom(body.UserId, body.UserName, params[RoomName])
+		if err != nil {
+			log.Println(err)
+			BadRequest(w, r)
+			return
+		}
+	}
+}
