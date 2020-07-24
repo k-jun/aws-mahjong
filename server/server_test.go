@@ -29,13 +29,10 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	roomRepo := repository.NewRoomRepository(wsserver)
-	gameRepo := repository.NewGameRepository()
-	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
-	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
+	roomRepo := repository.NewRoomRepository()
+	roomUsecase := usecase.NewRoomUsecase(roomRepo)
 	router := mux.NewRouter()
-
-	AttachHandlerAndEvent(router, wsserver, roomUsecase, gameUsecase)
+	AttachHandlerAndEvent(router, wsserver, roomUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

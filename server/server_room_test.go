@@ -2,79 +2,67 @@
 
 package server
 
-import (
-	"aws-mahjong/server/handler"
-	"aws-mahjong/testutil"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	socketio_client "github.com/zhouhui8915/go-socket.io-client"
-)
-
-func TestRooms(t *testing.T) {
-
-	cases := []struct {
-		Description  string
-		CurrentRooms []handler.CreateRoomRequest
-		OutRooms     []handler.RoomsResponse
-	}{
-		{
-			Description:  "valid case, single room",
-			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Fatima.Reilly", RoomCapacity: 3, UserName: "Rosalyn King"}},
-			OutRooms:     []handler.RoomsResponse{{RoomName: "Fatima.Reilly", RoomCapacity: 3, RoomMemberCount: 1}},
-		},
-		{
-			Description: "valid case, multi rooms",
-			CurrentRooms: []handler.CreateRoomRequest{
-				{RoomName: "Wilford30", RoomCapacity: 3, UserName: "Rosalyn King"},
-				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, UserName: "Rosalyn King"},
-				{RoomName: "Vincent62", RoomCapacity: 3, UserName: "Rosalyn King"},
-			},
-			OutRooms: []handler.RoomsResponse{
-				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, RoomMemberCount: 1},
-				{RoomName: "Vincent62", RoomCapacity: 3, RoomMemberCount: 1},
-				{RoomName: "Wilford30", RoomCapacity: 3, RoomMemberCount: 1},
-			},
-		},
-	}
-
-	client, err := socketio_client.NewClient(uri, opts)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for _, c := range cases {
-		t.Run(c.Description, func(t *testing.T) {
-			testutil.CreateRooms(client, c.CurrentRooms)
-
-			response, err := http.Get(uri + "/rooms")
-			assert.NoError(t, err)
-
-			bytes, err := ioutil.ReadAll(response.Body)
-			resBody := []handler.RoomsResponse{}
-			err = json.Unmarshal(bytes, &resBody)
-
-			// really bad checking
-			for _, room := range c.OutRooms {
-				isExist := false
-				for _, resRoom := range resBody {
-					if resRoom.RoomName != room.RoomName {
-						continue
-					}
-					isExist = true
-					assert.Equal(t, room.RoomCapacity, resRoom.RoomCapacity)
-					assert.Equal(t, room.RoomMemberCount, resRoom.RoomMemberCount)
-				}
-				assert.Equal(t, true, isExist)
-			}
-
-		})
-	}
-}
-
+// func TestRooms(t *testing.T) {
+//
+// 	cases := []struct {
+// 		Description  string
+// 		CurrentRooms []handler.CreateRoomRequest
+// 		OutRooms     []handler.RoomsResponse
+// 	}{
+// 		{
+// 			Description:  "valid case, single room",
+// 			CurrentRooms: []handler.CreateRoomRequest{{RoomName: "Fatima.Reilly", RoomCapacity: 3, UserName: "Rosalyn King"}},
+// 			OutRooms:     []handler.RoomsResponse{{RoomName: "Fatima.Reilly", RoomCapacity: 3, RoomMemberCount: 1}},
+// 		},
+// 		{
+// 			Description: "valid case, multi rooms",
+// 			CurrentRooms: []handler.CreateRoomRequest{
+// 				{RoomName: "Wilford30", RoomCapacity: 3, UserName: "Rosalyn King"},
+// 				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, UserName: "Rosalyn King"},
+// 				{RoomName: "Vincent62", RoomCapacity: 3, UserName: "Rosalyn King"},
+// 			},
+// 			OutRooms: []handler.RoomsResponse{
+// 				{RoomName: "Carmen.Turcotte", RoomCapacity: 4, RoomMemberCount: 1},
+// 				{RoomName: "Vincent62", RoomCapacity: 3, RoomMemberCount: 1},
+// 				{RoomName: "Wilford30", RoomCapacity: 3, RoomMemberCount: 1},
+// 			},
+// 		},
+// 	}
+//
+// 	client, err := socketio_client.NewClient(uri, opts)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+//
+// 	for _, c := range cases {
+// 		t.Run(c.Description, func(t *testing.T) {
+// 			testutil.CreateRooms(client, c.CurrentRooms)
+//
+// 			response, err := http.Get(uri + "/rooms")
+// 			assert.NoError(t, err)
+//
+// 			bytes, err := ioutil.ReadAll(response.Body)
+// 			resBody := []handler.RoomsResponse{}
+// 			err = json.Unmarshal(bytes, &resBody)
+//
+// 			// really bad checking
+// 			for _, room := range c.OutRooms {
+// 				isExist := false
+// 				for _, resRoom := range resBody {
+// 					if resRoom.RoomName != room.RoomName {
+// 						continue
+// 					}
+// 					isExist = true
+// 					assert.Equal(t, room.RoomCapacity, resRoom.RoomCapacity)
+// 					assert.Equal(t, room.RoomMemberCount, resRoom.RoomMemberCount)
+// 				}
+// 				assert.Equal(t, true, isExist)
+// 			}
+//
+// 		})
+// 	}
+// }
+//
 // func TestCreateRoom(t *testing.T) {
 //
 // 	cases := []struct {

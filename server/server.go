@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AttachHandlerAndEvent(router *mux.Router, wsserver *socketio.Server, roomUsecase usecase.RoomUsecase, gameUsecase usecase.GameUsecase) {
+func AttachHandlerAndEvent(router *mux.Router, wsserver *socketio.Server, roomUsecase usecase.RoomUsecase) {
 	// api handlers
 	router.HandleFunc("/rooms", handler.Rooms(roomUsecase)).Methods(http.MethodGet)
 
@@ -25,6 +25,5 @@ func AttachHandlerAndEvent(router *mux.Router, wsserver *socketio.Server, roomUs
 
 	wsserver.OnDisconnect("/", func(s socketio.Conn, _ string) {
 		fmt.Println("disconnected:", s.ID())
-		roomUsecase.LeaveAllRoom(s)
 	})
 }

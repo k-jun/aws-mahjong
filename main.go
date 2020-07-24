@@ -18,13 +18,11 @@ func main() {
 		panic(err)
 	}
 
-	roomRepo := repository.NewRoomRepository(wsserver)
-	gameRepo := repository.NewGameRepository()
+	roomRepo := repository.NewRoomRepository()
 
-	roomUsecase := usecase.NewRoomUsecase(roomRepo, gameRepo)
-	gameUsecase := usecase.NewGameUsecase(roomRepo, gameRepo)
+	roomUsecase := usecase.NewRoomUsecase(roomRepo)
 	router := mux.NewRouter()
-	server.AttachHandlerAndEvent(router, wsserver, roomUsecase, gameUsecase)
+	server.AttachHandlerAndEvent(router, wsserver, roomUsecase)
 
 	go wsserver.Serve()
 	defer wsserver.Close()

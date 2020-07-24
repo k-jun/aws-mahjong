@@ -1,6 +1,8 @@
 package repository
 
-import "aws-mahjong/game"
+import (
+	"aws-mahjong/game"
+)
 
 var _ RoomRepository = &RoomRepositoryMock{}
 
@@ -28,7 +30,6 @@ func (r *RoomRepositoryMock) Rooms() map[string]game.Game {
 
 func (r *RoomRepositoryMock) AddUserToRoom(roomName string, user *game.User) error {
 	return r.ExpectedError
-
 }
 
 func (r *RoomRepositoryMock) RemoveUserFromRoom(roomName string, user *game.User) error {

@@ -24,7 +24,7 @@ type RoomRepositoryImpl struct {
 	rooms map[string]game.Game
 }
 
-func NewGameRepository() RoomRepository {
+func NewRoomRepository() RoomRepository {
 	return &RoomRepositoryImpl{
 		rooms: map[string]game.Game{},
 	}
