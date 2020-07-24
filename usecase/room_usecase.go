@@ -67,11 +67,7 @@ func (u *RoomUsecaseImpl) CreateRoom(userId string, userName string, roomName st
 	if err != nil {
 		return err
 	}
-	err = u.roomRepo.Add(roomName, newGame)
-	if err != nil {
-		return err
-	}
-	return nil
+	return u.roomRepo.Add(roomName, newGame)
 }
 
 func (u *RoomUsecaseImpl) JoinRoom(userId string, userName string, roomName string) (*RoomStatus, error) {
