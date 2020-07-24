@@ -66,7 +66,14 @@ func (r *RoomRepositoryImpl) AddUserToRoom(roomName string, user *game.User) err
 	if err != nil {
 		return err
 	}
-	return game.AddUser(user)
+	err = game.AddUser(user)
+	if err != nil {
+		return err
+	}
+	if len(game.Users()) == game.Capacity() {
+		return game.GameStart()
+	}
+	return nil
 }
 
 func (r *RoomRepositoryImpl) RemoveUserFromRoom(roomName string, user *game.User) error {
