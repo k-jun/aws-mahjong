@@ -125,7 +125,8 @@ NO CONTENT
 
 ```json
 {
-  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1"
+  "user_id": "0b13481b-3006-31bd-ab96-4790616e0af1",
+  "user_name": "Miss Shaniya Larson"
 }
 
 ```
@@ -133,15 +134,9 @@ NO CONTENT
 
 **RESPONSE**
 
-`status 200`
+`status 204`
 
-
-```json
-{
-  "room_capacity": 4,
-  "room_member_count": 1
-}
-```
+NO CONTENT
 
 `default`
 
