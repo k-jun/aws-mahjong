@@ -53,15 +53,28 @@ func TestCreateRoom(t *testing.T) {
 		InRoomName     string
 		InRoomCapacity int
 		OutError       error
+		OutRoomStatus  *RoomStatus
 	}{
 		{
-			Description:    "valid case",
-			CurrentRepo:    &repository.RoomRepositoryMock{},
+			Description: "valid case",
+			CurrentRepo: &repository.RoomRepositoryMock{
+				ExpectedGame: &game.GameMock{
+					ExpectedUsers: []*game.User{
+						&game.User{},
+					},
+					ExpectedCapacity: 4,
+				},
+			},
 			InUserId:       "327158ad-ad00-3990-b594-874d958d3675",
 			InUserName:     "Mrs. Lorna Schmidt",
 			InRoomName:     "Ledner.Wilhelmine",
 			InRoomCapacity: 4,
 			OutError:       nil,
+			OutRoomStatus: &RoomStatus{
+				Name:     "Ledner.Wilhelmine",
+				Len:      1,
+				Capacity: 4,
+			},
 		},
 		{
 			Description:    "invalid case",
@@ -71,6 +84,7 @@ func TestCreateRoom(t *testing.T) {
 			InRoomName:     "Ledner.Wilhelmine",
 			InRoomCapacity: 2,
 			OutError:       game.GameCapacityInvalid,
+			OutRoomStatus:  nil,
 		},
 		{
 			Description: "invalid case",
@@ -82,14 +96,19 @@ func TestCreateRoom(t *testing.T) {
 			InRoomName:     "Ledner.Wilhelmine",
 			InRoomCapacity: 3,
 			OutError:       errors.New(""),
+			OutRoomStatus:  nil,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
 			usecase := RoomUsecaseImpl{roomRepo: c.CurrentRepo}
-			err := usecase.CreateRoom(c.InUserId, c.InUserName, c.InRoomName, c.InRoomCapacity)
+			status, err := usecase.CreateRoom(c.InUserId, c.InUserName, c.InRoomName, c.InRoomCapacity)
+			if err != nil && err == c.OutError {
+				return
+			}
 			assert.Equal(t, c.OutError, err)
+			assert.Equal(t, c.OutRoomStatus, status)
 		})
 	}
 }

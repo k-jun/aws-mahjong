@@ -12,8 +12,8 @@ func (u *RoomUsecaseMock) Rooms() []*RoomStatus {
 	return u.ExpectedRoomStatuses
 }
 
-func (u *RoomUsecaseMock) CreateRoom(userId string, userName string, roomName string, roomCapacity int) error {
-	return u.ExpectedError
+func (u *RoomUsecaseMock) CreateRoom(userId string, userName string, roomName string, roomCapacity int) (*RoomStatus, error) {
+	return u.ExpectedRoomStatus, u.ExpectedError
 
 }
 
