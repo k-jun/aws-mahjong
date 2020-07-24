@@ -1,6 +1,8 @@
 package game
 
-import "aws-mahjong/board"
+import (
+	"aws-mahjong/board"
+)
 
 var _ Game = &GameMock{}
 
@@ -26,9 +28,8 @@ func (g *GameMock) RemoveUser(user *User) error {
 			lastIdx := len(g.ExpectedUsers) - 1
 			g.ExpectedUsers[idx], g.ExpectedUsers[lastIdx] = g.ExpectedUsers[lastIdx], g.ExpectedUsers[idx]
 			g.ExpectedUsers = g.ExpectedUsers[:lastIdx]
-
+			return g.ExpectedError
 		}
-
 	}
 	return g.ExpectedError
 }

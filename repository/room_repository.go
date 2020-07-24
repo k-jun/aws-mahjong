@@ -74,5 +74,13 @@ func (r *RoomRepositoryImpl) RemoveUserFromRoom(roomName string, user *game.User
 	if err != nil {
 		return err
 	}
-	return game.RemoveUser(user)
+	err = game.RemoveUser(user)
+	if err != nil {
+		return err
+	}
+
+	if len(game.Users()) == 0 {
+		return r.Remove(roomName)
+	}
+	return nil
 }

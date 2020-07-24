@@ -151,27 +151,58 @@ func TestAddUserToRoom(t *testing.T) {
 
 func TestRemoveUserFromRoom(t *testing.T) {
 	cases := []struct {
-		Description  string
-		CurrentGames map[string]game.Game
-		InUser       *game.User
-		InRoomName   string
-		OutError     error
-		OutUsers     []*game.User
+		Description   string
+		CurrentGames  map[string]game.Game
+		InUser        *game.User
+		InRoomName    string
+		OutError      error
+		OutRoomDelete bool
+		OutUsers      []*game.User
 	}{
 		{
 			Description: "valid case",
 			CurrentGames: map[string]game.Game{
 				"Douglas.Maribel": &game.GameMock{
-					ExpectedUsers: []*game.User{&game.User{
-						"f24e0aab-337c-383e-82cf-2c32a930d73e",
-						"Lonnie Mertz",
-					}},
+					ExpectedUsers: []*game.User{
+						&game.User{
+							"f24e0aab-337c-383e-82cf-2c32a930d73e",
+							"Lonnie Mertz",
+						},
+						&game.User{
+							"a2d6bb27-029d-37e2-98d8-ec6df5b14444",
+							"Lonnie Mertz",
+						},
+					},
 				},
 			},
-			InRoomName: "Douglas.Maribel",
-			InUser:     &game.User{ID: "f24e0aab-337c-383e-82cf-2c32a930d73e"},
-			OutError:   nil,
-			OutUsers:   []*game.User{},
+			InRoomName:    "Douglas.Maribel",
+			InUser:        &game.User{ID: "f24e0aab-337c-383e-82cf-2c32a930d73e"},
+			OutError:      nil,
+			OutRoomDelete: false,
+			OutUsers: []*game.User{
+				&game.User{
+					"a2d6bb27-029d-37e2-98d8-ec6df5b14444",
+					"Lonnie Mertz",
+				},
+			},
+		},
+		{
+			Description: "valid case, delete room",
+			CurrentGames: map[string]game.Game{
+				"Douglas.Maribel": &game.GameMock{
+					ExpectedUsers: []*game.User{
+						&game.User{
+							"f24e0aab-337c-383e-82cf-2c32a930d73e",
+							"Lonnie Mertz",
+						},
+					},
+				},
+			},
+			InRoomName:    "Douglas.Maribel",
+			InUser:        &game.User{ID: "f24e0aab-337c-383e-82cf-2c32a930d73e"},
+			OutError:      nil,
+			OutRoomDelete: true,
+			OutUsers:      []*game.User{},
 		},
 	}
 
@@ -183,8 +214,11 @@ func TestRemoveUserFromRoom(t *testing.T) {
 				return
 			}
 			assert.Equal(t, c.OutError, err)
+			if c.OutRoomDelete {
+				assert.Equal(t, nil, repo.rooms[c.InRoomName])
+				return
+			}
 			assert.Equal(t, c.OutUsers, repo.rooms[c.InRoomName].Users())
-
 		})
 	}
 }
