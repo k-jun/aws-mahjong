@@ -1,9 +1,17 @@
 package handler
 
-type NewRoomStatus struct {
-	RoomName        string `json:"room_name"`
-	RoomMemberCount int    `json:"room_member_count"`
-	RoomCapacity    int    `json:"room_capacity"`
+import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+)
+
+func ExtractBody(r *http.Request, body interface{}) error {
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bytes, body)
 }
 
 // func roomStatus(roomUsecase usecase.RoomUsecase, roomName string) (string, error) {

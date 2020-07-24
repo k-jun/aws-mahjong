@@ -2,22 +2,36 @@ package view
 
 import "aws-mahjong/usecase"
 
-type RoomsResponse struct {
-	RoomName        string `json:"room_name"`
-	RoomCapacity    int    `json:"room_capacity"`
-	RoomMemberCount int    `json:"room_member_count"`
+type RoomResponse struct {
+	RoomName     string `json:"room_name"`
+	RoomCapacity int    `json:"room_capacity"`
+	RoomLen      int    `json:"room_len"`
 }
 
-func NewRoomResponse(rooms []*usecase.RoomStatus) []*RoomsResponse {
-	response := []*RoomsResponse{}
+func NewRoomResponse(rooms []*usecase.RoomStatus) []*RoomResponse {
+	response := []*RoomResponse{}
 	for _, roomInfo := range rooms {
-		response = append(response, &RoomsResponse{
-			RoomName:        roomInfo.Name,
-			RoomMemberCount: roomInfo.Len,
-			RoomCapacity:    roomInfo.Capacity,
+		response = append(response, &RoomResponse{
+			RoomName:     roomInfo.Name,
+			RoomLen:      roomInfo.Len,
+			RoomCapacity: roomInfo.Capacity,
 		})
 	}
 
 	return response
+}
 
+type CreateRoomRequest struct {
+	UserId       string `json:"user_id"`
+	UserName     string `json:"user_name"`
+	RoomName     string `json:"room_name"`
+	RoomCapacity int    `json:"room_capacity"`
+}
+
+func NewStatusRoomResponse(status *usecase.RoomStatus) *RoomResponse {
+	return &RoomResponse{
+		RoomName:     status.Name,
+		RoomCapacity: status.Capacity,
+		RoomLen:      status.Len,
+	}
 }
