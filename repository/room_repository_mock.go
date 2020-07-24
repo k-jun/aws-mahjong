@@ -25,3 +25,12 @@ func (r *RoomRepositoryMock) Find(roomName string) (game.Game, error) {
 func (r *RoomRepositoryMock) Rooms() map[string]game.Game {
 	return r.ExpectedRooms
 }
+
+func (r *RoomRepositoryMock) AddUserToRoom(roomName string, user *game.User) error {
+	return r.ExpectedError
+
+}
+
+func (r *RoomRepositoryMock) RemoveUserFromRoom(roomName string, user *game.User) error {
+	return r.ExpectedError
+}

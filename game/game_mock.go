@@ -16,12 +16,21 @@ func (g *GameMock) Capacity() int {
 }
 
 func (g *GameMock) AddUser(user *User) error {
+	g.ExpectedUsers = append(g.ExpectedUsers, user)
 	return g.ExpectedError
 }
 
 func (g *GameMock) RemoveUser(user *User) error {
-	return g.ExpectedError
+	for idx, u := range g.ExpectedUsers {
+		if u.ID == user.ID {
+			lastIdx := len(g.ExpectedUsers) - 1
+			g.ExpectedUsers[idx], g.ExpectedUsers[lastIdx] = g.ExpectedUsers[lastIdx], g.ExpectedUsers[idx]
+			g.ExpectedUsers = g.ExpectedUsers[:lastIdx]
 
+		}
+
+	}
+	return g.ExpectedError
 }
 
 func (g *GameMock) Board() board.Board {

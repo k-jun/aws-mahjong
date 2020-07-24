@@ -15,6 +15,8 @@ type RoomRepository interface {
 	Add(roomName string, inGame game.Game) error
 	Remove(roomName string) error
 	Find(roomName string) (game.Game, error)
+	AddUserToRoom(roomName string, user *game.User) error
+	RemoveUserFromRoom(roomName string, user *game.User) error
 	Rooms() map[string]game.Game
 }
 
@@ -57,4 +59,20 @@ func (r *RoomRepositoryImpl) Find(roomName string) (game.Game, error) {
 
 func (r *RoomRepositoryImpl) Rooms() map[string]game.Game {
 	return r.rooms
+}
+
+func (r *RoomRepositoryImpl) AddUserToRoom(roomName string, user *game.User) error {
+	game, err := r.Find(roomName)
+	if err != nil {
+		return err
+	}
+	return game.AddUser(user)
+}
+
+func (r *RoomRepositoryImpl) RemoveUserFromRoom(roomName string, user *game.User) error {
+	game, err := r.Find(roomName)
+	if err != nil {
+		return err
+	}
+	return game.RemoveUser(user)
 }

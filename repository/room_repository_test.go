@@ -108,3 +108,83 @@ func TestFind(t *testing.T) {
 		})
 	}
 }
+
+func TestAddUserToRoom(t *testing.T) {
+	cases := []struct {
+		Description  string
+		CurrentGames map[string]game.Game
+		InUser       *game.User
+		InRoomName   string
+		OutError     error
+		OutUsers     []*game.User
+	}{
+		{
+			Description:  "valid case",
+			CurrentGames: map[string]game.Game{"quis": &game.GameMock{}},
+			InUser:       &game.User{},
+			InRoomName:   "quis",
+			OutError:     nil,
+			OutUsers:     []*game.User{&game.User{}},
+		},
+		{
+			Description:  "invalid case",
+			CurrentGames: map[string]game.Game{"quis": &game.GameMock{ExpectedUsers: []*game.User{}}},
+			InUser:       &game.User{},
+			InRoomName:   "quiz",
+			OutError:     GameNotFoundErr,
+			OutUsers:     []*game.User{},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			repo := RoomRepositoryImpl{rooms: c.CurrentGames}
+			err := repo.AddUserToRoom(c.InRoomName, c.InUser)
+			if err != nil && err == c.OutError {
+				return
+			}
+			assert.Equal(t, c.OutError, err)
+			assert.Equal(t, c.OutUsers, repo.rooms[c.InRoomName].Users())
+		})
+	}
+}
+
+func TestRemoveUserFromRoom(t *testing.T) {
+	cases := []struct {
+		Description  string
+		CurrentGames map[string]game.Game
+		InUser       *game.User
+		InRoomName   string
+		OutError     error
+		OutUsers     []*game.User
+	}{
+		{
+			Description: "valid case",
+			CurrentGames: map[string]game.Game{
+				"Douglas.Maribel": &game.GameMock{
+					ExpectedUsers: []*game.User{&game.User{
+						"f24e0aab-337c-383e-82cf-2c32a930d73e",
+						"Lonnie Mertz",
+					}},
+				},
+			},
+			InRoomName: "Douglas.Maribel",
+			InUser:     &game.User{ID: "f24e0aab-337c-383e-82cf-2c32a930d73e"},
+			OutError:   nil,
+			OutUsers:   []*game.User{},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			repo := RoomRepositoryImpl{rooms: c.CurrentGames}
+			err := repo.RemoveUserFromRoom(c.InRoomName, c.InUser)
+			if err != nil && err == c.OutError {
+				return
+			}
+			assert.Equal(t, c.OutError, err)
+			assert.Equal(t, c.OutUsers, repo.rooms[c.InRoomName].Users())
+
+		})
+	}
+}
