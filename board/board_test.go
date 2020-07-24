@@ -290,12 +290,10 @@ func TestStatus(t *testing.T) {
 		CurrentTurn    int
 		CurrentOya     int
 		InPlayerID     string
-		OutOya         string
-		OutTurn        string
-		OutJicha       *player.PlayerStatus
-		OutShimocha    *player.PlayerStatus
-		OutToimen      *player.PlayerStatus
-		OutKamicha     *player.PlayerStatus
+		OutJicha       int
+		OutOya         int
+		OutTurn        int
+		OutPlayers     []*player.PlayerStatus
 	}{
 		{
 			Description:   "valid case",
@@ -310,12 +308,10 @@ func TestStatus(t *testing.T) {
 			CurrentOya:  0,
 			CurrentTurn: 0,
 			InPlayerID:  status1.ID,
-			OutOya:      "jicha",
-			OutTurn:     "jicha",
-			OutJicha:    status1,
-			OutShimocha: status2,
-			OutToimen:   status3,
-			OutKamicha:  status4,
+			OutJicha:    0,
+			OutOya:      0,
+			OutTurn:     0,
+			OutPlayers:  []*player.PlayerStatus{status1, status2, status3, status4},
 		},
 		{
 			Description:   "valid case, shimocha",
@@ -325,17 +321,14 @@ func TestStatus(t *testing.T) {
 				&player.PlayerMock{ExpectedStatus: status1},
 				&player.PlayerMock{ExpectedStatus: status2},
 				&player.PlayerMock{ExpectedStatus: status3},
-				&player.PlayerMock{ExpectedStatus: status4},
 			},
 			CurrentOya:  2,
 			CurrentTurn: 3,
 			InPlayerID:  status2.ID,
-			OutOya:      "shimocha",
-			OutTurn:     "toimen",
-			OutJicha:    status2,
-			OutShimocha: status3,
-			OutToimen:   status4,
-			OutKamicha:  status1,
+			OutJicha:    1,
+			OutOya:      2,
+			OutTurn:     3,
+			OutPlayers:  []*player.PlayerStatus{status1, status2, status3},
 		},
 	}
 
@@ -350,13 +343,12 @@ func TestStatus(t *testing.T) {
 			}
 
 			status := board.Status(c.InPlayerID)
+			assert.Equal(t, c.CurrentBakaze.Name(), status.Bakaze)
+			assert.Equal(t, c.CurrentDeck.Count(), status.DeckLen)
+			assert.Equal(t, c.OutJicha, status.Jicha)
 			assert.Equal(t, c.OutOya, status.Oya)
 			assert.Equal(t, c.OutTurn, status.Turn)
-			assert.Equal(t, c.OutJicha, status.Jicha)
-			assert.Equal(t, c.OutShimocha, status.Shimocha)
-			assert.Equal(t, c.OutToimen, status.Toimen)
-			assert.Equal(t, c.OutKamicha, status.Kamicha)
-
+			assert.Equal(t, c.OutPlayers, status.Players)
 		})
 	}
 }

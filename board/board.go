@@ -127,34 +127,17 @@ func (b *BoardImpl) ChangeTurn(playerIdx int) error {
 }
 
 type BoardStatus struct {
-	Bakaze    string               `json:"bakaze"`
-	DeckCound int                  `json:"deck_count"`
-	Oya       string               `json:"oya"`
-	Turn      string               `json:"turn"`
-	Jicha     *player.PlayerStatus `json:"jicha"`
-	Kamicha   *player.PlayerStatus `json:"kamicha"`
-	Toimen    *player.PlayerStatus `json:"toimen"`
-	Shimocha  *player.PlayerStatus `json:"shimocha"`
+	Bakaze  string                 `json:"bakaze"`
+	DeckLen int                    `json:"deck_len"`
+	Jicha   int                    `json:"jicha"`
+	Oya     int                    `json:"oya"`
+	Turn    int                    `json:"turn"`
+	Players []*player.PlayerStatus `json:"players"`
 }
 
-type Cha string
-
-var (
-	Kamicha  Cha = "kamicha"
-	Toimen   Cha = "toimen"
-	Shimocha Cha = "shimocha"
-	Jicha    Cha = "jicha"
-	Nil      Cha = ""
-)
-
 func (b *BoardImpl) Status(playerID string) *BoardStatus {
-	status := &BoardStatus{
-		Bakaze:    b.bakaze.Name(),
-		DeckCound: b.deck.Count(),
-	}
-
-	myIdx := 0
 	playerStatuses := []*player.PlayerStatus{}
+	myIdx := 0
 	for idx, player := range b.players {
 		playerStatus := player.Status(b.nakiTile)
 		if playerStatus.ID == playerID {
@@ -162,39 +145,14 @@ func (b *BoardImpl) Status(playerID string) *BoardStatus {
 		}
 		playerStatuses = append(playerStatuses, playerStatus)
 	}
-
-	status.Oya = string(getCha(myIdx, b.oya))
-	status.Turn = string(getCha(myIdx, b.turn))
-
-	for idx, s := range playerStatuses {
-		switch getCha(myIdx, idx) {
-		case Kamicha:
-			status.Kamicha = s
-		case Toimen:
-			status.Toimen = s
-		case Shimocha:
-			status.Shimocha = s
-		case Jicha:
-			status.Jicha = s
-		default:
-			continue
-		}
+	status := &BoardStatus{
+		Bakaze:  b.bakaze.Name(),
+		DeckLen: b.deck.Count(),
+		Jicha:   myIdx,
+		Oya:     b.oya,
+		Turn:    b.turn,
+		Players: playerStatuses,
 	}
 
 	return status
-}
-
-func getCha(jichaIdx int, tachaIdx int) Cha {
-	switch jichaIdx - tachaIdx {
-	case 3, -1:
-		return Shimocha
-	case 2, -2:
-		return Toimen
-	case 1, -3:
-		return Kamicha
-	case 0:
-		return Jicha
-	default:
-		return Nil
-	}
 }
