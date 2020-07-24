@@ -65,6 +65,7 @@ NO CONTENT
 部屋を作成する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
 ```json
 {
+  "user_id": "310baa3c-ed93-389a-95a3-c3ce7d459cc2",
   "user_name": "Elwin Ebert",
   "room_name": "possimus",
   "room_capacity": 3
@@ -95,7 +96,8 @@ NO CONTENT
 `user_id`に関してはクライエント側で適当に生成する。他のプレイヤーとかぶらなければ正直なんの値でも良い。
 ```json
 {
-  "user_id": "ba214aff-365b-398f-8492-80e3057f0d44"
+  "user_id": "ba214aff-365b-398f-8492-80e3057f0d44",
+  "user_name": "Mellie Crist PhD"
 }
 ```
  
