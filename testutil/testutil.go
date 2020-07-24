@@ -1,5 +1,19 @@
 package testutil
 
+import (
+	"bytes"
+	"net/http/httptest"
+
+	"github.com/gorilla/mux"
+)
+
+func MakeRequest(router *mux.Router, method string, path string, body string) *httptest.ResponseRecorder {
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(method, path, bytes.NewBuffer([]byte(body)))
+	router.ServeHTTP(rec, req)
+	return rec
+}
+
 // func CreateRoom(client *socketio_client.Client, room handler.CreateRoomRequest) {
 // 	body, _ := json.Marshal(&room)
 //

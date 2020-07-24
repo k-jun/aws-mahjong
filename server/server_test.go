@@ -3,10 +3,9 @@
 package server
 
 import (
-	"aws-mahjong/repository"
 	"aws-mahjong/usecase"
-	"context"
-	"net/http"
+	"errors"
+	"os"
 	"testing"
 
 	socketio "github.com/googollee/go-socket.io"
@@ -21,25 +20,23 @@ var (
 	}
 	uri       = "http://localhost:8000"
 	socketUri = uri + "/socket.io/"
+	wsserver  *socketio.Server
 )
 
 func TestMain(m *testing.M) {
-	wsserver, err := socketio.NewServer(nil)
+	err := errors.New("")
+	wsserver, err = socketio.NewServer(nil)
 	if err != nil {
 		panic(err)
 	}
 
-	roomRepo := repository.NewRoomRepository()
-	roomUsecase := usecase.NewRoomUsecase(roomRepo)
-	router := mux.NewRouter()
-	AttachHandlerAndEvent(router, wsserver, roomUsecase)
-
 	go wsserver.Serve()
 	defer wsserver.Close()
-	srv := &http.Server{
-		Addr:    ":8000",
-		Handler: router,
-	}
-	go srv.ListenAndServe()
-	defer srv.Shutdown(context.Background())
+	os.Exit(m.Run())
+}
+
+func makeServer(roomUsecase usecase.RoomUsecase) *mux.Router {
+	router := mux.NewRouter()
+	AttachHandlerAndEvent(router, wsserver, roomUsecase)
+	return router
 }
