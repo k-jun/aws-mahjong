@@ -44,12 +44,12 @@ http://localhost:8000/
   {
     "room_name": "provident",
     "room_capacity": 3,
-    "room_member_count": 1
+    "room_len": 1
   },
   {
     "room_name": "fugiat",
     "room_capacity": 4,
-    "room_member_count": 1
+    "room_len": 1
   }
 ]
 ```
@@ -60,7 +60,7 @@ NO CONTENT
 
 ---
 
-### [ ] POST `/rooms`
+### [x] POST `/rooms`
 
 部屋を作成する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
 ```json
@@ -90,7 +90,7 @@ NO CONTENT
 
 ---
 
-### [ ] PUT `/rooms/{room_name}/join`
+### [x] PUT `/rooms/{room_name}/join`
 
 部屋に参加する。作成の際にプレイ人数を指定できる。指定した人数集まった場合には自動的にスタートする。
 `user_id`に関してはクライエント側で適当に生成する。他のプレイヤーとかぶらなければ正直なんの値でも良い。
@@ -119,7 +119,7 @@ NO CONTENT
 
 ---
 
-### [ ] PUT `/rooms/{room_name}/leave`
+### [x] PUT `/rooms/{room_name}/leave`
 
 現在joinしている部屋から退出する。ちなみにゲームが開始されてからの退出は受け付けていない。
 
