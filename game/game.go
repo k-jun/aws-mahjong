@@ -22,6 +22,9 @@ var (
 	GameReachMaxMemberErr = errors.New("game already fulled")
 	GameCapacityInvalid   = errors.New("game capacity is invalid")
 	GameMemberInvalid     = errors.New("game member is invalid")
+	GameAlreadyStartedErr = errors.New("game already started")
+	GameNotStartedErr     = errors.New("game not started")
+	NotYourTurnErr        = errors.New("this is not your turn")
 )
 
 type User struct {
@@ -34,8 +37,8 @@ type Game interface {
 	RemoveUser(user *User) error
 	Users() []*User
 	Capacity() int
-	Board() board.Board
 	GameStart() error
+	Dahai(userId string, hai *tile.Tile) (*board.BoardStatus, error)
 }
 
 type GameImpl struct {
@@ -56,10 +59,6 @@ func NewGame(capacity int, user *User) (Game, error) {
 	}
 
 	return newGame, nil
-}
-
-func (g *GameImpl) Board() board.Board {
-	return g.board
 }
 
 func (g *GameImpl) Capacity() int {
@@ -123,4 +122,18 @@ func (g *GameImpl) GameStart() error {
 	newBoard := board.NewBoard(newDeck, players)
 	g.board = newBoard
 	return g.board.Start()
+}
+
+func (g *GameImpl) Dahai(userId string, hai *tile.Tile) (*board.BoardStatus, error) {
+	if g.board == nil {
+		return nil, GameNotStartedErr
+	}
+	if !g.board.IsTurnPlayer(userId) {
+		return nil, NotYourTurnErr
+	}
+	err := g.board.TurnPlayerDahai(hai)
+	if err != nil {
+		return nil, err
+	}
+	return g.board.Status(userId), nil
 }

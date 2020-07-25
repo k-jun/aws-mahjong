@@ -2,15 +2,17 @@ package game
 
 import (
 	"aws-mahjong/board"
+	"aws-mahjong/tile"
 )
 
 var _ Game = &GameMock{}
 
 type GameMock struct {
-	ExpectedCapacity int
-	ExpectedError    error
-	ExpectedBoard    board.Board
-	ExpectedUsers    []*User
+	ExpectedCapacity    int
+	ExpectedError       error
+	ExpectedBoard       board.Board
+	ExpectedUsers       []*User
+	ExpectedBoardStatus *board.BoardStatus
 }
 
 func (g *GameMock) Capacity() int {
@@ -34,14 +36,14 @@ func (g *GameMock) RemoveUser(user *User) error {
 	return g.ExpectedError
 }
 
-func (g *GameMock) Board() board.Board {
-	return g.ExpectedBoard
-}
-
 func (g *GameMock) GameStart() error {
 	return g.ExpectedError
 }
 
 func (g *GameMock) Users() []*User {
 	return g.ExpectedUsers
+}
+
+func (g *GameMock) Dahai(userId string, hai *tile.Tile) (*board.BoardStatus, error) {
+	return g.ExpectedBoardStatus, g.ExpectedError
 }
