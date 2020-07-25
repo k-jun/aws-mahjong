@@ -15,6 +15,7 @@ type Board interface {
 	ChangeTurn(playerIdx int) error
 	Start() error
 	Status(playerID string) *BoardStatus
+	IsTurnPlayer(playerID string) bool
 }
 
 type BoardImpl struct {
@@ -155,4 +156,15 @@ func (b *BoardImpl) Status(playerID string) *BoardStatus {
 	}
 
 	return status
+}
+
+func (b *BoardImpl) IsTurnPlayer(playerID string) bool {
+	for idx, player := range b.players {
+		if player.ID() == playerID {
+			return idx == b.turn
+		}
+	}
+
+	return false
+
 }

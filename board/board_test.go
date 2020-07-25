@@ -136,7 +136,6 @@ func TestTurnPlayerDahai(t *testing.T) {
 	}{
 		{
 			Description:         "valid case",
-			CurrentNakiTile:     nil,
 			CurrentFirstPlayer:  &player.PlayerMock{ExpectedTile: &tile.Chun},
 			CurrentSecondPlayer: &player.PlayerMock{ExpectedNakiActions: []*naki.NakiAction{}},
 			CurrentTurn:         0,
@@ -349,6 +348,33 @@ func TestStatus(t *testing.T) {
 			assert.Equal(t, c.OutOya, status.Oya)
 			assert.Equal(t, c.OutTurn, status.Turn)
 			assert.Equal(t, c.OutPlayers, status.Players)
+		})
+	}
+}
+
+func TestIsTurnPlayer(t *testing.T) {
+	cases := []struct {
+		Description    string
+		CurrentTurn    int
+		CurrentPlayers []player.Player
+		InPlayerID     string
+		OutResult      bool
+	}{
+		{
+			Description: "valid case",
+			CurrentTurn: 0,
+			CurrentPlayers: []player.Player{
+				&player.PlayerMock{ExpectedID: "951b4115-cefe-336f-a65d-849e2c84169e"},
+			},
+			InPlayerID: "951b4115-cefe-336f-a65d-849e2c84169e",
+			OutResult:  true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			board := BoardImpl{players: c.CurrentPlayers, turn: c.CurrentTurn}
+			assert.Equal(t, c.OutResult, board.IsTurnPlayer(c.InPlayerID))
 		})
 	}
 }
