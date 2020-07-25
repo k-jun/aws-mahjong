@@ -33,8 +33,8 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func makeServer(roomUsecase usecase.RoomUsecase) *mux.Router {
+func makeServer(roomUsecase usecase.RoomUsecase, gameUsecase usecase.GameUsecase) *mux.Router {
 	router := mux.NewRouter()
-	AttachHandlerAndEvent(router, wsserver, roomUsecase)
+	AttachHandlerAndEvent(router, wsserver, roomUsecase, gameUsecase)
 	return router
 }

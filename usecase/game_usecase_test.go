@@ -46,7 +46,6 @@ func TestDahai(t *testing.T) {
 			}
 			assert.Equal(t, c.OutError, err)
 			assert.Equal(t, c.OutStatus, status)
-
 		})
 	}
 

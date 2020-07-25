@@ -29,7 +29,7 @@ func TestRooms(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			router := makeServer(c.CurrentUsecase)
+			router := makeServer(c.CurrentUsecase, nil)
 			res := testutil.MakeRequest(router, http.MethodGet, "/rooms", "")
 			if res.Code != 200 && c.OutCode == res.Code {
 				return
@@ -64,7 +64,7 @@ func TestCreateRoom(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			router := makeServer(c.CurrentUsecase)
+			router := makeServer(c.CurrentUsecase, nil)
 			res := testutil.MakeRequest(router, http.MethodPost, "/rooms", c.InBody)
 			if res.Code != 200 && c.OutCode == res.Code {
 				return
@@ -102,7 +102,7 @@ func TestJoinRoom(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			router := makeServer(c.CurrentUsecase)
+			router := makeServer(c.CurrentUsecase, nil)
 			res := testutil.MakeRequest(router, http.MethodPut, "/rooms/"+c.InRoomName+"/join", c.InBody)
 			if res.Code != 200 && c.OutCode == res.Code {
 				return
@@ -137,7 +137,7 @@ func TestLeave(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.Description, func(t *testing.T) {
-			router := makeServer(c.CurrentUsecase)
+			router := makeServer(c.CurrentUsecase, nil)
 			res := testutil.MakeRequest(router, http.MethodPut, "/rooms/"+c.InRoomName+"/leave", c.InBody)
 			assert.Equal(t, c.OutCode, res.Code)
 		})

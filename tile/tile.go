@@ -282,15 +282,15 @@ var (
 	// honors
 	Chun = Tile{
 		kind: []*TileKind{&zihai, &yakuhai},
-		name: "red",
+		name: "chun",
 	}
 	Hatu = Tile{
 		kind: []*TileKind{&zihai, &yakuhai},
-		name: "green",
+		name: "hatu",
 	}
 	Haku = Tile{
 		kind: []*TileKind{&zihai, &yakuhai},
-		name: "white",
+		name: "haku",
 	}
 	North = Tile{
 		kind: []*TileKind{&zihai, &kaze},
