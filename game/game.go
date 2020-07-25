@@ -131,7 +131,7 @@ func (g *GameImpl) Dahai(userId string, hai *tile.Tile) (*board.BoardStatus, err
 	if !g.board.IsTurnPlayer(userId) {
 		return nil, NotYourTurnErr
 	}
-	err := g.board.TurnPlayerDahai(hai)
+	err := g.board.TurnPlayerDahai(userId, hai)
 	if err != nil {
 		return nil, err
 	}

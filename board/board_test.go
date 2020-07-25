@@ -131,45 +131,76 @@ func TestTurnPlayerDahai(t *testing.T) {
 		CurrentSecondPlayer *player.PlayerMock
 		CurrentTurn         int
 		InTile              *tile.Tile
+		InPlayerID          string
 		OutError            error
 		OutTurn             int
 	}{
 		{
-			Description:         "valid case",
-			CurrentFirstPlayer:  &player.PlayerMock{ExpectedTile: &tile.Chun},
-			CurrentSecondPlayer: &player.PlayerMock{ExpectedNakiActions: []*naki.NakiAction{}},
-			CurrentTurn:         0,
-			InTile:              &tile.Chun,
-			OutError:            nil,
-			OutTurn:             1,
+			Description: "valid case",
+			CurrentFirstPlayer: &player.PlayerMock{
+				ExpectedID:   "a3e22f7a-cca9-3945-841d-2499d9310ad2",
+				ExpectedTile: &tile.Chun,
+			},
+			CurrentSecondPlayer: &player.PlayerMock{
+				ExpectedID:          "7e2eaebc-703c-3152-a6b2-1a3d64f2a223",
+				ExpectedNakiActions: []*naki.NakiAction{},
+			},
+			CurrentTurn: 0,
+			InTile:      &tile.Chun,
+			InPlayerID:  "a3e22f7a-cca9-3945-841d-2499d9310ad2",
+			OutError:    nil,
+			OutTurn:     1,
 		},
 		// {
-		// 	Description:         "valid case",
-		// 	CurrentNakiTile:     nil,
-		// 	CurrentFirstPlayer:  &player.PlayerMock{ExpectedTile: &tile.Chun},
+		// 	Description:     "valid case",
+		// 	CurrentNakiTile: nil,
+		// 	CurrentFirstPlayer: &player.PlayerMock{
+		// 		ExpectedID:   "a3e22f7a-cca9-3945-841d-2499d9310ad2",
+		// 		ExpectedTile: &tile.Chun,
+		// 	},
 		// 	CurrentSecondPlayer: &player.PlayerMock{ExpectedNakiActions: []*naki.NakiAction{&naki.Pon}},
 		// 	CurrentTurn:         0,
 		// 	InTile:              &tile.Chun,
+		// 	InPlayerID:          "a3e22f7a-cca9-3945-841d-2499d9310ad2",
 		// 	OutError:            nil,
 		// 	OutTurn:             0,
 		// },
 		{
-			Description:         "invalid case",
-			CurrentNakiTile:     &tile.Chun,
-			CurrentFirstPlayer:  &player.PlayerMock{},
+			Description:     "invalid case, invalid PlayerID",
+			CurrentNakiTile: &tile.Chun,
+			CurrentFirstPlayer: &player.PlayerMock{
+				ExpectedID:   "e8c17d38-57c0-382e-ba89-11893c5f7c6f",
+				ExpectedTile: &tile.Chun,
+			},
 			CurrentSecondPlayer: &player.PlayerMock{},
 			CurrentTurn:         0,
 			InTile:              &tile.Chun,
+			InPlayerID:          "a3e22f7a-cca9-3945-841d-2499d9310ad2",
+			OutError:            NotTurnPlayerErr,
+			OutTurn:             0,
+		},
+		{
+			Description:         "invalid case, nakiTile exist",
+			CurrentNakiTile:     &tile.Chun,
+			CurrentFirstPlayer:  &player.PlayerMock{ExpectedID: "e8c17d38-57c0-382e-ba89-11893c5f7c6f"},
+			CurrentSecondPlayer: &player.PlayerMock{},
+			CurrentTurn:         0,
+			InTile:              &tile.Chun,
+			InPlayerID:          "e8c17d38-57c0-382e-ba89-11893c5f7c6f",
 			OutError:            BoardNakiTileAlreadyExist,
 			OutTurn:             0,
 		},
 		{
-			Description:         "invalid case",
-			CurrentNakiTile:     nil,
-			CurrentFirstPlayer:  &player.PlayerMock{ExpectedError: errors.New("")},
+			Description:     "invalid case",
+			CurrentNakiTile: nil,
+			CurrentFirstPlayer: &player.PlayerMock{
+				ExpectedError: errors.New(""),
+				ExpectedID:    "bdf6258d-b0a7-3ee9-8ae5-fb492193680c",
+			},
 			CurrentSecondPlayer: &player.PlayerMock{},
 			CurrentTurn:         0,
 			InTile:              &tile.Chun,
+			InPlayerID:          "bdf6258d-b0a7-3ee9-8ae5-fb492193680c",
 			OutError:            errors.New(""),
 			OutTurn:             0,
 		},
@@ -193,7 +224,7 @@ func TestTurnPlayerDahai(t *testing.T) {
 				turn:     c.CurrentTurn,
 			}
 
-			err := board.TurnPlayerDahai(c.InTile)
+			err := board.TurnPlayerDahai(c.InPlayerID, c.InTile)
 			assert.Equal(t, c.OutError, err)
 			assert.Equal(t, c.OutTurn, board.turn)
 		})

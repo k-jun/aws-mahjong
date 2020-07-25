@@ -10,7 +10,7 @@ import (
 
 type Board interface {
 	TurnPlayerTsumo() error
-	TurnPlayerDahai(outTile *tile.Tile) error
+	TurnPlayerDahai(playerId string, outTile *tile.Tile) error
 	NextTurn()
 	ChangeTurn(playerIdx int) error
 	Start() error
@@ -32,6 +32,7 @@ var (
 	BoardNakiTileAlreadyExist = errors.New("board naki tile already exist")
 	BoardTurnOutOfRange       = errors.New("specified turn is out of range")
 	GameAlreadyStarted        = errors.New("game have already started")
+	NotTurnPlayerErr          = errors.New("this PlayerID is not turn PlayerID")
 )
 
 func NewBoard(deck deck.Deck, players []player.Player) Board {
@@ -90,7 +91,10 @@ func (b *BoardImpl) CanOtherPlayersNaki(nakiTile *tile.Tile) bool {
 
 }
 
-func (b *BoardImpl) TurnPlayerDahai(outTile *tile.Tile) error {
+func (b *BoardImpl) TurnPlayerDahai(playerId string, outTile *tile.Tile) error {
+	if !b.IsTurnPlayer(playerId) {
+		return NotTurnPlayerErr
+	}
 	if b.nakiTile != nil {
 		return BoardNakiTileAlreadyExist
 	}
