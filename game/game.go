@@ -24,7 +24,6 @@ var (
 	GameMemberInvalid     = errors.New("game member is invalid")
 	GameAlreadyStartedErr = errors.New("game already started")
 	GameNotStartedErr     = errors.New("game not started")
-	NotYourTurnErr        = errors.New("this is not your turn")
 )
 
 type User struct {
@@ -128,9 +127,7 @@ func (g *GameImpl) Dahai(userId string, hai *tile.Tile) (*board.BoardStatus, err
 	if g.board == nil {
 		return nil, GameNotStartedErr
 	}
-	if !g.board.IsTurnPlayer(userId) {
-		return nil, NotYourTurnErr
-	}
+
 	err := g.board.TurnPlayerDahai(userId, hai)
 	if err != nil {
 		return nil, err

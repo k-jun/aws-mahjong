@@ -1,6 +1,9 @@
 package game
 
 import (
+	"aws-mahjong/board"
+	"aws-mahjong/tile"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -137,5 +140,56 @@ func TestGameStart(t *testing.T) {
 			assert.Equal(t, c.OutError, err)
 		})
 
+	}
+}
+
+func TestDahai(t *testing.T) {
+	cases := []struct {
+		Description    string
+		CurrentBoard   board.Board
+		InPlayerID     string
+		InHai          *tile.Tile
+		OutError       error
+		OutBoardStatus *board.BoardStatus
+	}{
+		{
+			Description: "valid case",
+			CurrentBoard: &board.BoardMock{
+				ExpectedBoardStatus: &board.BoardStatus{},
+			},
+			InPlayerID:     "aa27f4f9-7f73-3712-8907-945978a33541",
+			InHai:          &tile.Chun,
+			OutError:       nil,
+			OutBoardStatus: &board.BoardStatus{},
+		},
+		{
+			Description:    "invalid case, game not started",
+			CurrentBoard:   nil,
+			InPlayerID:     "aa27f4f9-7f73-3712-8907-945978a33541",
+			InHai:          &tile.Chun,
+			OutError:       GameNotStartedErr,
+			OutBoardStatus: nil,
+		},
+		{
+			Description:    "invalid case, board error",
+			CurrentBoard:   &board.BoardMock{ExpectedError: errors.New("")},
+			InPlayerID:     "aa27f4f9-7f73-3712-8907-945978a33541",
+			InHai:          &tile.Chun,
+			OutError:       errors.New(""),
+			OutBoardStatus: nil,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Description, func(t *testing.T) {
+			game := GameImpl{board: c.CurrentBoard}
+			status, err := game.Dahai(c.InPlayerID, c.InHai)
+			if err != nil && err == c.OutError {
+				return
+			}
+			assert.Equal(t, c.OutError, err)
+			assert.Equal(t, c.OutBoardStatus, status)
+
+		})
 	}
 }
