@@ -17,6 +17,7 @@ type Player interface {
 	Naki(inTile *tile.Tile, fromHandTiles []*tile.Tile, cha naki.NakiFrom) error
 	CanNakiActions(inTile *tile.Tile) []*naki.NakiAction
 	Status(inTile *tile.Tile) *PlayerStatus
+	ID() string
 }
 
 var (
@@ -60,6 +61,10 @@ func NewPlayer(
 		kawa:   kawa,
 		naki:   naki,
 	}
+}
+
+func (p *PlayerImpl) ID() string {
+	return p.id
 }
 
 func (p *PlayerImpl) Hand() hand.Hand {

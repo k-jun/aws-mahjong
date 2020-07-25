@@ -14,6 +14,7 @@ type PlayerMock struct {
 	ExpectedTile        *tile.Tile
 	ExpectedNakiActions []*naki.NakiAction
 	ExpectedStatus      *PlayerStatus
+	ExpectedID          string
 }
 
 func (p *PlayerMock) Hand() hand.Hand {
@@ -43,5 +44,10 @@ func (p *PlayerMock) CanNakiActions(inTile *tile.Tile) []*naki.NakiAction {
 
 func (p *PlayerMock) Status(inTile *tile.Tile) *PlayerStatus {
 	return p.ExpectedStatus
+
+}
+
+func (p *PlayerMock) ID() string {
+	return p.ExpectedID
 
 }
